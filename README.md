@@ -1,15 +1,13 @@
----
-title: 'Project documentation'
-disqus: MedEx
----
-
 MedEx
 ===
 ![downloads](https://img.shields.io/github/downloads/atom/atom/total.svg) ![build](https://img.shields.io/appveyor/ci/:user/:repo.svg) ![test](https://img.shields.io/discord/:serverId.svg)
 
 ## Table of Contents
 
-[TOC]
+- [Description](#description)
+- [Project team](#project-team)
+- [Project bookmarks](#project-bookmarks)
+
 
 Description
 ---
@@ -29,8 +27,9 @@ Project team
 
 Project bookmarks
 ---
-Project Backlog - [Jira](https://crowdwire.atlassian.net/jira/software/projects/MED/boards/3)
-Document Sharing - [Google Drive](https://drive.google.com/drive/folders/1tgk3GQd3EnHOorKlSXlc6PDayAXA7Fmg?usp=sharing)
-API Documentation - [Swagger]()
-Static Analysis - [SonarCloud]() and SonarLint
-CI/CD Environment - Github Actions
+- Project Backlog - [Jira](https://crowdwire.atlassian.net/jira/software/projects/MED/boards/3)
+- Document Sharing - [Google Drive](https://drive.google.com/drive/folders/1tgk3GQd3EnHOorKlSXlc6PDayAXA7Fmg?usp=sharing)
+- API Documentation - [Swagger]()
+- Static Analysis - [SonarCloud]() and SonarLint
+- CI/CD Environment - Github Actions
+
