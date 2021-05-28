@@ -19,8 +19,8 @@ It includes two main “sub-projects”:
 
 Project team
 ---
-- Team Leader - Daniel Gomes (NMEC: 93)
-- DevOps Master - Bruno Bastos (NMEC: 93)
+- Team Leader - Daniel Gomes (NMEC: 93015)
+- DevOps Master - Bruno Bastos (NMEC: 93302)
 - QA Engineer - Leandro Silva (NMEC: 93436)
 - Product Owner - Mário Silva (NMEC: 93430)
 
