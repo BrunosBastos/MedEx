@@ -4,10 +4,10 @@ import MainLayout from 'src/components/MainLayout';
 import Account from 'src/pages/Account';
 import CustomerList from 'src/pages/CustomerList';
 import Dashboard from 'src/pages/Dashboard';
-import Login from 'src/pages/Login';
+import Login from 'src/pages/Login.tsx';
 import NotFound from 'src/pages/NotFound';
 import ProductList from 'src/pages/ProductList';
-import Register from 'src/pages/Register';
+import Register from 'src/pages/Register.tsx';
 import Settings from 'src/pages/Settings';
 
 const routes = [
