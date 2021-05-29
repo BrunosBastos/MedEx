@@ -1,17 +1,88 @@
 import { Helmet } from 'react-helmet';
+import { v4 as uuid } from 'uuid';
 import {
   Box,
   Container,
   Grid
 } from '@material-ui/core';
 import Budget from 'src/components/dashboard//Budget';
-import LatestOrders from 'src/components/dashboard//LatestOrders';
+import LatestOrders from 'src/components/dashboard//LatestOrders.tsx';
 import LatestProducts from 'src/components/dashboard//LatestProducts';
 import Sales from 'src/components/dashboard//Sales';
 import TasksProgress from 'src/components/dashboard//TasksProgress';
 import TotalCustomers from 'src/components/dashboard//TotalCustomers';
 import TotalProfit from 'src/components/dashboard//TotalProfit';
 import TrafficByDevice from 'src/components/dashboard//TrafficByDevice';
+
+
+const orders = [
+  {
+    id: uuid(),
+    ref: 'CDD1049',
+    amount: 30.5,
+    customer: {
+      name: 'Ekaterina Tankova'
+    },
+    delLocation: 'Oliveira de Azeméis',
+    createdAt: 1595016400000,
+    status: 'pending'
+  },
+  {
+    id: uuid(),
+    ref: 'CDD1048',
+    amount: 25.1,
+    customer: {
+      name: 'Cao Yu'
+    },
+    delLocation: 'Oliveira de Azeméis',
+    createdAt: 1555016400000,
+    status: 'delivered'
+  },
+  {
+    id: uuid(),
+    ref: 'CDD1047',
+    amount: 10.99,
+    customer: {
+      name: 'Alexa Richardson'
+    },
+    delLocation: 'São João da Madeira',
+    createdAt: 1554930000000,
+    status: 'refunded'
+  },
+  {
+    id: uuid(),
+    ref: 'CDD1046',
+    amount: 96.43,
+    customer: {
+      name: 'Anje Keizer'
+    },
+    delLocation: 'São João da Madeira',
+    createdAt: 1554757200000,
+    status: 'pending'
+  },
+  {
+    id: uuid(),
+    ref: 'CDD1045',
+    amount: 32.54,
+    customer: {
+      name: 'Clarke Gillebert'
+    },
+    delLocation: 'Mangualde',
+    createdAt: 1554670800000,
+    status: 'delivered'
+  },
+  {
+    id: uuid(),
+    ref: 'CDD1044',
+    amount: 16.76,
+    customer: {
+      name: 'Adam Denisov'
+    },
+    delLocation: 'Casa do Leandro',
+    createdAt: 1554172800000,
+    status: 'delivered'
+  }
+];
 
 const Dashboard = () => (
   <>
@@ -100,7 +171,7 @@ const Dashboard = () => (
             xl={9}
             xs={12}
           >
-            <LatestOrders />
+            <LatestOrders orders={orders}/>
           </Grid>
         </Grid>
       </Container>
