@@ -16,6 +16,7 @@ import {
   AlertCircle as AlertCircleIcon,
   BarChart as BarChartIcon,
   Lock as LockIcon,
+  PlusCircle as PlusCircleIcon,
   Settings as SettingsIcon,
   ShoppingBag as ShoppingBagIcon,
   User as UserIcon,
@@ -55,6 +56,11 @@ const items = [
     href: '/app/settings',
     icon: SettingsIcon,
     title: 'Settings'
+  },
+  {
+    href: '/app/addProduct',
+    icon: PlusCircleIcon,
+    title: 'Add Product'
   },
   {
     href: '/login',

@@ -9,6 +9,7 @@ import NotFound from 'src/pages/NotFound';
 import ProductList from 'src/pages/ProductList.tsx';
 import Register from 'src/pages/Register.tsx';
 import Settings from 'src/pages/Settings';
+import AddProduct from './pages/AddProduct.tsx';
 
 const routes = [
   {
@@ -20,6 +21,7 @@ const routes = [
       { path: 'dashboard', element: <Dashboard /> },
       { path: 'products', element: <ProductList /> },
       { path: 'settings', element: <Settings /> },
+      { path: 'addProduct', element: <AddProduct />},
       { path: '*', element: <Navigate to="/404" /> }
     ]
   },
