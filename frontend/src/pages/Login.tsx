@@ -83,7 +83,7 @@ const Login = () => {
                       color="primary"
                       fullWidth
                       startIcon={<FacebookIcon />}
-                      onClick={handleSubmit}
+                      onClick={() => handleSubmit()}
                       size="large"
                       variant="contained"
                     >
@@ -98,7 +98,7 @@ const Login = () => {
                     <Button
                       fullWidth
                       startIcon={<GoogleIcon />}
-                      onClick={handleSubmit}
+                      onClick={() => handleSubmit()}
                       size="large"
                       variant="contained"
                     >

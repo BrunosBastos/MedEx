@@ -12,11 +12,13 @@ import {
 } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import NotificationsIcon from '@material-ui/icons/NotificationsOutlined';
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import InputIcon from '@material-ui/icons/Input';
 import Logo from './Logo';
 
 const DashboardNavbar = ({ onMobileNavOpen, ...rest }) => {
   const [notifications] = useState([]);
+  const [items] = useState([]);
   const theme = useTheme();
   const hidden = useMediaQuery(theme => theme.breakpoints.up('lg'));
   const hiddenDown = useMediaQuery(theme => theme.breakpoints.down('lg'));
@@ -33,6 +35,15 @@ const DashboardNavbar = ({ onMobileNavOpen, ...rest }) => {
         <Box sx={{ flexGrow: 1 }} />
         {hiddenDown ? null :
           <>
+            <IconButton color="inherit">
+              <Badge
+                badgeContent={items.length}
+                color="primary"
+                variant="dot"
+              >
+                <ShoppingCartIcon />
+              </Badge>
+            </IconButton>
             <IconButton color="inherit">
               <Badge
                 badgeContent={notifications.length}
