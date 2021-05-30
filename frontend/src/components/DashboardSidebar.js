@@ -26,6 +26,7 @@ import {
 } from 'react-feather';
 import NavItem from './NavItem';
 import HistoryIcon from '@material-ui/icons/History';
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 
 const user = {
   avatar: '/static/images/avatars/avatar_6.png',
@@ -48,6 +49,11 @@ const items = [
     href: '/app/orders',
     icon: HistoryIcon,
     title: 'Orders'
+  },
+  {
+    href: '/app/shoppingCart',
+    icon: ShoppingCartIcon,
+    title: 'Shopping Cart'
   },
   {
     href: '/app/products',

@@ -10,7 +10,7 @@ import {
   Typography
 } from '@material-ui/core';
 import LocalOfferIcon from '@material-ui/icons/LocalOffer';
-import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+import AddShoppingCartOutlinedIcon from '@material-ui/icons/AddShoppingCartOutlined';
 import { toast } from 'react-toastify';
 import Logo from 'src/components/Logo';
 
@@ -127,7 +127,7 @@ const ProductCard = ({ product, ...rest }) => {
             }}
           >
             <Button color="primary" variant="contained" onClick={() => addToCart(product)}>
-              <ShoppingCartIcon style={{color: "white"}} />
+              <AddShoppingCartOutlinedIcon style={{color: "white"}} />
               <Typography
                 style={{color: "white"}}
                 display="inline"
