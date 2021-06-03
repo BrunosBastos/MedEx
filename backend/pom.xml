@@ -17,6 +17,9 @@
 		<java.version>11</java.version>
 		<mockito-core.version>3.3.3</mockito-core.version>
 		<junit-jupiter.version>5.7.1</junit-jupiter.version>
+		<sonar.projectKey>BrunosBastos_MedEx</sonar.projectKey>
+		 <sonar.organization>brunosbastos</sonar.organization>
+		 <sonar.host.url>https://sonarcloud.io</sonar.host.url>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -33,6 +36,11 @@
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
+		<dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
