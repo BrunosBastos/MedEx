@@ -1,11 +1,13 @@
 package tqs.medex.entity;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 
 import javax.persistence.*;
 
 @Data
 @Entity
+@JsonSerialize
 public class Client {
 
     @Id

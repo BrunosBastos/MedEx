@@ -10,11 +10,14 @@ import tqs.medex.entity.User;
 import tqs.medex.exception.UserNotFoundException;
 import tqs.medex.repository.UserRepository;
 
+import java.util.Objects;
+
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
   @Autowired
   private UserRepository userRepository;
+
 
   @SneakyThrows
   @Override
@@ -31,5 +34,18 @@ public class CustomUserDetailsService implements UserDetailsService {
     User user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
 
     return new CustomUserDetails(user);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    CustomUserDetailsService that = (CustomUserDetailsService) o;
+    return Objects.equals(userRepository, that.userRepository);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(userRepository);
   }
 }
