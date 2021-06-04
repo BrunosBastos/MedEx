@@ -5,6 +5,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Objects;
 
 public class CustomUserDetails extends User implements UserDetails {
 
@@ -16,7 +17,7 @@ public class CustomUserDetails extends User implements UserDetails {
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return new HashSet<GrantedAuthority>();
+    return new HashSet<>();
   }
 
   @Override
@@ -52,6 +53,20 @@ public class CustomUserDetails extends User implements UserDetails {
   @Override
   public boolean isEnabled() {
     return true;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    if (!super.equals(o)) return false;
+    CustomUserDetails that = (CustomUserDetails) o;
+    return Objects.equals(user, that.user);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), user);
   }
 
   public User getUser() {

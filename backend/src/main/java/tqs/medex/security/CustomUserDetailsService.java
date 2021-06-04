@@ -36,16 +36,4 @@ public class CustomUserDetailsService implements UserDetailsService {
     return new CustomUserDetails(user);
   }
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    CustomUserDetailsService that = (CustomUserDetailsService) o;
-    return Objects.equals(userRepository, that.userRepository);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(userRepository);
-  }
 }
