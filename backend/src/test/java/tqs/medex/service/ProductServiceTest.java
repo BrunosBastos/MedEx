@@ -45,6 +45,7 @@ class ProductServiceTest {
         when(productRepository.findById(product2.getId())).thenReturn(Optional.of(product2));
         when(productRepository.findAll()).thenReturn(productList);
         when(productRepository.save(Mockito.any(Product.class))).thenReturn(product);
+
     }
 
     @Test
