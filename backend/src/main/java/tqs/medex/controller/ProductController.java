@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
-import tqs.medex.entity.Product;
 import tqs.medex.pojo.ProductPOJO;
 import tqs.medex.service.ProductService;
 
@@ -21,7 +20,7 @@ public class ProductController {
 
   @PostMapping("/products")
   public ResponseEntity<Object> addNewProduct(@Valid @RequestBody ProductPOJO product) {
-    Product product1 = productService.addNewProduct(product);
+    var product1 = productService.addNewProduct(product);
     if (product1 == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Supplier Not Found");
     }

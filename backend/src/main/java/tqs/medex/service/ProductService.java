@@ -14,13 +14,13 @@ public class ProductService {
   @Autowired private ProductRepository productrepository;
 
   public Product addNewProduct(ProductPOJO productPOJO) {
-    Product product = new Product();
+    var product = new Product();
     product.setName(productPOJO.getName());
     product.setDescription(productPOJO.getDescription());
     product.setStock(productPOJO.getStock());
     product.setPrice(productPOJO.getPrice());
     product.setImageUrl(product.getImageUrl());
-    Supplier supplier = supplierRepository.findById(productPOJO.getSupplier()).orElse(null);
+    var supplier = supplierRepository.findById(productPOJO.getSupplier()).orElse(null);
     if (supplier == null) {
       return null;
     }
