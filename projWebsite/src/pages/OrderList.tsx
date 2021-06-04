@@ -10,8 +10,6 @@ import {
   SvgIcon
  } from '@material-ui/core';
 import { Search as SearchIcon } from 'react-feather';
-import CustomerListResults from 'src/components/customer/CustomerListResults';
-import customers from 'src/__mocks__/customers';
 //@ts-ignore
 import LatestOrders from 'src/components/dashboard//LatestOrders.tsx';
 
@@ -21,7 +19,7 @@ const orders = [
     id: uuid(),
     ref: 'CDD1049',
     amount: 30.5,
-    customer: {
+    product: {
       name: 'Ekaterina Tankova'
     },
     delLocation: 'Oliveira de Azeméis',
@@ -32,7 +30,7 @@ const orders = [
     id: uuid(),
     ref: 'CDD1048',
     amount: 25.1,
-    customer: {
+    product: {
       name: 'Cao Yu'
     },
     delLocation: 'Oliveira de Azeméis',
@@ -43,7 +41,7 @@ const orders = [
     id: uuid(),
     ref: 'CDD1047',
     amount: 10.99,
-    customer: {
+    product: {
       name: 'Alexa Richardson'
     },
     delLocation: 'São João da Madeira',
@@ -54,7 +52,7 @@ const orders = [
     id: uuid(),
     ref: 'CDD1046',
     amount: 96.43,
-    customer: {
+    product: {
       name: 'Anje Keizer'
     },
     delLocation: 'São João da Madeira',
@@ -65,7 +63,7 @@ const orders = [
     id: uuid(),
     ref: 'CDD1045',
     amount: 32.54,
-    customer: {
+    product: {
       name: 'Clarke Gillebert'
     },
     delLocation: 'Mangualde',
@@ -76,7 +74,7 @@ const orders = [
     id: uuid(),
     ref: 'CDD1044',
     amount: 16.76,
-    customer: {
+    product: {
       name: 'Adam Denisov'
     },
     delLocation: 'Casa do Leandro',
@@ -85,7 +83,7 @@ const orders = [
   }
 ];
 
-const CustomerList = () => (
+const CourierList = () => (
   <>
     <Helmet>
       <title>My Orders History</title>
@@ -129,4 +127,4 @@ const CustomerList = () => (
   </>
 );
 
-export default CustomerList;
+export default CourierList;
