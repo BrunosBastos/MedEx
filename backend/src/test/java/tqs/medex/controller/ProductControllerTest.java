@@ -10,18 +10,15 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import tqs.medex.entity.Product;
 import tqs.medex.entity.Supplier;
-import tqs.medex.pojos.ProductPOJO;
+import tqs.medex.pojo.ProductPOJO;
 import tqs.medex.service.ProductService;
-import tqs.medex.utils.JsonUtil;
-
-import java.io.IOException;
 
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
 
 @WebMvcTest(ProductController.class)
 class ProductControllerTest {
-
+  private static final  String IMAGE_URL = "https://lh3.googleusercontent.com/proxy/LAOk1qdvF1vC926xeHgL_PqHkc3c7rog4LcvcAgPVTCjYc8megOXU6NUY1jl_Fy3dHntjQwyhrDobmMT7XY-itIMLcjue6_QHWqhcM44hLnBJMaIpiQ96-fqzufr0CC2hrXm3tezCm1yhsUvlk63";
   @Autowired private MockMvc mvc;
   @MockBean private ProductService productService;
 
@@ -70,17 +67,17 @@ class ProductControllerTest {
 
   public Product setUpObject() {
     Supplier supplier = new Supplier();
-    Product product = new Product("ProductTest", 1, 4.99);
+    Product product = new Product("ProductTest", "A description", 1, 4.99, IMAGE_URL);
     product.setId(1L);
     product.setSupplier(supplier);
     return product;
   }
 
   public ProductPOJO setUpObjectPOJO() {
-    return new ProductPOJO("ProductTest", 1, 4.99, 1L);
+    return new ProductPOJO("ProductTest", "A description", 1, 4.99,IMAGE_URL, 1L);
   }
   public ProductPOJO setUpInvalidObjectPOJO() {
-    return new ProductPOJO("ProductTest", 1, 4.99, -99L);
+    return new ProductPOJO("ProductTest", "A description", 1, 4.99,IMAGE_URL,-99L);
   }
 
 }

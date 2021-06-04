@@ -1,5 +1,6 @@
 package tqs.medex.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.Entity;
@@ -21,5 +22,6 @@ public class Supplier {
   private double lon;
 
   @OneToOne(mappedBy = "supplier")
+  @JsonIgnore
   private Product product;
 }
