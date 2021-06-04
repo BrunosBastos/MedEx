@@ -6,8 +6,11 @@ import javax.persistence.*;
 
 @Entity
 @Data
+@Table
 public class Product {
-  @Id @GeneratedValue private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
   private String name;
 
@@ -19,7 +22,7 @@ public class Product {
 
   private String imageUrl;
 
-  @OneToOne(cascade = CascadeType.ALL)
+  @ManyToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "supplier_id", referencedColumnName = "id")
   private Supplier supplier;
 
