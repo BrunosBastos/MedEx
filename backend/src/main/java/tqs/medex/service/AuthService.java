@@ -33,7 +33,7 @@ public class AuthService {
 
   @Autowired private JwtTokenProvider tokenProvider;
 
-  public JwtAuthenticationResponse authenticateUser(LoginRequest request) throws AuthenticationException {
+  public JwtAuthenticationResponse authenticateUser(LoginRequest request) {
 
     Authentication authentication =
         authenticationManager.authenticate(

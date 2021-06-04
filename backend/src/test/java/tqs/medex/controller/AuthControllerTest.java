@@ -5,22 +5,19 @@ import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import io.restassured.parsing.Parser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import tqs.medex.MedExApplication;
 import tqs.medex.entity.Client;
 import tqs.medex.entity.User;
 import tqs.medex.exception.EmailAlreadyInUseException;
+import tqs.medex.pojo.JwtAuthenticationResponse;
+import tqs.medex.pojo.LoginRequest;
 import tqs.medex.pojo.RegisterRequest;
-import tqs.medex.security.JwtTokenProvider;
 import tqs.medex.service.AuthService;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -35,18 +32,24 @@ class AuthControllerTest {
     @MockBean
     private AuthService authService;
 
+    RegisterRequest registerRequest;
+    LoginRequest loginRequest;
     @BeforeEach
     void setUp() {
+        registerRequest = new RegisterRequest();
+        registerRequest.setPassword("password");
+        registerRequest.setEmail("test@email.com");
+        registerRequest.setName("Test");
+
+        loginRequest = new LoginRequest();
+        loginRequest.setEmail("test@email.com");
+        loginRequest.setPassword("password");
+
         RestAssuredMockMvc.mockMvc(mvc);
     }
 
     @Test
     void whenRegisterWithValidData_thenReturnData() throws EmailAlreadyInUseException {
-
-        RegisterRequest request = new RegisterRequest();
-        request.setPassword("password");
-        request.setEmail("test@email.com");
-        request.setName("Test");
 
         User user = setUpUserRegister();
 
@@ -55,7 +58,7 @@ class AuthControllerTest {
         RestAssured.defaultParser = Parser.JSON;
         RestAssuredMockMvc.given()
                 .header("Content-Type", "application/json")
-                .body(request)
+                .body(registerRequest)
                 .post("api/v1/register")
                 .then()
                 .assertThat()
@@ -66,6 +69,44 @@ class AuthControllerTest {
                 ;
 
         verify(authService, times(1)).registerUser(any());
+    }
+
+    @Test
+    void whenRegisterWithInValidData_thenReturnEmailAlreadyInUseException() throws EmailAlreadyInUseException {
+
+        when(authService.registerUser(any(RegisterRequest.class))).thenThrow(new EmailAlreadyInUseException());
+
+        RestAssured.defaultParser = Parser.JSON;
+        RestAssuredMockMvc.given()
+                .header("Content-Type", "application/json")
+                .body(registerRequest)
+                .post("api/v1/register")
+                .then()
+                .assertThat()
+                .statusCode(400);
+
+        verify(authService, times(1)).registerUser(any());
+
+    }
+
+    @Test
+    void whenLoginWithValidCredentials_thenReturnToken() {
+
+        JwtAuthenticationResponse jwt = new JwtAuthenticationResponse("valid token");
+
+        when(authService.authenticateUser(any(LoginRequest.class))).thenReturn(jwt);
+        RestAssured.defaultParser = Parser.JSON;
+        RestAssuredMockMvc.given()
+                .header("Content-Type", "application/json")
+                .body(loginRequest)
+                .post("api/v1/login")
+                .then()
+                .assertThat()
+                .statusCode(200).and()
+                .body("accessToken", is(jwt.getAccessToken()))
+                .and().body("tokenType", is(jwt.getTokenType()))
+        ;
+        verify(authService, times(1)).authenticateUser(any());
     }
 
     User setUpUserRegister(){
