@@ -1,4 +1,3 @@
 package tqs.medex.service;
 
-public class UserService {
-}
+public class UserService {}

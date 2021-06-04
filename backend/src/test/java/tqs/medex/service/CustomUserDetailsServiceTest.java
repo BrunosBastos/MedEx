@@ -20,71 +20,62 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class CustomUserDetailsServiceTest {
 
-    @Mock( lenient = true)
-    private UserRepository repository;
+  @Mock(lenient = true)
+  private UserRepository repository;
 
-    @InjectMocks
-    private CustomUserDetailsService service;
+  @InjectMocks private CustomUserDetailsService service;
 
-    @BeforeEach
-    void setUp(){
-        User user = new User();
-        user.setEmail("testValid@email.com");
-        user.setPassword("test");
+  @BeforeEach
+  void setUp() {
+    User user = new User();
+    user.setEmail("testValid@email.com");
+    user.setPassword("test");
 
-        when(repository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
-        when(repository.findByEmail("invalid@email.com")).thenReturn(Optional.empty());
-        when(repository.findById(1L)).thenReturn(Optional.of(user));
-        when(repository.findById(1000L)).thenReturn(Optional.empty());
+    when(repository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
+    when(repository.findByEmail("invalid@email.com")).thenReturn(Optional.empty());
+    when(repository.findById(1L)).thenReturn(Optional.of(user));
+    when(repository.findById(1000L)).thenReturn(Optional.empty());
+  }
 
-    }
+  @Test
+  void whenLoadUserByUsernameWithValidEmail_thenReturnUserDetails() {
 
-    @Test
-    void whenLoadUserByUsernameWithValidEmail_thenReturnUserDetails() {
+    UserDetails user = service.loadUserByUsername("testValid@email.com");
 
-        UserDetails user = service.loadUserByUsername("testValid@email.com");
+    assertThat(user.getUsername()).isEqualTo("testValid@email.com");
+    assertThat(user.getPassword()).isEqualTo("test");
+    verify(repository, VerificationModeFactory.times(1)).findByEmail("testValid@email.com");
+  }
 
-        assertThat(user.getUsername()).isEqualTo("testValid@email.com");
-        assertThat(user.getPassword()).isEqualTo("test");
-        verify(repository, VerificationModeFactory.times(1))
-                .findByEmail("testValid@email.com");
-    }
+  @Test
+  void whenLoadUserByUsernameWithInvalidEmail_thenThrowUserNotFoundException() {
 
-    @Test
-    void whenLoadUserByUsernameWithInvalidEmail_thenThrowUserNotFoundException() {
+    assertThrows(
+        UserNotFoundException.class,
+        () -> service.loadUserByUsername("invalid@email.com"),
+        "Expected loadUserByUsername to throw, but it didn't");
 
-        assertThrows(UserNotFoundException.class,
-                () -> service.loadUserByUsername("invalid@email.com"),
-                "Expected loadUserByUsername to throw, but it didn't"
-        );
+    verify(repository, VerificationModeFactory.times(1)).findByEmail("invalid@email.com");
+  }
 
-        verify(repository, VerificationModeFactory.times(1))
-                .findByEmail("invalid@email.com");
-    }
+  @Test
+  void whenLoadUserByIdWithValidId_thenReturnUserDetails() {
 
+    UserDetails user = service.loadUserById(1);
 
-    @Test
-    void whenLoadUserByIdWithValidId_thenReturnUserDetails() {
+    assertThat(user.getUsername()).isEqualTo("testValid@email.com");
+    assertThat(user.getPassword()).isEqualTo("test");
+    verify(repository, VerificationModeFactory.times(1)).findById(1L);
+  }
 
-        UserDetails user = service.loadUserById(1);
+  @Test
+  void whenLoadUserByIdWithInvalidId_thenThrowUserNotFoundException() {
 
-        assertThat(user.getUsername()).isEqualTo("testValid@email.com");
-        assertThat(user.getPassword()).isEqualTo("test");
-        verify(repository, VerificationModeFactory.times(1))
-                .findById(1L);
+    assertThrows(
+        UserNotFoundException.class,
+        () -> service.loadUserById(1000L),
+        "Expected loadUserById to throw, but it didn't");
 
-    }
-
-    @Test
-    void whenLoadUserByIdWithInvalidId_thenThrowUserNotFoundException() {
-
-        assertThrows(UserNotFoundException.class,
-                () -> service.loadUserById(1000L),
-                "Expected loadUserById to throw, but it didn't"
-        );
-
-        verify(repository, VerificationModeFactory.times(1))
-                .findById(1000L);
-    }
-
+    verify(repository, VerificationModeFactory.times(1)).findById(1000L);
+  }
 }

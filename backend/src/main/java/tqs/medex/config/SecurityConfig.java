@@ -16,34 +16,43 @@ import tqs.medex.service.CustomUserDetailsService;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private static final String[] AUTH_WHITELIST = {
-            "/register", "/login","/v2-api-docs","/configuration/**",
-            "/v2/api-docs",
-            "/swagger*/**", "/webjars/**"
-    };
+  private static final String[] AUTH_WHITELIST = {
+    "/register",
+    "/login",
+    "/v2-api-docs",
+    "/configuration/**",
+    "/v2/api-docs",
+    "/swagger*/**",
+    "/webjars/**"
+  };
 
-    @Autowired
-    private AuthenticationEntryPoint authenticationEntryPoint;
+  @Autowired private AuthenticationEntryPoint authenticationEntryPoint;
 
-    @Autowired
-    CustomUserDetailsService customUserDetailsService;
+  @Autowired CustomUserDetailsService customUserDetailsService;
 
-    @Override
-    protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(customUserDetailsService).passwordEncoder(new BCryptPasswordEncoder());
-    }
+  @Override
+  protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
+    auth.userDetailsService(customUserDetailsService).passwordEncoder(new BCryptPasswordEncoder());
+  }
 
-    @Bean
-    public AuthenticationManager customAuthenticationManager() throws Exception {
-        return authenticationManager();
-    }
+  @Bean
+  public AuthenticationManager customAuthenticationManager() throws Exception {
+    return authenticationManager();
+  }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable().authorizeRequests()
-                .antMatchers(AUTH_WHITELIST).permitAll()
-                .anyRequest().authenticated()
-                .and().httpBasic()
-                .authenticationEntryPoint(authenticationEntryPoint);
-    }
+  @Override
+  protected void configure(HttpSecurity http) throws Exception {
+    http.cors()
+        .and()
+        .csrf()
+        .disable()
+        .authorizeRequests()
+        .antMatchers(AUTH_WHITELIST)
+        .permitAll()
+        .anyRequest()
+        .authenticated()
+        .and()
+        .httpBasic()
+        .authenticationEntryPoint(authenticationEntryPoint);
+  }
 }

@@ -8,14 +8,11 @@ import javax.persistence.*;
 @Data
 public class User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long userId;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private long userId;
 
-    @Column
-    private String email;
+  @Column private String email;
 
-    @Column
-    private String password;
-
+  @Column private String password;
 }
