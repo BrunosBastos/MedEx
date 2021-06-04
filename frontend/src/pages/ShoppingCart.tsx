@@ -23,7 +23,7 @@ import getInitials from 'src/utils/getInitials';
 import Purchase from 'src/components/shoppingCart/Purchase';
 
 
-const CustomerList = () => {
+const ShopCartList = () => {
   const [selectedProductIds, setSelectedProductIds] = useState([]);
   const [limit, setLimit] = useState(5);
   const [page, setPage] = useState(0);
@@ -32,7 +32,7 @@ const CustomerList = () => {
     let newSelectedProductIds;
 
     if (event.target.checked) {
-      newSelectedProductIds = products.map((customer) => customer.id);
+      newSelectedProductIds = products.map((product) => product.id);
     } else {
       newSelectedProductIds = [];
     }
@@ -118,16 +118,16 @@ const CustomerList = () => {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {products.slice(page*limit, page*limit + limit).map((customer) => (
+                      {products.slice(page*limit, page*limit + limit).map((product) => (
                         <TableRow
                           hover
-                          key={customer.id}
-                          selected={selectedProductIds.indexOf(customer.id) !== -1}
+                          key={product.id}
+                          selected={selectedProductIds.indexOf(product.id) !== -1}
                         >
                           <TableCell padding="checkbox">
                             <Checkbox
-                              checked={selectedProductIds.indexOf(customer.id) !== -1}
-                              onChange={(event) => handleSelectOne(event, customer.id)}
+                              checked={selectedProductIds.indexOf(product.id) !== -1}
+                              onChange={(event) => handleSelectOne(event, product.id)}
                               value="true"
                             />
                           </TableCell>
@@ -139,30 +139,30 @@ const CustomerList = () => {
                               }}
                             >
                               <Avatar
-                                src={customer.avatarUrl}
+                                src={product.avatarUrl}
                                 sx={{ mr: 2 }}
                               >
-                                {getInitials(customer.name)}
+                                {getInitials(product.name)}
                               </Avatar>
                               <Typography
                                 color="textPrimary"
                                 variant="body1"
                               >
-                                {customer.name}
+                                {product.name}
                               </Typography>
                             </Box>
                           </TableCell>
                           <TableCell>
-                            {customer.email}
+                            {product.email}
                           </TableCell>
                           <TableCell>
-                            {`${customer.address.city}, ${customer.address.state}, ${customer.address.country}`}
+                            {`${product.address.city}, ${product.address.state}, ${product.address.country}`}
                           </TableCell>
                           <TableCell>
-                            {customer.phone}
+                            {product.phone}
                           </TableCell>
                           <TableCell>
-                            {moment(customer.createdAt).format('DD/MM/YYYY')}
+                            {moment(product.createdAt).format('DD/MM/YYYY')}
                           </TableCell>
                         </TableRow>
                       ))}
@@ -229,4 +229,4 @@ const CustomerList = () => {
   )
 }
 
-export default CustomerList;
+export default ShopCartList;

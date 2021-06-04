@@ -17,41 +17,41 @@ import {
 } from '@material-ui/core';
 import getInitials from 'src/utils/getInitials';
 
-const CustomerListResults = ({ customers, ...rest }) => {
-  const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
+const CourierListResults = ({ couriers, ...rest }) => {
+  const [selectedCourierIds, setSelectedCourierIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
 
   const handleSelectAll = (event) => {
-    let newSelectedCustomerIds;
+    let newSelectedCourierIds;
 
     if (event.target.checked) {
-      newSelectedCustomerIds = customers.map((customer) => customer.id);
+      newSelectedCourierIds = couriers.map((courier) => courier.id);
     } else {
-      newSelectedCustomerIds = [];
+      newSelectedCourierIds = [];
     }
 
-    setSelectedCustomerIds(newSelectedCustomerIds);
+    setSelectedCourierIds(newSelectedCourierIds);
   };
 
   const handleSelectOne = (event, id) => {
-    const selectedIndex = selectedCustomerIds.indexOf(id);
-    let newSelectedCustomerIds = [];
+    const selectedIndex = selectedCourierIds.indexOf(id);
+    let newSelectedCourierIds = [];
 
     if (selectedIndex === -1) {
-      newSelectedCustomerIds = newSelectedCustomerIds.concat(selectedCustomerIds, id);
+      newSelectedCourierIds = newSelectedCourierIds.concat(selectedCourierIds, id);
     } else if (selectedIndex === 0) {
-      newSelectedCustomerIds = newSelectedCustomerIds.concat(selectedCustomerIds.slice(1));
-    } else if (selectedIndex === selectedCustomerIds.length - 1) {
-      newSelectedCustomerIds = newSelectedCustomerIds.concat(selectedCustomerIds.slice(0, -1));
+      newSelectedCourierIds = newSelectedCourierIds.concat(selectedCourierIds.slice(1));
+    } else if (selectedIndex === selectedCourierIds.length - 1) {
+      newSelectedCourierIds = newSelectedCourierIds.concat(selectedCourierIds.slice(0, -1));
     } else if (selectedIndex > 0) {
-      newSelectedCustomerIds = newSelectedCustomerIds.concat(
-        selectedCustomerIds.slice(0, selectedIndex),
-        selectedCustomerIds.slice(selectedIndex + 1)
+      newSelectedCourierIds = newSelectedCourierIds.concat(
+        selectedCourierIds.slice(0, selectedIndex),
+        selectedCourierIds.slice(selectedIndex + 1)
       );
     }
 
-    setSelectedCustomerIds(newSelectedCustomerIds);
+    setSelectedCourierIds(newSelectedCourierIds);
   };
 
   const handleLimitChange = (event) => {
@@ -71,11 +71,11 @@ const CustomerListResults = ({ customers, ...rest }) => {
               <TableRow>
                 <TableCell padding="checkbox">
                   <Checkbox
-                    checked={selectedCustomerIds.length === customers.length}
+                    checked={selectedCourierIds.length === couriers.length}
                     color="primary"
                     indeterminate={
-                      selectedCustomerIds.length > 0
-                      && selectedCustomerIds.length < customers.length
+                      selectedCourierIds.length > 0
+                      && selectedCourierIds.length < couriers.length
                     }
                     onChange={handleSelectAll}
                   />
@@ -98,16 +98,16 @@ const CustomerListResults = ({ customers, ...rest }) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {customers.slice(0, limit).map((customer) => (
+              {couriers.slice(0, limit).map((courier) => (
                 <TableRow
                   hover
-                  key={customer.id}
-                  selected={selectedCustomerIds.indexOf(customer.id) !== -1}
+                  key={courier.id}
+                  selected={selectedCourierIds.indexOf(courier.id) !== -1}
                 >
                   <TableCell padding="checkbox">
                     <Checkbox
-                      checked={selectedCustomerIds.indexOf(customer.id) !== -1}
-                      onChange={(event) => handleSelectOne(event, customer.id)}
+                      checked={selectedCourierIds.indexOf(courier.id) !== -1}
+                      onChange={(event) => handleSelectOne(event, courier.id)}
                       value="true"
                     />
                   </TableCell>
@@ -119,30 +119,30 @@ const CustomerListResults = ({ customers, ...rest }) => {
                       }}
                     >
                       <Avatar
-                        src={customer.avatarUrl}
+                        src={courier.avatarUrl}
                         sx={{ mr: 2 }}
                       >
-                        {getInitials(customer.name)}
+                        {getInitials(courier.name)}
                       </Avatar>
                       <Typography
                         color="textPrimary"
                         variant="body1"
                       >
-                        {customer.name}
+                        {courier.name}
                       </Typography>
                     </Box>
                   </TableCell>
                   <TableCell>
-                    {customer.email}
+                    {courier.email}
                   </TableCell>
                   <TableCell>
-                    {`${customer.address.city}, ${customer.address.state}, ${customer.address.country}`}
+                    {`${courier.address.city}, ${courier.address.state}, ${courier.address.country}`}
                   </TableCell>
                   <TableCell>
-                    {customer.phone}
+                    {courier.phone}
                   </TableCell>
                   <TableCell>
-                    {moment(customer.createdAt).format('DD/MM/YYYY')}
+                    {moment(courier.createdAt).format('DD/MM/YYYY')}
                   </TableCell>
                 </TableRow>
               ))}
@@ -152,7 +152,7 @@ const CustomerListResults = ({ customers, ...rest }) => {
       </PerfectScrollbar>
       <TablePagination
         component="div"
-        count={customers.length}
+        count={couriers.length}
         onPageChange={handlePageChange}
         onRowsPerPageChange={handleLimitChange}
         page={page}
@@ -163,8 +163,8 @@ const CustomerListResults = ({ customers, ...rest }) => {
   );
 };
 
-CustomerListResults.propTypes = {
-  customers: PropTypes.array.isRequired
+CourierListResults.propTypes = {
+  couriers: PropTypes.array.isRequired
 };
 
-export default CustomerListResults;
+export default CourierListResults;

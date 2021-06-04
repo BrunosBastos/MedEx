@@ -22,7 +22,7 @@ interface Order {
   id: any;
   ref: string;
   amount: number;
-  customer: {
+  product: {
     name: string;
   };
   delLocation: string;
@@ -95,7 +95,7 @@ const LatestOrders: React.FC<LatestOrdersProps> = ({orders}) => {
                   Order Ref
                 </TableCell>
                 <TableCell>
-                  Customer
+                  courier
                 </TableCell>
                 <TableCell>
                   Delivery Location
@@ -129,7 +129,7 @@ const LatestOrders: React.FC<LatestOrdersProps> = ({orders}) => {
                     {order.ref}
                   </TableCell>
                   <TableCell>
-                    {order.customer.name}
+                    {order.product.name}
                   </TableCell>
                   <TableCell>
                     {order.delLocation}
