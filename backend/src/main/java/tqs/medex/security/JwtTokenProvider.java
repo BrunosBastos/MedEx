@@ -6,14 +6,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import tqs.medex.entity.CustomUserDetails;
 import java.util.Date;
+import org.springframework.context.annotation.PropertySource;
 
 @Component
 public class JwtTokenProvider {
-  @Value("${app.jwtSecret}")
-  private String jwtSecret;
+  // @Value("${app.jwtSecret}")
+  private String jwtSecret = "secret";
 
-  @Value("${app.jwtExpirationInMs}")
-  private int jwtExpirationInMs;
+  // @Value("${app.jwtExpirationInMs}")
+  private int jwtExpirationInMs = 604800000;
 
   public String generateToken(Authentication authentication) {
 
