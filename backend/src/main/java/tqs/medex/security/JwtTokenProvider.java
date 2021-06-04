@@ -1,10 +1,10 @@
-package tqs.medex.Security;
+package tqs.medex.security;
 
 import org.springframework.stereotype.Component;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
-import tqs.medex.Entity.CustomUserDetails;
+import tqs.medex.entity.CustomUserDetails;
 import java.util.Date;
 
 @Component

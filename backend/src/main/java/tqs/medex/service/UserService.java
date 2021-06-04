@@ -1,4 +1,4 @@
-package tqs.medex.Service;
+package tqs.medex.service;
 
 public class UserService {
 }

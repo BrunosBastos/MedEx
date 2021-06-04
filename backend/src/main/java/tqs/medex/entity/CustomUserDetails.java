@@ -1,4 +1,4 @@
-package tqs.medex.Entity;
+package tqs.medex.entity;
 
 
 import org.springframework.security.core.GrantedAuthority;
@@ -31,7 +31,7 @@ public class CustomUserDetails extends User implements UserDetails {
     }
 
     public long getUserId() {
-        return user.getUser_id();
+        return user.getUserId();
     }
 
     @Override

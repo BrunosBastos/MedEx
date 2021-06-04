@@ -1,7 +1,7 @@
-package tqs.medex.Repository;
+package tqs.medex.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import tqs.medex.Entity.User;
+import tqs.medex.entity.User;
 
 import java.util.Optional;
 

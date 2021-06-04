@@ -1,4 +1,4 @@
-package tqs.medex.Entity;
+package tqs.medex.entity;
 
 import lombok.Data;
 
@@ -10,7 +10,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long user_id;
+    private long userId;
 
     @Column
     private String email;

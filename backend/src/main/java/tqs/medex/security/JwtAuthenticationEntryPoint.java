@@ -1,4 +1,4 @@
-package tqs.medex.Security;
+package tqs.medex.security;
 
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
