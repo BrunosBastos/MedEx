@@ -4,29 +4,36 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import tqs.medex.entity.Client;
 import tqs.medex.entity.User;
 import tqs.medex.exception.EmailAlreadyInUseException;
 import tqs.medex.pojo.JwtAuthenticationResponse;
 import tqs.medex.pojo.LoginRequest;
 import tqs.medex.pojo.RegisterRequest;
+import tqs.medex.repository.ClientRepository;
 import tqs.medex.repository.UserRepository;
 import tqs.medex.security.JwtTokenProvider;
 
 import java.util.Optional;
 
+@Service
 public class AuthService {
 
   @Autowired private AuthenticationManager authenticationManager;
 
   @Autowired private UserRepository userRepository;
 
+  @Autowired private ClientRepository clientRepository;
+
   @Autowired private PasswordEncoder passwordEncoder;
 
   @Autowired private JwtTokenProvider tokenProvider;
 
-  JwtAuthenticationResponse authenticateUser(LoginRequest request) {
+  public JwtAuthenticationResponse authenticateUser(LoginRequest request) throws AuthenticationException {
 
     Authentication authentication =
         authenticationManager.authenticate(
@@ -39,7 +46,7 @@ public class AuthService {
     return new JwtAuthenticationResponse(jwt);
   }
 
-  User registerUser(RegisterRequest request) throws EmailAlreadyInUseException {
+  public User registerUser(RegisterRequest request) throws EmailAlreadyInUseException {
 
     Optional<User> dbUser =userRepository.findByEmail(request.getEmail());
     if(dbUser.isPresent()){
@@ -50,6 +57,13 @@ public class AuthService {
     user.setEmail(request.getEmail());
     user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-    return userRepository.save(user);
+    Client client = new Client();
+    client.setName(request.getName());
+    user = userRepository.save(user);
+
+    client.setUser(user);
+    clientRepository.save(client);
+
+    return user;
   }
 }

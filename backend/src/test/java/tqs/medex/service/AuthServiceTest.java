@@ -17,6 +17,7 @@ import tqs.medex.exception.EmailAlreadyInUseException;
 import tqs.medex.pojo.JwtAuthenticationResponse;
 import tqs.medex.pojo.LoginRequest;
 import tqs.medex.pojo.RegisterRequest;
+import tqs.medex.repository.ClientRepository;
 import tqs.medex.repository.UserRepository;
 import tqs.medex.security.JwtTokenProvider;
 import javax.security.auth.Subject;
@@ -47,6 +48,9 @@ class AuthServiceTest {
 
   @Mock(lenient = true)
   private UserRepository repository;
+
+  @Mock(lenient = true)
+  private ClientRepository clientRepository;
 
   @InjectMocks private AuthService authService;
 
@@ -143,6 +147,8 @@ class AuthServiceTest {
 
     verify(repository, VerificationModeFactory.times(1)).findByEmail(any());
     verify(repository, VerificationModeFactory.times(1)).save(any());
+    verify(clientRepository, VerificationModeFactory.times(1)).save(any());
+
   }
 
   @Test

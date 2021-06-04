@@ -15,4 +15,8 @@ public class User {
   @Column private String email;
 
   @Column private String password;
+
+  @OneToOne(mappedBy = "user")
+  private Client client;
+
 }

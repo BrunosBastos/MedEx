@@ -2,57 +2,81 @@ package tqs.medex.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.AuthenticationEntryPoint;
-import tqs.medex.service.CustomUserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import tqs.medex.repository.UserRepository;
+import tqs.medex.security.JwtAuthenticationEntryPoint;
+import tqs.medex.security.JwtAuthenticationFilter;
+import tqs.medex.security.CustomUserDetailsService;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(
+        prePostEnabled = true
+)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   private static final String[] AUTH_WHITELIST = {
-    "/register",
-    "/login",
-    "/v2-api-docs",
-    "/configuration/**",
-    "/v2/api-docs",
-    "/swagger*/**",
-    "/webjars/**"
+          "/api/v1/register",
+          "/api/v1/login",
+          "/v2-api-docs",
+          "/configuration/**",
+          "/v2/api-docs",
+          "/swagger*/**",
+          "/webjars/**"
   };
 
-  @Autowired private AuthenticationEntryPoint authenticationEntryPoint;
+  @Autowired
+  private JwtAuthenticationEntryPoint authenticationEntryPoint;
 
-  @Autowired CustomUserDetailsService customUserDetailsService;
+  @Autowired
+  private CustomUserDetailsService customUserDetailsService;
+
+  @Autowired
+  private JwtAuthenticationFilter jwtAuthenticationFilter;
 
   @Override
   protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
     auth.userDetailsService(customUserDetailsService).passwordEncoder(new BCryptPasswordEncoder());
   }
 
-  @Bean
-  public AuthenticationManager customAuthenticationManager() throws Exception {
-    return authenticationManager();
+  @Bean(BeanIds.AUTHENTICATION_MANAGER)
+  @Override
+  public AuthenticationManager authenticationManagerBean() throws Exception {
+    return super.authenticationManagerBean();
   }
+
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
+  }
+
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     http.cors()
-        .and()
-        .csrf()
-        .disable()
-        .authorizeRequests()
-        .antMatchers(AUTH_WHITELIST)
-        .permitAll()
-        .anyRequest()
-        .authenticated()
-        .and()
-        .httpBasic()
-        .authenticationEntryPoint(authenticationEntryPoint);
+            .and()
+            .csrf()
+            .disable()
+            .authorizeRequests()
+            .antMatchers(AUTH_WHITELIST)
+            .permitAll()
+            .anyRequest()
+            .authenticated()
+            .and()
+            .httpBasic()
+            .authenticationEntryPoint(authenticationEntryPoint);
+
+    http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
   }
 }

@@ -11,6 +11,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import tqs.medex.entity.User;
 import tqs.medex.exception.UserNotFoundException;
 import tqs.medex.repository.UserRepository;
+import tqs.medex.security.CustomUserDetailsService;
+
 import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
