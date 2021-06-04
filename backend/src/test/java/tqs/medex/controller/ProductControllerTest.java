@@ -13,6 +13,9 @@ import tqs.medex.entity.Supplier;
 import tqs.medex.pojo.ProductPOJO;
 import tqs.medex.service.ProductService;
 
+import java.util.Arrays;
+
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
 
@@ -25,6 +28,48 @@ class ProductControllerTest {
   @BeforeEach
   void setUp() {
     RestAssuredMockMvc.mockMvc(mvc);
+  }
+
+  @Test
+  void whenGetProducts_thenReturnProducts(){
+    Product product = new Product("ProductTest", "A description", 1, 4.99, IMAGE_URL);
+    Product product2 = new Product("ProductTest2", "A description2", 4, 0.99, IMAGE_URL);
+    when(productService.listProducts()).thenReturn(Arrays.asList(product,product2));
+    RestAssuredMockMvc.given()
+            .when()
+            .get("api/v1/products")
+            .then().assertThat().statusCode(200)
+            .and().body("",hasSize(2))
+            .and().body("[0].name", is(product.getName()))
+            .and().body("[0].price", is((float) product.getPrice()))
+            .and().body("[1].name", is(product2.getName()))
+            .and().body("[1].price", is((float)product2.getPrice()));
+    verify(productService, times(1)).listProducts();
+  }
+
+  @Test
+  void whenGetProductById_thenReturnProduct(){
+    Product product = setUpObject();
+    when(productService.getProductDetails(product.getId())).thenReturn(product);
+    RestAssuredMockMvc.given()
+            .when()
+            .get("/api/v1/products/1")
+            .then().assertThat().statusCode(200)
+            .and().body("name", is(product.getName()))
+            .and().body("price", is((float) product.getPrice()));
+    verify(productService, times(1)).getProductDetails(product.getId());
+  }
+  @Test
+  void whenGetProductByInvalidId_thenReturnBadRequest(){
+    when(productService.getProductDetails(-99L)).thenReturn(null);
+    RestAssuredMockMvc.given()
+            .header("Content-Type", "application/json")
+            .get("api/v1/products/-99")
+            .then()
+            .assertThat()
+            .statusCode(400)
+            .statusLine("400 Product Not Found");
+    verify(productService,times(1)).getProductDetails(-99L);
   }
 
   @Test

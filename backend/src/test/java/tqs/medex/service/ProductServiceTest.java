@@ -45,7 +45,29 @@ class ProductServiceTest {
         when(productRepository.findById(product2.getId())).thenReturn(Optional.of(product2));
         when(productRepository.findAll()).thenReturn(productList);
         when(productRepository.save(Mockito.any(Product.class))).thenReturn(product);
-
+    }
+    @Test
+    void given2Products_whenGetProducts_thenReturn2Records(){
+        Product product = new Product("ProductTest", "A description", 1, 4.99,IMAGE_URL);
+        Product product2 = new Product("SecondProduct","A description", 5 , 2.99, IMAGE_URL);
+        List<Product> productList = productService.listProducts();
+        assertThat(productList).hasSize(2)
+                .extracting(Product::getName)
+                .contains(product.getName(),product2.getName());
+        verifyFindAllProductsisCalledOnce();
+    }
+    @Test
+    void whenGetProductById_thenReturnProduct(){
+        Product productdb = productService.getProductDetails(1L);
+        assertThat(productdb).isNotNull();
+        assertThat(productdb.getId()).isEqualTo(1L);
+        verifyFindProductByIdisCalledOnce();
+    }
+    @Test
+    void whenGetProductByInvalidId_thenReturnProduct(){
+        Product productdb = productService.getProductDetails(-99L);
+        assertThat(productdb).isNull();
+        verifyFindProductByIdisCalledOnce();
     }
 
     @Test
@@ -92,5 +114,11 @@ class ProductServiceTest {
     }
     private void verifyFindSupplierByIdisCalledOnce(){
         Mockito.verify(supplierRepository, VerificationModeFactory.times(1)).findById(Mockito.any());
+    }
+    private void verifyFindProductByIdisCalledOnce(){
+        Mockito.verify(productRepository, VerificationModeFactory.times(1)).findById(Mockito.any());
+    }
+    private void verifyFindAllProductsisCalledOnce(){
+        Mockito.verify(productRepository, VerificationModeFactory.times(1)).findAll();
     }
 }
