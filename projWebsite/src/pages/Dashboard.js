@@ -10,7 +10,7 @@ import LatestOrders from 'src/components/dashboard//LatestOrders.tsx';
 import LatestProducts from 'src/components/dashboard//LatestProducts';
 import Sales from 'src/components/dashboard//Sales';
 import TasksProgress from 'src/components/dashboard//TasksProgress';
-import TotalCustomers from 'src/components/dashboard//TotalCustomers';
+import TotalCouriers from 'src/components/dashboard//TotalCouriers';
 import TotalProfit from 'src/components/dashboard//TotalProfit';
 import TrafficByDevice from 'src/components/dashboard//TrafficByDevice';
 
@@ -20,7 +20,7 @@ const orders = [
     id: uuid(),
     ref: 'CDD1049',
     amount: 30.5,
-    customer: {
+    product: {
       name: 'Ekaterina Tankova'
     },
     delLocation: 'Oliveira de Azeméis',
@@ -31,7 +31,7 @@ const orders = [
     id: uuid(),
     ref: 'CDD1048',
     amount: 25.1,
-    customer: {
+    product: {
       name: 'Cao Yu'
     },
     delLocation: 'Oliveira de Azeméis',
@@ -42,7 +42,7 @@ const orders = [
     id: uuid(),
     ref: 'CDD1047',
     amount: 10.99,
-    customer: {
+    product: {
       name: 'Alexa Richardson'
     },
     delLocation: 'São João da Madeira',
@@ -53,7 +53,7 @@ const orders = [
     id: uuid(),
     ref: 'CDD1046',
     amount: 96.43,
-    customer: {
+    product: {
       name: 'Anje Keizer'
     },
     delLocation: 'São João da Madeira',
@@ -64,7 +64,7 @@ const orders = [
     id: uuid(),
     ref: 'CDD1045',
     amount: 32.54,
-    customer: {
+    product: {
       name: 'Clarke Gillebert'
     },
     delLocation: 'Mangualde',
@@ -75,7 +75,7 @@ const orders = [
     id: uuid(),
     ref: 'CDD1044',
     amount: 16.76,
-    customer: {
+    product: {
       name: 'Adam Denisov'
     },
     delLocation: 'Casa do Leandro',
@@ -117,7 +117,7 @@ const Dashboard = () => (
             xl={3}
             xs={12}
           >
-            <TotalCustomers />
+            <TotalCouriers />
           </Grid>
           <Grid
             item
