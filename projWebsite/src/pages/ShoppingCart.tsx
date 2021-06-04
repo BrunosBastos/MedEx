@@ -65,6 +65,9 @@ const ShopCartList = () => {
     selectedProducts.forEach(product => {
       useShopCartStore.getState().removeProduct(product);
     })
+    setSelectedProducts([])
+    //@ts-ignore
+    document.getElementById("select_box").checked = false;
   }
 
   const handleLimitChange = (event) => {
@@ -103,12 +106,14 @@ const ShopCartList = () => {
                       <TableRow>
                         <TableCell padding="checkbox">
                           <Checkbox
-                            checked={selectedProducts.length === products.length}
+                            checked={selectedProducts.length === 0 ? false :
+                                      selectedProducts.length === products.length}
                             color="primary"
                             indeterminate={
                               selectedProducts.length > 0
                               && selectedProducts.length < products.length
                             }
+                            id="select_box"
                             onChange={handleSelectAll}
                           />
                         </TableCell>
