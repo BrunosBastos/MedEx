@@ -1,5 +1,7 @@
 package tqs.medex.security;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,6 +19,9 @@ import java.io.IOException;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+  private static final Logger logger = LogManager.getLogger(JwtAuthenticationFilter.class);
+
   @Autowired private JwtTokenProvider tokenProvider;
 
   @Autowired private CustomUserDetailsService customUserDetailsService;
@@ -39,7 +44,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(authentication);
       }
     } catch (Exception ex) {
-      System.err.println("Could not set user authentication in security context");
+      logger.error("Could not set user authentication in security context");
     }
 
     filterChain.doFilter(request, response);
