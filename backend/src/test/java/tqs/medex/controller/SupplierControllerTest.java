@@ -17,67 +17,63 @@ import tqs.medex.service.SupplierService;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.Mockito.*;
 
-
 @SpringBootTest
 @AutoConfigureMockMvc
 class SupplierControllerTest {
-    @Autowired
-    private MockMvc mvc;
-    @MockBean
-    private SupplierService supplierService;
+  @Autowired private MockMvc mvc;
+  @MockBean private SupplierService supplierService;
 
-    @BeforeEach
-    void setUp() {
-        RestAssuredMockMvc.mockMvc(mvc);
-    }
+  @BeforeEach
+  void setUp() {
+    RestAssuredMockMvc.mockMvc(mvc);
+  }
 
-    @Test
-    @WithMockUser(value = "test")
-    void whenAddSupplier_thenReturnValidResponse() {
-        Supplier supplier = setUpObject();
-        SupplierPOJO supplierPOJO = setUpObjectPOJO();
-        when(supplierService.addSupplier(Mockito.any(SupplierPOJO.class))).thenReturn(
-                supplier
-        );
-        RestAssuredMockMvc.given()
-                .header("Content-Type", "application/json")
-                .body(supplierPOJO)
-                .post("api/v1/suppliers")
-                .then()
-                .assertThat()
-                .statusCode(201)
-                .and()
-                .body("name", is(supplier.getName()))
-                .and()
-                .body("lat", is((float) supplier.getLat()))
-                .and()
-                .body("lon", is((float) supplier.getLon()));
-        verify(supplierService, times(1)).addSupplier(supplierPOJO);
-    }
-    @Test
-    @WithMockUser(value = "test")
-    void whenAddInvalidSupplier_thenReturnBadRequest() {
-        Supplier supplier = setUpObject();
-        SupplierPOJO supplierPOJO = setUpObjectPOJO();
-        when(supplierService.addSupplier(Mockito.any(SupplierPOJO.class))).thenReturn(
-                null
-        );
-        RestAssuredMockMvc.given()
-                .header("Content-Type", "application/json")
-                .body(supplierPOJO)
-                .post("api/v1/suppliers")
-                .then()
-                .assertThat()
-                .statusCode(400)
-                .statusLine("400 There is already supplier with this name.");
-        verify(supplierService, times(1)).addSupplier(supplierPOJO);
-    }
-    public SupplierPOJO setUpObjectPOJO() {
-        return new SupplierPOJO("Pharmacy", 50,50);
-    }
-    public Supplier setUpObject(){
-        Supplier supplier = new Supplier("Pharmacy", 50,50);
-        supplier.setId(1L);
-        return supplier;
-    }
+  @Test
+  @WithMockUser(value = "test")
+  void whenAddSupplier_thenReturnValidResponse() {
+    Supplier supplier = setUpObject();
+    SupplierPOJO supplierPOJO = setUpObjectPOJO();
+    when(supplierService.addSupplier(Mockito.any(SupplierPOJO.class))).thenReturn(supplier);
+    RestAssuredMockMvc.given()
+        .header("Content-Type", "application/json")
+        .body(supplierPOJO)
+        .post("api/v1/suppliers")
+        .then()
+        .assertThat()
+        .statusCode(201)
+        .and()
+        .body("name", is(supplier.getName()))
+        .and()
+        .body("lat", is((float) supplier.getLat()))
+        .and()
+        .body("lon", is((float) supplier.getLon()));
+    verify(supplierService, times(1)).addSupplier(supplierPOJO);
+  }
+
+  @Test
+  @WithMockUser(value = "test")
+  void whenAddInvalidSupplier_thenReturnBadRequest() {
+    Supplier supplier = setUpObject();
+    SupplierPOJO supplierPOJO = setUpObjectPOJO();
+    when(supplierService.addSupplier(Mockito.any(SupplierPOJO.class))).thenReturn(null);
+    RestAssuredMockMvc.given()
+        .header("Content-Type", "application/json")
+        .body(supplierPOJO)
+        .post("api/v1/suppliers")
+        .then()
+        .assertThat()
+        .statusCode(400)
+        .statusLine("400 There is already supplier with this name.");
+    verify(supplierService, times(1)).addSupplier(supplierPOJO);
+  }
+
+  public SupplierPOJO setUpObjectPOJO() {
+    return new SupplierPOJO("Pharmacy", 50, 50);
+  }
+
+  public Supplier setUpObject() {
+    Supplier supplier = new Supplier("Pharmacy", 50, 50);
+    supplier.setId(1L);
+    return supplier;
+  }
 }
