@@ -20,9 +20,11 @@ import tqs.medex.pojo.RegisterRequest;
 import tqs.medex.repository.ClientRepository;
 import tqs.medex.repository.UserRepository;
 import tqs.medex.security.JwtTokenProvider;
+
 import javax.security.auth.Subject;
 import java.util.Collection;
 import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -148,7 +150,6 @@ class AuthServiceTest {
     verify(repository, VerificationModeFactory.times(1)).findByEmail(any());
     verify(repository, VerificationModeFactory.times(1)).save(any());
     verify(clientRepository, VerificationModeFactory.times(1)).save(any());
-
   }
 
   @Test

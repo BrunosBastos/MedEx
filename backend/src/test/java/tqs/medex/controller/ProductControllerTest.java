@@ -3,15 +3,12 @@ package tqs.medex.controller;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import tqs.medex.entity.Product;
 import tqs.medex.entity.Supplier;
@@ -32,10 +29,10 @@ class ProductControllerTest {
   @Autowired private MockMvc mvc;
   @MockBean private ProductService productService;
 
-    @BeforeEach
-    void setUp() {
-        RestAssuredMockMvc.mockMvc(mvc);
-    }
+  @BeforeEach
+  void setUp() {
+    RestAssuredMockMvc.mockMvc(mvc);
+  }
 
   @Test
   @WithMockUser(value = "test")
@@ -135,6 +132,7 @@ class ProductControllerTest {
   }
 
   @Test
+  @WithMockUser(value = "test")
   void whenUpdateProduct_thenReturnValidResponse() {
     ProductPOJO productPOJO =
         new ProductPOJO("ProductUpdated", "descriptionUpdated", 5, 2.99, IMAGE_URL, 1L);
@@ -157,6 +155,7 @@ class ProductControllerTest {
   }
 
   @Test
+  @WithMockUser(value = "test")
   void whenUpdateProductByInvalidId_thenReturnBadRequest() {
     ProductPOJO productPOJO =
         new ProductPOJO("ProductUpdated", "descriptionUpdated", 5, 2.99, IMAGE_URL, 1L);

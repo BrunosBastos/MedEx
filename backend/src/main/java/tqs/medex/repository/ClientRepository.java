@@ -5,5 +5,4 @@ import org.springframework.stereotype.Repository;
 import tqs.medex.entity.Client;
 
 @Repository
-public interface ClientRepository extends JpaRepository<Client, Long> {
-}
+public interface ClientRepository extends JpaRepository<Client, Long> {}
