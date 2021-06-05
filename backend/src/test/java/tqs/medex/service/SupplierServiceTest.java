@@ -39,6 +39,35 @@ class SupplierServiceTest {
   }
 
   @Test
+  void whenGetSuppliers_thenReturnSuppliers() {
+    Supplier supplier = new Supplier("Pharmacy", 50, 50);
+    Supplier supplier2 = new Supplier("AnotherPharmacy", 60, 60);
+    List<Supplier> supplierList = supplierService.getSuppliers();
+    assertThat(supplierList)
+        .hasSize(2)
+        .extracting(Supplier::getName)
+        .contains(supplier.getName(), supplier2.getName());
+    verifyFindAllSuppliersisCalledOnce();
+  }
+
+  @Test
+  void whenGetSupplyById_thenReturnSupply() {
+    Supplier supplier = setUpObject();
+    Supplier supplierdb = supplierService.getSupplier(supplier.getId());
+    assertThat(supplierdb).isNotNull();
+    assertThat(supplierdb.getId()).isEqualTo(supplier.getId());
+    verifyFindByIdisCalledOnce();
+  }
+
+  @Test
+  void whenGetSupplyByInvalidId_thenReturnSupply() {
+    when(supplierRepository.findById(-99L)).thenReturn(Optional.empty());
+    Supplier supplierdb = supplierService.getSupplier(-99L);
+    assertThat(supplierdb).isNull();
+    verifyFindByIdisCalledOnce();
+  }
+
+  @Test
   void whenAddSupplier_thenReturnSupplier() {
     Supplier supplier = setUpObject();
     SupplierPOJO supplierPOJO = setUpObjectPOJO();
@@ -80,5 +109,14 @@ class SupplierServiceTest {
   private void verifyFindByNameisCalledOnce() {
     Mockito.verify(supplierRepository, VerificationModeFactory.times(1))
         .findByName(Mockito.anyString());
+  }
+
+  private void verifyFindByIdisCalledOnce() {
+    Mockito.verify(supplierRepository, VerificationModeFactory.times(1))
+        .findById(Mockito.anyLong());
+  }
+
+  private void verifyFindAllSuppliersisCalledOnce() {
+    Mockito.verify(supplierRepository, VerificationModeFactory.times(1)).findAll();
   }
 }

@@ -1,6 +1,7 @@
 package tqs.medex.controller;
 
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +15,11 @@ import tqs.medex.entity.Supplier;
 import tqs.medex.pojo.SupplierPOJO;
 import tqs.medex.repository.SupplierRepository;
 
+import java.util.Arrays;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.hasSize;
 
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase
@@ -53,7 +57,7 @@ class SupplierControllerIT {
 
   @Test
   @WithMockUser(value = "test")
-  void whenAddInvalidSupplier_thenReturnValidResponse() {
+  void whenGetAllSuppliers_thenReturnSuppliers() {
     SupplierPOJO supplierPOJO = setUpObjectPOJO();
     Supplier supplier = setUpObject();
     supplierRepository.save(supplier);
@@ -64,7 +68,60 @@ class SupplierControllerIT {
         .then()
         .assertThat()
         .statusCode(400);
-    assertThat(supplierRepository.findAll()).hasSize(1);
+  }
+
+  @Test
+  @WithMockUser(value = "test")
+  void whenAddInvalidSupplier_thenReturnValidResponse() {
+    Supplier supplier = new Supplier("Pharmacy", 50, 50);
+    Supplier supplier2 = new Supplier("Pharmacy2", 60, 60);
+    Arrays.asList(supplier, supplier2)
+        .forEach(
+            sup -> {
+              supplierRepository.save(sup);
+            });
+    RestAssuredMockMvc.given()
+        .when()
+        .get("api/v1/suppliers")
+        .then()
+        .assertThat()
+        .statusCode(200)
+        .and()
+        .body("", hasSize(2))
+        .and()
+        .body("[0].name", Matchers.is(supplier.getName()))
+        .and()
+        .body("[1].name", Matchers.is(supplier2.getName()));
+  }
+
+  @Test
+  @WithMockUser(value = "test")
+  void whenGetSupplierById_thenReturnValidResponse() {
+    Supplier supplier = setUpObject();
+    supplierRepository.save(supplier);
+    long id = supplier.getId();
+    RestAssuredMockMvc.given()
+        .when()
+        .get("api/v1/suppliers/" + id)
+        .then()
+        .assertThat()
+        .statusCode(200)
+        .and()
+        .body("id", Matchers.is(supplier.getId().intValue()))
+        .and()
+        .body("name", Matchers.is(supplier.getName()));
+  }
+
+  @Test
+  @WithMockUser(value = "test")
+  void whenGetSupplierByInvalidId_thenReturnBadRequest() {
+    RestAssuredMockMvc.given()
+        .when()
+        .get("api/v1/suppliers/-99")
+        .then()
+        .assertThat()
+        .statusCode(400)
+        .statusLine("400 Supplier Not Found");
   }
 
   public SupplierPOJO setUpObjectPOJO() {

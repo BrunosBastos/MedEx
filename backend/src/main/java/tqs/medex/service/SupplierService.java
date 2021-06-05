@@ -6,6 +6,7 @@ import tqs.medex.entity.Supplier;
 import tqs.medex.pojo.SupplierPOJO;
 import tqs.medex.repository.SupplierRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -23,5 +24,13 @@ public class SupplierService {
     s.setLat(supplierPOJO.getLat());
     s.setLon(supplierPOJO.getLon());
     return supplierRepository.save(s);
+  }
+
+  public Supplier getSupplier(long id) {
+    return supplierRepository.findById(id).orElse(null);
+  }
+
+  public List<Supplier> getSuppliers() {
+    return supplierRepository.findAll();
   }
 }

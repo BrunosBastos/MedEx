@@ -42,7 +42,6 @@ class ProductServiceTest {
     product.setId(1L);
     product.setSupplier(supplier);
     Product product2 = new Product("SecondProduct", "A description", 5, 2.99, IMAGE_URL);
-    product2.setId(2L);
     List<Product> productList = Arrays.asList(product, product2);
     when(productRepository.findById(product.getId())).thenReturn(Optional.of(product));
     when(productRepository.findById(product2.getId())).thenReturn(Optional.of(product2));
