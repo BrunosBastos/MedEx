@@ -3,10 +3,15 @@ package tqs.medex.controller;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import tqs.medex.entity.Product;
 import tqs.medex.entity.Supplier;
@@ -19,19 +24,21 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
 
-@WebMvcTest(ProductController.class)
+@SpringBootTest
+@AutoConfigureMockMvc
 class ProductControllerTest {
   private static final String IMAGE_URL =
       "https://lh3.googleusercontent.com/proxy/LAOk1qdvF1vC926xeHgL_PqHkc3c7rog4LcvcAgPVTCjYc8megOXU6NUY1jl_Fy3dHntjQwyhrDobmMT7XY-itIMLcjue6_QHWqhcM44hLnBJMaIpiQ96-fqzufr0CC2hrXm3tezCm1yhsUvlk63";
   @Autowired private MockMvc mvc;
   @MockBean private ProductService productService;
 
-  @BeforeEach
-  void setUp() {
-    RestAssuredMockMvc.mockMvc(mvc);
-  }
+    @BeforeEach
+    void setUp() {
+        RestAssuredMockMvc.mockMvc(mvc);
+    }
 
   @Test
+  @WithMockUser(value = "test")
   void whenGetProducts_thenReturnProducts() {
     Product product = new Product("ProductTest", "A description", 1, 4.99, IMAGE_URL);
     Product product2 = new Product("ProductTest2", "A description2", 4, 0.99, IMAGE_URL);
@@ -56,6 +63,7 @@ class ProductControllerTest {
   }
 
   @Test
+  @WithMockUser(value = "test")
   void whenGetProductById_thenReturnProduct() {
     Product product = setUpObject();
     when(productService.getProductDetails(product.getId())).thenReturn(product);
@@ -73,6 +81,7 @@ class ProductControllerTest {
   }
 
   @Test
+  @WithMockUser(value = "test")
   void whenGetProductByInvalidId_thenReturnBadRequest() {
     when(productService.getProductDetails(-99L)).thenReturn(null);
     RestAssuredMockMvc.given()
@@ -86,6 +95,7 @@ class ProductControllerTest {
   }
 
   @Test
+  @WithMockUser(value = "test")
   void whenAddProduct_thenReturnProduct() {
     Product product = setUpObject();
     ProductPOJO productPOJO = setUpObjectPOJO();
@@ -109,6 +119,7 @@ class ProductControllerTest {
   }
 
   @Test
+  @WithMockUser(value = "test")
   void whenAddInvalidProductSupplier_thenReturnBadRequest() {
     ProductPOJO productPOJO = setUpInvalidObjectPOJO();
     when(productService.addNewProduct(productPOJO)).thenReturn(null);
