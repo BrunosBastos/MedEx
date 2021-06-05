@@ -25,7 +25,7 @@ public class ProductController {
 
   @GetMapping("/products/{id}")
   public ResponseEntity<Object> getProduct(@PathVariable long id) {
-    Product product = productService.getProductDetails(id);
+    var product = productService.getProductDetails(id);
     if (product == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Product Not Found");
     }
@@ -39,5 +39,15 @@ public class ProductController {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Supplier Not Found");
     }
     return ResponseEntity.status(HttpStatus.CREATED).body(product1);
+  }
+
+  @PutMapping("/products/{id}")
+  public ResponseEntity<Object> updateProduct(
+      @Valid @RequestBody ProductPOJO productPOJO, @PathVariable long id) {
+    var product = productService.updateProduct(id, productPOJO);
+    if (product == null) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Product Not Found");
+    }
+    return ResponseEntity.status(HttpStatus.OK).body(product);
   }
 }

@@ -134,13 +134,52 @@ class ProductControllerTest {
     verify(productService, times(1)).addNewProduct(Mockito.any(ProductPOJO.class));
   }
 
-    public Product setUpObject() {
-        Supplier supplier = new Supplier();
-        Product product = new Product("ProductTest", "A description", 1, 4.99, IMAGE_URL);
-        product.setId(1L);
-        product.setSupplier(supplier);
-        return product;
-    }
+  @Test
+  void whenUpdateProduct_thenReturnValidResponse() {
+    ProductPOJO productPOJO =
+        new ProductPOJO("ProductUpdated", "descriptionUpdated", 5, 2.99, IMAGE_URL, 1L);
+    Product product_update =
+        new Product("ProductUpdated", "descriptionUpdated", 5, 2.99, IMAGE_URL);
+    product_update.setId(2L);
+    when(productService.updateProduct(Mockito.anyLong(), Mockito.any(ProductPOJO.class)))
+        .thenReturn(product_update);
+    RestAssuredMockMvc.given()
+        .header("Content-Type", "application/json")
+        .body(productPOJO)
+        .put("api/v1/products/1")
+        .then()
+        .assertThat()
+        .statusCode(200)
+        .and()
+        .body("name", is(product_update.getName()));
+    verify(productService, times(1))
+        .updateProduct(Mockito.anyLong(), Mockito.any(ProductPOJO.class));
+  }
+
+  @Test
+  void whenUpdateProductByInvalidId_thenReturnBadRequest() {
+    ProductPOJO productPOJO =
+        new ProductPOJO("ProductUpdated", "descriptionUpdated", 5, 2.99, IMAGE_URL, 1L);
+    when(productService.updateProduct(-99L, productPOJO)).thenReturn(null);
+    RestAssuredMockMvc.given()
+        .header("Content-Type", "application/json")
+        .body(productPOJO)
+        .put("api/v1/products/-99")
+        .then()
+        .assertThat()
+        .statusCode(400)
+        .statusLine("400 Product Not Found");
+    verify(productService, times(1))
+        .updateProduct(Mockito.anyLong(), Mockito.any(ProductPOJO.class));
+  }
+
+  public Product setUpObject() {
+    Supplier supplier = new Supplier();
+    Product product = new Product("ProductTest", "A description", 1, 4.99, IMAGE_URL);
+    product.setId(1L);
+    product.setSupplier(supplier);
+    return product;
+  }
 
   public ProductPOJO setUpObjectPOJO() {
     return new ProductPOJO("ProductTest", "A description", 1, 4.99, IMAGE_URL, 1L);

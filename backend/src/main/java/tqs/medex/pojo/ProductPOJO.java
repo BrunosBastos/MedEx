@@ -23,4 +23,8 @@ public class ProductPOJO {
 
   private String imageUrl;
   private long supplier;
+
+  public Integer getStock() {
+    return this.stock;
+  }
 }

@@ -99,7 +99,39 @@ class ProductServiceTest {
   }
 
   @Test
+  void whenUpdateProduct_thenReturnProduct() {
+    Product productupdated =
+        new Product("ProductUpdated", "descriptionUpdatedd", 5, 2.99, IMAGE_URL);
+    productupdated.setId(1L);
+    when(productRepository.save(Mockito.any(Product.class))).thenReturn(productupdated);
+    ProductPOJO updatePOJO =
+        new ProductPOJO("ProductUpdated", "descriptionUpdatedd", 5, 2.99, IMAGE_URL, 1L);
+    Product prodctupdateddb = productService.updateProduct(1L, updatePOJO);
+    assertThat(prodctupdateddb).isNotNull();
+    assertThat(prodctupdateddb.getId()).isEqualTo(productupdated.getId());
+    assertThat(prodctupdateddb.getName()).isEqualTo(productupdated.getName());
+    assertThat(prodctupdateddb.getDescription()).isEqualTo(productupdated.getDescription());
+    assertThat(prodctupdateddb.getPrice()).isEqualTo(productupdated.getPrice());
+    assertThat(prodctupdateddb.getStock()).isEqualTo(productupdated.getStock());
+    assertThat(prodctupdateddb.getImageUrl()).isEqualTo(productupdated.getImageUrl());
+    assertThat(prodctupdateddb.getSupplier()).isEqualTo(productupdated.getSupplier());
+    verifyFindProductByIdisCalledOnce();
+    verifyAddProductisCalledOnce();
+  }
+
+  @Test
+  void whenUpdateProductByInvalidId_thenReturnNull() {
+    when(productRepository.findById(-99L)).thenReturn(Optional.empty());
+    ProductPOJO updatePOJO =
+        new ProductPOJO("ProductUpdated", "descriptionUpdatedd", 5, 2.99, IMAGE_URL, 1L);
+    Product prodctupdateddb = productService.updateProduct(-99L, updatePOJO);
+    assertThat(prodctupdateddb).isNull();
+    verifyFindProductByIdisCalledOnce();
+  }
+
+  @Test
   void whenAddInvalidProductSupplier_thenReturnNull() {
+
     when(supplierRepository.findById(-99L)).thenReturn(Optional.empty());
     ProductPOJO productPOJO = setUpInvalidProductSupplierPOJO();
     Product saved_product = productService.addNewProduct(productPOJO);
