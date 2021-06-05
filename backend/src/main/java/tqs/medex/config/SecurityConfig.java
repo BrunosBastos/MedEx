@@ -13,35 +13,30 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import tqs.medex.security.CustomUserDetailsService;
 import tqs.medex.security.JwtAuthenticationEntryPoint;
 import tqs.medex.security.JwtAuthenticationFilter;
-import tqs.medex.security.CustomUserDetailsService;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(
-        prePostEnabled = true
-)
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   private static final String[] AUTH_WHITELIST = {
-          "/api/v1/register",
-          "/api/v1/login",
-          "/v2-api-docs",
-          "/configuration/**",
-          "/v2/api-docs",
-          "/swagger*/**",
-          "/webjars/**"
+    "/api/v1/register",
+    "/api/v1/login",
+    "/v2-api-docs",
+    "/configuration/**",
+    "/v2/api-docs",
+    "/swagger*/**",
+    "/webjars/**"
   };
 
-  @Autowired
-  private JwtAuthenticationEntryPoint authenticationEntryPoint;
+  @Autowired private JwtAuthenticationEntryPoint authenticationEntryPoint;
 
-  @Autowired
-  private CustomUserDetailsService customUserDetailsService;
+  @Autowired private CustomUserDetailsService customUserDetailsService;
 
-  @Autowired
-  private JwtAuthenticationFilter jwtAuthenticationFilter;
+  @Autowired private JwtAuthenticationFilter jwtAuthenticationFilter;
 
   @Override
   protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
@@ -59,21 +54,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     return new BCryptPasswordEncoder();
   }
 
-
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     http.cors()
-            .and()
-            .csrf()
-            .disable()
-            .authorizeRequests()
-            .antMatchers(AUTH_WHITELIST)
-            .permitAll()
-            .anyRequest()
-            .authenticated()
-            .and()
-            .httpBasic()
-            .authenticationEntryPoint(authenticationEntryPoint);
+        .and()
+        .csrf()
+        .disable()
+        .authorizeRequests()
+        .antMatchers(AUTH_WHITELIST)
+        .permitAll()
+        .anyRequest()
+        .authenticated()
+        .and()
+        .httpBasic()
+        .authenticationEntryPoint(authenticationEntryPoint);
 
     http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
   }

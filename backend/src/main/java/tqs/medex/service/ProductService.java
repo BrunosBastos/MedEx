@@ -36,4 +36,27 @@ public class ProductService {
     product.setSupplier(supplier);
     return productrepository.save(product);
   }
+
+  public Product updateProduct(long productid, ProductPOJO productPOJO) {
+    var product = productrepository.findById(productid).orElse(null);
+    if (product == null) {
+      return null;
+    }
+    if (productPOJO.getName() != null) {
+      product.setName(productPOJO.getName());
+    }
+    if (productPOJO.getDescription() != null) {
+      product.setDescription(productPOJO.getDescription());
+    }
+    if (productPOJO.getPrice() != 0) {
+      product.setPrice(productPOJO.getPrice());
+    }
+    if (productPOJO.getStock() == null) {
+      product.setStock(product.getStock());
+    }
+    if (productPOJO.getImageUrl() == null) {
+      product.setImageUrl(product.getImageUrl());
+    }
+    return productrepository.save(product);
+  }
 }

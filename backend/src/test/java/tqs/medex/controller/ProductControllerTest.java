@@ -3,15 +3,12 @@ package tqs.medex.controller;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import tqs.medex.entity.Product;
 import tqs.medex.entity.Supplier;
@@ -32,10 +29,10 @@ class ProductControllerTest {
   @Autowired private MockMvc mvc;
   @MockBean private ProductService productService;
 
-    @BeforeEach
-    void setUp() {
-        RestAssuredMockMvc.mockMvc(mvc);
-    }
+  @BeforeEach
+  void setUp() {
+    RestAssuredMockMvc.mockMvc(mvc);
+  }
 
   @Test
   @WithMockUser(value = "test")
@@ -134,13 +131,54 @@ class ProductControllerTest {
     verify(productService, times(1)).addNewProduct(Mockito.any(ProductPOJO.class));
   }
 
-    public Product setUpObject() {
-        Supplier supplier = new Supplier();
-        Product product = new Product("ProductTest", "A description", 1, 4.99, IMAGE_URL);
-        product.setId(1L);
-        product.setSupplier(supplier);
-        return product;
-    }
+  @Test
+  @WithMockUser(value = "test")
+  void whenUpdateProduct_thenReturnValidResponse() {
+    ProductPOJO productPOJO =
+        new ProductPOJO("ProductUpdated", "descriptionUpdated", 5, 2.99, IMAGE_URL, 1L);
+    Product product_update =
+        new Product("ProductUpdated", "descriptionUpdated", 5, 2.99, IMAGE_URL);
+    product_update.setId(2L);
+    when(productService.updateProduct(Mockito.anyLong(), Mockito.any(ProductPOJO.class)))
+        .thenReturn(product_update);
+    RestAssuredMockMvc.given()
+        .header("Content-Type", "application/json")
+        .body(productPOJO)
+        .put("api/v1/products/1")
+        .then()
+        .assertThat()
+        .statusCode(200)
+        .and()
+        .body("name", is(product_update.getName()));
+    verify(productService, times(1))
+        .updateProduct(Mockito.anyLong(), Mockito.any(ProductPOJO.class));
+  }
+
+  @Test
+  @WithMockUser(value = "test")
+  void whenUpdateProductByInvalidId_thenReturnBadRequest() {
+    ProductPOJO productPOJO =
+        new ProductPOJO("ProductUpdated", "descriptionUpdated", 5, 2.99, IMAGE_URL, 1L);
+    when(productService.updateProduct(-99L, productPOJO)).thenReturn(null);
+    RestAssuredMockMvc.given()
+        .header("Content-Type", "application/json")
+        .body(productPOJO)
+        .put("api/v1/products/-99")
+        .then()
+        .assertThat()
+        .statusCode(400)
+        .statusLine("400 Product Not Found");
+    verify(productService, times(1))
+        .updateProduct(Mockito.anyLong(), Mockito.any(ProductPOJO.class));
+  }
+
+  public Product setUpObject() {
+    Supplier supplier = new Supplier();
+    Product product = new Product("ProductTest", "A description", 1, 4.99, IMAGE_URL);
+    product.setId(1L);
+    product.setSupplier(supplier);
+    return product;
+  }
 
   public ProductPOJO setUpObjectPOJO() {
     return new ProductPOJO("ProductTest", "A description", 1, 4.99, IMAGE_URL, 1L);

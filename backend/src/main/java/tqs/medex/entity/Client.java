@@ -10,15 +10,13 @@ import javax.persistence.*;
 @JsonSerialize
 public class Client {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long clientId;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private long clientId;
 
-    @Column
-    private String name;
+  @Column private String name;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "userId", referencedColumnName = "userId")
-    private User user;
-
+  @OneToOne(cascade = CascadeType.ALL)
+  @JoinColumn(name = "userId", referencedColumnName = "userId")
+  private User user;
 }
