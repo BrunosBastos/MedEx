@@ -1,0 +1,2 @@
+export const MEDEX_API_BASE_URL: string = 'http://localhost:8080/api/v1/';
+export const TEST_TOKEN: string = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjIyOTg5MjE5LCJleHAiOjE2MjM1OTQwMTl9.uTnbeyWBOh-0YCFA68S8b3ogGeGJxUXJX6vvBJXwkmCqjInVERbiFKcDeJCbSFetj7Y25idrq_he9KDudT9-9Q';
