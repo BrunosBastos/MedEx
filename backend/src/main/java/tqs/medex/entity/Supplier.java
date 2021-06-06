@@ -14,9 +14,15 @@ public class Supplier {
 
   private String name;
 
-  private String password;
-
   private double lat;
 
   private double lon;
+
+  public Supplier(String name, double lat, double lon) {
+    this.name = name;
+    this.lat = lat;
+    this.lon = lon;
+  }
+
+  public Supplier() {}
 }
