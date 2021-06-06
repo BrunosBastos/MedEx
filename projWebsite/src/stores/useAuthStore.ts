@@ -9,24 +9,17 @@ const useAuthStore = createStore(
         },
         (set) => ({
             token: String,
-            expire_date: String,
-            login: (token: string, expire_date: string) => {
+            isSuperUser: Boolean,
+            login: (token: string, isSuperUser: boolean) => {
                 set((state) => ({
-                    token:token,
-                    expire_date:expire_date
+                    token: token,
+                    isSuperUser: isSuperUser
                 }))
             },
-            leave: () => {
+            exit: () => {
                 set((state) => ({
                     token: null,
-                    expire_date: null,
-                    guest_uuid: null
-                }))
-            },
-            updateToken: (token: string, expire_date: string) => {
-                set((state) => ({
-                        token: token,
-                        expire_date: expire_date
+                    isSuperUser: null,
                 }))
             }
         })

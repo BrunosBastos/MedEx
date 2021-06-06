@@ -13,6 +13,9 @@ import {
 } from '@material-ui/core';
 import FacebookIcon from 'src/icons/Facebook';
 import GoogleIcon from 'src/icons/Google';
+import AuthentService from 'src/services/authentService';
+import useAuthStore from 'src/stores/useAuthStore';
+
 
 const Login = () => {
   const navigate = useNavigate();
@@ -20,7 +23,7 @@ const Login = () => {
   return (
     <>
       <Helmet>
-        <title>Login | Material Kit</title>
+        <title>Login</title>
       </Helmet>
       <Box
         sx={{
@@ -34,15 +37,29 @@ const Login = () => {
         <Container maxWidth="sm">
           <Formik
             initialValues={{
-              email: 'demo@devias.io',
-              password: 'Password123'
+              email: '',
+              password: ''
             }}
             validationSchema={Yup.object().shape({
               email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
               password: Yup.string().max(255).required('Password is required')
             })}
-            onSubmit={() => {
-              navigate('/app/dashboard', { replace: true });
+            onSubmit={(values) => {
+              AuthentService.login(values.email, values.password)
+              .then((res) => {
+                console.log(res)
+                if (res.status === 200) {
+                  return res.json()
+                }
+              })
+              .then((res) => {
+                console.log(res)
+                // if (res && res.accessToken && res.superUser) {
+                if (res && res.accessToken) {
+                  useAuthStore.getState().login(res.token, false)
+                  navigate('/app/dashboard', { replace: true });
+                }
+              })
             }}
           >
             {({
@@ -67,57 +84,7 @@ const Login = () => {
                     gutterBottom
                     variant="body2"
                   >
-                    Sign in on the internal platform
-                  </Typography>
-                </Box>
-                <Grid
-                  container
-                  spacing={3}
-                >
-                  <Grid
-                    item
-                    xs={12}
-                    md={6}
-                  >
-                    <Button
-                      color="primary"
-                      fullWidth
-                      startIcon={<FacebookIcon />}
-                      onClick={() => handleSubmit()}
-                      size="large"
-                      variant="contained"
-                    >
-                      Login with Facebook
-                    </Button>
-                  </Grid>
-                  <Grid
-                    item
-                    xs={12}
-                    md={6}
-                  >
-                    <Button
-                      fullWidth
-                      startIcon={<GoogleIcon />}
-                      onClick={() => handleSubmit()}
-                      size="large"
-                      variant="contained"
-                    >
-                      Login with Google
-                    </Button>
-                  </Grid>
-                </Grid>
-                <Box
-                  sx={{
-                    pb: 1,
-                    pt: 3
-                  }}
-                >
-                  <Typography
-                    align="center"
-                    color="textSecondary"
-                    variant="body1"
-                  >
-                    or login with email address
+                    Sign in on the platform
                   </Typography>
                 </Box>
                 <TextField
