@@ -11,7 +11,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
-import tqs.medex.entity.Client;
 import tqs.medex.entity.User;
 import tqs.medex.exception.EmailAlreadyInUseException;
 import tqs.medex.pojo.JwtAuthenticationResponse;
@@ -66,7 +65,7 @@ class AuthControllerTest {
         .and()
         .body("email", is(user.getEmail()))
         .and()
-        .body("client.name", is(user.getClient().getName()));
+        .body("name", is(user.getName()));
 
     verify(authService, times(1)).registerUser(any());
   }
@@ -116,11 +115,7 @@ class AuthControllerTest {
     user.setEmail("test@email.com");
     user.setPassword("password");
     user.setUserId(1L);
-
-    Client client = new Client();
-    client.setName("Test");
-
-    user.setClient(client);
+    user.setName("Test");
     return user;
   }
 }
