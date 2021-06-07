@@ -39,6 +39,7 @@ class SupplierControllerIT {
   @WithMockUser(value = "test")
   void whenAddSupplier_thenReturnValidResponse() {
     SupplierPOJO supplierPOJO = setUpObjectPOJO();
+
     RestAssuredMockMvc.given()
         .header("Content-Type", "application/json")
         .body(supplierPOJO)
@@ -52,34 +53,30 @@ class SupplierControllerIT {
         .body("lat", is((float) supplierPOJO.getLat()))
         .and()
         .body("lon", is((float) supplierPOJO.getLon()));
-    assertThat(supplierRepository.findAll()).hasSize(1);
+
+    assertThat(supplierRepository.findByName(supplierPOJO.getName())).isPresent();
   }
 
   @Test
   @WithMockUser(value = "test")
-  void whenGetAllSuppliers_thenReturnSuppliers() {
-    SupplierPOJO supplierPOJO = setUpObjectPOJO();
-    Supplier supplier = setUpObject();
-    supplierRepository.save(supplier);
+  void whenAddInvalidSupplier_thenReturnInvalidResponse() {
+    SupplierPOJO supplierPOJO = setInvalidUpObjectPOJO();
+
     RestAssuredMockMvc.given()
-        .header("Content-Type", "application/json")
-        .body(supplierPOJO)
-        .post("api/v1/suppliers")
-        .then()
-        .assertThat()
-        .statusCode(400);
+            .header("Content-Type", "application/json")
+            .body(supplierPOJO)
+            .post("api/v1/suppliers")
+            .then()
+            .assertThat()
+            .statusCode(400);
   }
 
   @Test
   @WithMockUser(value = "test")
-  void whenAddInvalidSupplier_thenReturnValidResponse() {
-    Supplier supplier = new Supplier("Pharmacy", 50, 50);
-    Supplier supplier2 = new Supplier("Pharmacy2", 60, 60);
-    Arrays.asList(supplier, supplier2)
-        .forEach(
-            sup -> {
-              supplierRepository.save(sup);
-            });
+  void whenGetSuppliers_thenReturnValidResponse() {
+    Supplier supplier = getExistingSupplier();
+    Supplier supplier2 = getExistingSupplier2();
+
     RestAssuredMockMvc.given()
         .when()
         .get("api/v1/suppliers")
@@ -97,9 +94,9 @@ class SupplierControllerIT {
   @Test
   @WithMockUser(value = "test")
   void whenGetSupplierById_thenReturnValidResponse() {
-    Supplier supplier = setUpObject();
-    supplierRepository.save(supplier);
+    Supplier supplier = getExistingSupplier();
     long id = supplier.getId();
+
     RestAssuredMockMvc.given()
         .when()
         .get("api/v1/suppliers/" + id)
@@ -125,12 +122,18 @@ class SupplierControllerIT {
   }
 
   public SupplierPOJO setUpObjectPOJO() {
+    return new SupplierPOJO("New Pharmacy", 50, 50);
+  }
+
+  public SupplierPOJO setInvalidUpObjectPOJO() {
     return new SupplierPOJO("Pharmacy", 50, 50);
   }
 
-  public Supplier setUpObject() {
-    Supplier supplier = new Supplier("Pharmacy", -201, 50);
-    supplier.setId(1L);
-    return supplier;
+  public Supplier getExistingSupplier() {
+    return supplierRepository.findByName("Pharmacy").orElse(null);
+  }
+
+  public Supplier getExistingSupplier2() {
+    return supplierRepository.findByName("Pharmacy2").orElse(null);
   }
 }
