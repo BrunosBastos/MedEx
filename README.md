@@ -30,6 +30,6 @@ Project bookmarks
 - Project Backlog - [Jira](https://crowdwire.atlassian.net/jira/software/projects/MED/boards/3)
 - Document Sharing - [Google Drive](https://drive.google.com/drive/folders/1tgk3GQd3EnHOorKlSXlc6PDayAXA7Fmg?usp=sharing)
 - API Documentation - [Swagger]()
-- Static Analysis - [SonarCloud]() and SonarLint
+- Static Analysis - [SonarCloud](https://sonarcloud.io/dashboard?id=BrunosBastos_MedEx) and SonarLint
 - CI/CD Environment - Github Actions
 
