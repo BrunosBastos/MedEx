@@ -1,8 +1,10 @@
 Feature: Login as a Client
 
-  Background: I navigate to 'http://localhost:3000/login'
+  Background:
+    Given I already have an account
+    And I navigate to 'http://localhost:3000/login'
 
-  Scenario: Introduce Invalid Information to Register
+  Scenario: Introduce Invalid Information to Login
     When I insert my email 'henrique@gmail.com'
     And I insert my password 'wrong'
     Then I see a message an error appear

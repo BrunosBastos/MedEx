@@ -5,3 +5,7 @@ Feature: Register as a Client
   Scenario: Introduce Invalid Information to Register
     And I insert an invalid email like 'teste@'
     Then an error message appears saying 'Invalid Email'
+
+  Scenario: Introduce Invalid Information to Register
+    And I insert an invalid email like 'teste@'
+    Then an error message appears saying 'Invalid Email'

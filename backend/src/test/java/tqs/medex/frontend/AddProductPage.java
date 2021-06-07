@@ -23,6 +23,8 @@ import tqs.medex.service.SupplierService;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+import io.github.bonigarcia.wdm.WebDriverManager;
+
 @CucumberContextConfiguration
 @SpringBootTest(
     classes = MedExApplication.class,
@@ -31,16 +33,19 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @AutoConfigureTestDatabase
 public class AddProductPage {
 
-  @Autowired public ProductService productService;
-  @Autowired public SupplierService supplierService;
   private WebDriver driver;
+
+  @Autowired public ProductService productService;
+
+  @Autowired public SupplierService supplierService;
+
   @LocalServerPort private int port;
 
   @When("I navigate to {string}")
   public void navigateTo(String url) {
-    System.setProperty("webdriver.gecko.driver", "/Users/mario/Downloads/geckodriver");
-    driver = new FirefoxDriver();
     setUpSuppliers();
+    WebDriverManager.firefoxdriver().setup();
+    driver = new FirefoxDriver();
     driver.get(url);
     driver.manage().window().setSize(new Dimension(1489, 1026));
   }
