@@ -39,12 +39,12 @@ public class AuthService {
 
     String jwt = tokenProvider.generateToken(authentication);
     CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
-    boolean isSuperUser = user.getUser().isSuperUser();
 
-    return new JwtAuthenticationResponse(jwt, isSuperUser);
+    return new JwtAuthenticationResponse(jwt, user);
   }
 
-  public User registerUser(RegisterRequest request) throws EmailAlreadyInUseException {
+  public JwtAuthenticationResponse registerUser(RegisterRequest request)
+      throws EmailAlreadyInUseException {
 
     Optional<User> dbUser = userRepository.findByEmail(request.getEmail());
     if (dbUser.isPresent()) {
@@ -57,6 +57,13 @@ public class AuthService {
 
     user = userRepository.save(user);
 
-    return user;
+    Authentication authentication =
+        authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+    SecurityContextHolder.getContext().setAuthentication(authentication);
+
+    String jwt = tokenProvider.generateToken(authentication);
+
+    return new JwtAuthenticationResponse(jwt, user);
   }
 }
