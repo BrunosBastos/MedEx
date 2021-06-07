@@ -53,9 +53,8 @@ const Login = () => {
                 }
               })
               .then((res) => {
-                console.log(res)
                 if (res && res.accessToken) {
-                  useAuthStore.getState().login(res.token, res.superUser)
+                  useAuthStore.getState().login(res.accessToken, res.user)
                   navigate('/app/dashboard', { replace: true });
                 }
               })

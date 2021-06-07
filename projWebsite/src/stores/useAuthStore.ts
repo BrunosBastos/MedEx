@@ -2,24 +2,32 @@ import createStore from "zustand";
 import persist from 'src/stores/utils/persist.js';
 
 
+interface User {
+    name: string;
+    email: string;
+    superUser: boolean;
+    userId: number;
+}
+
+
 const useAuthStore = createStore(
     persist(
         {
-            key:"auth",
+            key:"auth2",
         },
         (set) => ({
-            token: String,
-            isSuperUser: Boolean,
-            login: (token: string, isSuperUser: boolean) => {
+            token: null,
+            user: null,
+            login: (token: string, user: User) => {
                 set((state) => ({
                     token: token,
-                    isSuperUser: isSuperUser
+                    user: user,
                 }))
             },
             exit: () => {
                 set((state) => ({
                     token: null,
-                    isSuperUser: null,
+                    user: null,
                 }))
             }
         })

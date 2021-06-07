@@ -66,11 +66,10 @@ const Register = () => {
                   }
                 })
                 .then((res) => {
-                  console.log(res)
-                  if (res && res.token && res.superUser) {
-                    useAuthStore.getState().login(res.token, res.superUser)
+                  if (res && res.user) {
+                    useAuthStore.getState().login(res.accessToken, res.user)
+                    navigate('/app/dashboard', { replace: true });
                   }
-                  navigate('/app/dashboard', { replace: true });
                 })
               }}
             >
@@ -141,7 +140,7 @@ const Register = () => {
                     <Button
                       color="primary"
                       fullWidth
-                      disabled={isSubmitting}
+                      // disabled={isSubmitting}
                       size="large"
                       type="submit"
                       variant="contained"

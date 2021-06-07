@@ -7,7 +7,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import tqs.medex.entity.Product;
 import tqs.medex.entity.Supplier;
 import tqs.medex.entity.User;
-import tqs.medex.repository.ClientRepository;
 import tqs.medex.repository.ProductRepository;
 import tqs.medex.repository.SupplierRepository;
 import tqs.medex.repository.UserRepository;
@@ -21,21 +20,18 @@ class LoadDatabase {
   @Bean
   CommandLineRunner initDatabase(
       UserRepository users,
-      ClientRepository clients,
       ProductRepository products,
       SupplierRepository suppliers) {
 
     return args -> {
       BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-      User admin_user = new User(1L, "clara@gmail.com", encoder.encode("string"), true);
+      User admin_user = new User(1L, "clara@gmail.com",
+              encoder.encode("string"),true, "clara");
       users.save(admin_user);
-      Client clara = new Client(1L, "clara", admin_user);
-      clients.save(clara);
 
-      User client_user = new User(2L, "henrique@gmail.com", encoder.encode("string"), false);
+      User client_user = new User(2L, "henrique@gmail.com",
+              encoder.encode("string"), false,"henrique");
       users.save(client_user);
-      Client henrique = new Client(2L, "henrique", client_user);
-      clients.save(henrique);
 
       Supplier supplier = new Supplier("Pharmacy", 50, 50);
       supplier.setId(1L);
