@@ -18,7 +18,7 @@ import {
   TextField,
 } from '@material-ui/core';
 import ProductService from "../services/productService";
-import SupplierService from "../services/suppliersService";
+import SupplierService from "../services/supplierService";
 import { number } from 'prop-types';
 
 
@@ -117,7 +117,7 @@ const AddProduct = () => {
   return (
     <>
       <Helmet>
-        <title>Account | Material Kit</title>
+        <title>Account</title>
       </Helmet>
       <Box
         sx={{
@@ -143,7 +143,7 @@ const AddProduct = () => {
               >
                 <Card>
                   <CardHeader
-                    subheader="Fill the form with product information"
+                    subheader="Fill the form with product's information"
                     title="Add Product"
                   />
                   <Divider />
@@ -173,7 +173,7 @@ const AddProduct = () => {
                         </Box>
                         <div className={classes.root} >
                         <TextField
-                            fullWidth
+                            
                             label="Image URL"
                             name="image"
                             required
@@ -209,7 +209,7 @@ const AddProduct = () => {
                           md={12}
                           xs={12}
                           mb={2}
-
+                          pb={2}
                         >
                           <TextField
                             fullWidth
@@ -228,6 +228,7 @@ const AddProduct = () => {
                           xs={6}
                           mb={2}
                           pr={1}
+                          pb={1}
                         >
                           <TextField
                             fullWidth
