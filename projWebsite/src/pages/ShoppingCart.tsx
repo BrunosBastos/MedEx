@@ -84,6 +84,10 @@ const ShopCartList = () => {
     if (document.getElementById(product.id + 'quant').value){
       //@ts-ignore
       useShopCartStore.getState().setProductQuantity(product, document.getElementById(product.id + 'quant').value)
+    } else {
+      //@ts-ignore
+      document.getElementById(product.id + 'quant').value = 1
+      useShopCartStore.getState().setProductQuantity(product, 1)
     }
   }
 

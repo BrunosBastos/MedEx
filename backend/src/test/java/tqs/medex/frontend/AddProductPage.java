@@ -38,6 +38,7 @@ public class AddProductPage {
 
   @When("I navigate to {string}")
   public void navigateTo(String url) {
+    System.setProperty("webdriver.gecko.driver", "/Users/mario/Downloads/geckodriver");
     driver = new FirefoxDriver();
     setUpSuppliers();
     driver.get(url);
