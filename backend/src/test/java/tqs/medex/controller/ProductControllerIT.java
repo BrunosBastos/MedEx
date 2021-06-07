@@ -16,10 +16,6 @@ import tqs.medex.pojo.ProductPOJO;
 import tqs.medex.repository.ProductRepository;
 import tqs.medex.repository.SupplierRepository;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 
@@ -101,8 +97,8 @@ class ProductControllerIT {
     Product product = getExistingObject();
 
     ProductPOJO productPOJO =
-        new ProductPOJO("ProductTest", "A description", 1, 4.99, null,
-                product.getSupplier().getId());
+        new ProductPOJO(
+            "ProductTest", "A description", 1, 4.99, null, product.getSupplier().getId());
     RestAssuredMockMvc.given()
         .header("Content-Type", "application/json")
         .body(productPOJO)
@@ -124,8 +120,14 @@ class ProductControllerIT {
   @WithMockUser(value = "test")
   void whenAddInvalidProductSupplier_thenReturnBadRequest() {
     Product product = getExistingObject();
-    ProductPOJO productPOJO = new ProductPOJO(product.getName(), product.getDescription(), product.getStock(),
-            product.getPrice(),product.getImageUrl(), -2);
+    ProductPOJO productPOJO =
+        new ProductPOJO(
+            product.getName(),
+            product.getDescription(),
+            product.getStock(),
+            product.getPrice(),
+            product.getImageUrl(),
+            -2);
     RestAssuredMockMvc.given()
         .header("Content-Type", "application/json")
         .body(productPOJO)
@@ -168,8 +170,7 @@ class ProductControllerIT {
   }
 
   public ProductPOJO setUpObjectPojo() {
-    return new ProductPOJO("ProductUpdated", "descriptionUpdated", 5, 2.99,
-            null, 1L);
+    return new ProductPOJO("ProductUpdated", "descriptionUpdated", 5, 2.99, null, 1L);
   }
 
   public Product getExistingObject() {

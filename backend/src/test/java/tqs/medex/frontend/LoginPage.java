@@ -30,7 +30,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
     webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
     properties = {"security.basic.enabled=false"})
 @AutoConfigureTestDatabase
-public class AddProductPage {
+public class LoginPage {
 
   @Autowired public ProductService productService;
   @Autowired public SupplierService supplierService;

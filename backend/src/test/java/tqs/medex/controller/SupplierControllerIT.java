@@ -15,8 +15,6 @@ import tqs.medex.entity.Supplier;
 import tqs.medex.pojo.SupplierPOJO;
 import tqs.medex.repository.SupplierRepository;
 
-import java.util.Arrays;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
@@ -63,12 +61,12 @@ class SupplierControllerIT {
     SupplierPOJO supplierPOJO = setInvalidUpObjectPOJO();
 
     RestAssuredMockMvc.given()
-            .header("Content-Type", "application/json")
-            .body(supplierPOJO)
-            .post("api/v1/suppliers")
-            .then()
-            .assertThat()
-            .statusCode(400);
+        .header("Content-Type", "application/json")
+        .body(supplierPOJO)
+        .post("api/v1/suppliers")
+        .then()
+        .assertThat()
+        .statusCode(400);
   }
 
   @Test
