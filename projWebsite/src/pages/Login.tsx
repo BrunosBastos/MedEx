@@ -54,9 +54,8 @@ const Login = () => {
               })
               .then((res) => {
                 console.log(res)
-                // if (res && res.accessToken && res.superUser) {
                 if (res && res.accessToken) {
-                  useAuthStore.getState().login(res.token, false)
+                  useAuthStore.getState().login(res.token, res.superUser)
                   navigate('/app/dashboard', { replace: true });
                 }
               })
@@ -116,7 +115,7 @@ const Login = () => {
                 <Box sx={{ py: 2 }}>
                   <Button
                     color="primary"
-                    disabled={isSubmitting}
+                    // disabled={isSubmitting}
                     fullWidth
                     size="large"
                     type="submit"

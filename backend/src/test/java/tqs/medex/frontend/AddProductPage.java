@@ -1,10 +1,12 @@
 package tqs.medex.frontend;
 
 import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.cucumber.spring.CucumberContextConfiguration;
 import io.github.bonigarcia.wdm.WebDriverManager;
+import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
@@ -17,7 +19,6 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import tqs.medex.MedExApplication;
-import tqs.medex.pojo.SupplierPOJO;
 import tqs.medex.service.ProductService;
 import tqs.medex.service.SupplierService;
 
@@ -37,13 +38,22 @@ public class AddProductPage {
   private WebDriver driver;
   @LocalServerPort private int port;
 
-  @When("I navigate to {string}")
-  public void navigateTo(String url) {
-    setUpSuppliers();
+  @Given("Logged in with email {string} and password {string}")
+  public void loggInAs(String email, String password) {
     WebDriverManager.firefoxdriver().setup();
     driver = new FirefoxDriver();
-    driver.get(url);
+    driver.get("http://localhost:3000/login");
     driver.manage().window().setSize(new Dimension(1489, 1026));
+
+    driver.findElement(By.name("email")).click();
+    driver.findElement(By.name("email")).sendKeys(email);
+    driver.findElement(By.name("password")).sendKeys(password);
+    driver.findElement(By.cssSelector(".MuiButton-label")).click();
+  }
+
+  @When("I navigate to {string}")
+  public void navigateTo(String url) {
+    driver.get(url);
   }
 
   @And("I insert information like the name {string}, the price {double}, and stock {int}")
@@ -51,20 +61,20 @@ public class AddProductPage {
     driver.findElement(By.id("prodname")).click();
     driver.findElement(By.id("prodname")).sendKeys(name);
     driver.findElement(By.id("prodaddress")).sendKeys("Aveiro,PT");
-    driver.findElement(By.id("prodstock")).sendKeys(String.valueOf(price));
+    driver.findElement(By.id("prodstock")).sendKeys(String.valueOf(stock));
     driver.findElement(By.id("prodprice")).click();
-    driver.findElement(By.id("prodprice")).sendKeys(String.valueOf(stock));
+    driver.findElement(By.id("prodprice")).sendKeys(String.valueOf(price));
     driver.findElement(By.cssSelector(".MuiGrid-grid-md-4")).click();
     driver.findElement(By.id("prodphoto")).click();
     driver.findElement(By.id("prodphoto")).sendKeys("http://image.png");
-    final WebDriverWait wait = new WebDriverWait(driver, 2);
+    final WebDriverWait wait = new WebDriverWait(driver, 10);
     wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("age-native-simple")));
     driver.findElement(By.id("age-native-simple")).click();
     {
       WebElement dropdown = driver.findElement(By.id("age-native-simple"));
-      dropdown.findElement(By.xpath("//option[. = 'farmacia']")).click();
+      dropdown.findElement(By.xpath("//option[. = 'Pharmacy2']")).click();
     }
-    driver.findElement(By.cssSelector("option:nth-child(3)")).click();
+    driver.findElement(By.cssSelector("option:nth-child(2)")).click();
     driver.findElement(By.id("proddescription")).click();
     driver.findElement(By.id("proddescription")).sendKeys("A description");
     driver.findElement(By.cssSelector(".MuiButton-contained > .MuiButton-label")).click();
@@ -72,20 +82,17 @@ public class AddProductPage {
 
   @Then("a success message should appear like {string}")
   public void successResponse(String message) {
-    driver.findElement(By.cssSelector(".MuiButton-contained > .MuiButton-label")).click();
-    assertThat(driver.findElement(By.cssSelector(".Toastify__toast-body")).getText(), is(message));
-  }
-
-  @Then("an error message should appear like {string}")
-  public void anErrorMessageShouldAppearLikeErrorCreatingProduct(String message) {
-    driver.findElement(By.cssSelector(".MuiButton-contained > .MuiButton-label")).click();
+    final WebDriverWait wait = new WebDriverWait(driver, 10);
+    wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".Toastify__toast-body")));
     assertThat(driver.findElement(By.cssSelector(".Toastify__toast-body")).getText(), is(message));
     driver.quit();
   }
 
-  void setUpSuppliers() {
-    supplierService.addSupplier(new SupplierPOJO("test", 50, 50));
-    supplierService.addSupplier(new SupplierPOJO("test2", 60, 60));
-    supplierService.addSupplier(new SupplierPOJO("farmacia", 55, 55));
+  @Then("an error message should appear like {string}")
+  public void anErrorMessageShouldAppearLikeErrorCreatingProduct(String message) {
+    final WebDriverWait wait = new WebDriverWait(driver, 10);
+    wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".Toastify__toast-body")));
+    assertThat(driver.findElement(By.cssSelector(".Toastify__toast-body")).getText(), is(message));
+    driver.quit();
   }
 }
