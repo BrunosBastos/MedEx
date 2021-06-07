@@ -20,6 +20,5 @@ public class User {
 
   @Column private boolean isSuperUser;
 
-  @OneToOne(mappedBy = "user")
-  private Client client;
+  @Column private String name;
 }
