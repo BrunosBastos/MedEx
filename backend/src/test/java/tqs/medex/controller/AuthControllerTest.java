@@ -18,4 +18,94 @@ class AuthControllerTest {
   LoginRequest loginRequest;
   @Autowired private MockMvc mvc;
   @MockBean private AuthService authService;
+
+  @BeforeEach
+  void setUp() {
+    registerRequest = new RegisterRequest();
+    registerRequest.setPassword("password");
+    registerRequest.setEmail("test@email.com");
+    registerRequest.setName("Test");
+
+    loginRequest = new LoginRequest();
+    loginRequest.setEmail("test@email.com");
+    loginRequest.setPassword("password");
+
+    RestAssuredMockMvc.mockMvc(mvc);
+  }
+
+  @Test
+  void whenRegisterWithValidData_thenReturnData() throws EmailAlreadyInUseException {
+
+    User user = setUpUserRegister();
+
+    when(authService.registerUser(any(RegisterRequest.class))).thenReturn(user);
+
+    RestAssured.defaultParser = Parser.JSON;
+    RestAssuredMockMvc.given()
+        .header("Content-Type", "application/json")
+        .body(registerRequest)
+        .post("api/v1/register")
+        .then()
+        .assertThat()
+        .statusCode(200)
+        .and()
+        .body("email", is(user.getEmail()))
+        .and()
+        .body("client.name", is(user.getClient().getName()));
+
+    verify(authService, times(1)).registerUser(any());
+  }
+
+  @Test
+  void whenRegisterWithInValidData_thenReturnEmailAlreadyInUseException()
+      throws EmailAlreadyInUseException {
+
+    when(authService.registerUser(any(RegisterRequest.class)))
+        .thenThrow(new EmailAlreadyInUseException());
+
+    RestAssured.defaultParser = Parser.JSON;
+    RestAssuredMockMvc.given()
+        .header("Content-Type", "application/json")
+        .body(registerRequest)
+        .post("api/v1/register")
+        .then()
+        .assertThat()
+        .statusCode(400);
+
+    verify(authService, times(1)).registerUser(any());
+  }
+
+  @Test
+  void whenLoginWithValidCredentials_thenReturnToken() {
+
+    JwtAuthenticationResponse jwt = new JwtAuthenticationResponse("valid token");
+
+    when(authService.authenticateUser(any(LoginRequest.class))).thenReturn(jwt);
+    RestAssured.defaultParser = Parser.JSON;
+    RestAssuredMockMvc.given()
+        .header("Content-Type", "application/json")
+        .body(loginRequest)
+        .post("api/v1/login")
+        .then()
+        .assertThat()
+        .statusCode(200)
+        .and()
+        .body("accessToken", is(jwt.getAccessToken()))
+        .and()
+        .body("tokenType", is(jwt.getTokenType()));
+    verify(authService, times(1)).authenticateUser(any());
+  }
+
+  User setUpUserRegister() {
+    User user = new User();
+    user.setEmail("test@email.com");
+    user.setPassword("password");
+    user.setUserId(1L);
+
+    Client client = new Client();
+    client.setName("Test");
+
+    user.setClient(client);
+    return user;
+  }
 }
