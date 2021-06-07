@@ -12,12 +12,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import tqs.medex.entity.CustomUserDetails;
 import tqs.medex.entity.User;
 import tqs.medex.exception.EmailAlreadyInUseException;
 import tqs.medex.pojo.JwtAuthenticationResponse;
 import tqs.medex.pojo.LoginRequest;
 import tqs.medex.pojo.RegisterRequest;
-import tqs.medex.repository.ClientRepository;
 import tqs.medex.repository.UserRepository;
 import tqs.medex.security.JwtTokenProvider;
 
@@ -51,9 +51,6 @@ class AuthServiceTest {
   @Mock(lenient = true)
   private UserRepository repository;
 
-  @Mock(lenient = true)
-  private ClientRepository clientRepository;
-
   @InjectMocks private AuthService authService;
 
   @BeforeEach
@@ -77,7 +74,7 @@ class AuthServiceTest {
     registeredUser.setEmail("valid@test.com");
     registeredUser.setPassword("test");
 
-    Authentication authentication =
+    Authentication auth =
         new Authentication() {
           @Override
           public String getName() {
@@ -106,7 +103,7 @@ class AuthServiceTest {
 
           @Override
           public Object getPrincipal() {
-            return null;
+            return new CustomUserDetails(registeredUser);
           }
 
           @Override
@@ -120,9 +117,9 @@ class AuthServiceTest {
 
     when(authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(valid.getEmail(), valid.getPassword())))
-        .thenReturn(authentication);
+        .thenReturn(auth);
 
-    when(tokenProvider.generateToken(authentication)).thenReturn("valid token");
+    when(tokenProvider.generateToken(auth)).thenReturn("valid token");
 
     when(repository.findByEmail(validRegister.getEmail())).thenReturn(Optional.empty());
     when(repository.save(any())).thenReturn(registeredUser);
@@ -135,6 +132,7 @@ class AuthServiceTest {
 
     JwtAuthenticationResponse response = authService.authenticateUser(valid);
 
+    assertThat(response.getUser().isSuperUser()).isFalse();
     assertThat(response.getAccessToken()).contains("valid token");
     assertThat(response.getTokenType()).contains("Bearer");
 
@@ -145,11 +143,10 @@ class AuthServiceTest {
   @Test
   void whenRegisterWithValidData_thenReturnSuccess() throws EmailAlreadyInUseException {
 
-    assertThat(authService.registerUser(validRegister)).isEqualTo(registeredUser);
+    assertThat(authService.registerUser(validRegister).getUser()).isEqualTo(registeredUser);
 
     verify(repository, VerificationModeFactory.times(1)).findByEmail(any());
     verify(repository, VerificationModeFactory.times(1)).save(any());
-    verify(clientRepository, VerificationModeFactory.times(1)).save(any());
   }
 
   @Test
