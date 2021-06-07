@@ -8,6 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import tqs.medex.entity.Client;
+import tqs.medex.entity.CustomUserDetails;
 import tqs.medex.entity.User;
 import tqs.medex.exception.EmailAlreadyInUseException;
 import tqs.medex.pojo.JwtAuthenticationResponse;
@@ -41,8 +42,10 @@ public class AuthService {
     SecurityContextHolder.getContext().setAuthentication(authentication);
 
     String jwt = tokenProvider.generateToken(authentication);
+    CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
+    boolean isSuperUser = user.getUser().isSuperUser();
 
-    return new JwtAuthenticationResponse(jwt);
+    return new JwtAuthenticationResponse(jwt, isSuperUser);
   }
 
   public User registerUser(RegisterRequest request) throws EmailAlreadyInUseException {
