@@ -4,7 +4,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import tqs.medex.entity.Client;
 import tqs.medex.entity.Product;
 import tqs.medex.entity.Supplier;
 import tqs.medex.entity.User;

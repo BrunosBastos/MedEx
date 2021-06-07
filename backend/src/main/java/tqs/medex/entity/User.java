@@ -1,5 +1,6 @@
 package tqs.medex.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,7 +21,9 @@ public class User {
 
   @Column private String email;
 
-  @Column private String password;
+  @JsonIgnore @Column private String password;
 
   @Column private boolean isSuperUser;
+
+  @Column private String name;
 }
