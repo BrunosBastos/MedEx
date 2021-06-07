@@ -43,7 +43,6 @@ public class AuthService {
 
     String jwt = tokenProvider.generateToken(authentication);
     CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
-    System.out.println(user);
     boolean isSuperUser = user.getUser().isSuperUser();
 
     return new JwtAuthenticationResponse(jwt, isSuperUser);
