@@ -1,22 +1,16 @@
 package tqs.medex.pojo;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import tqs.medex.entity.User;
 
-@Getter
-@Setter
+@Data
 public class JwtAuthenticationResponse {
   private String accessToken;
   private String tokenType = "Bearer";
-  private boolean isSuperUser;
+  private User user;
 
-  public JwtAuthenticationResponse(String accessToken) {
+  public JwtAuthenticationResponse(String accessToken, User user) {
     this.accessToken = accessToken;
-    this.isSuperUser = false;
-  }
-
-  public JwtAuthenticationResponse(String accessToken, boolean isSuperUser) {
-    this.accessToken = accessToken;
-    this.isSuperUser = isSuperUser;
+    this.user = user;
   }
 }

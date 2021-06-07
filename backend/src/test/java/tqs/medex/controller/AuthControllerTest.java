@@ -19,6 +19,8 @@ import tqs.medex.pojo.RegisterRequest;
 import tqs.medex.service.AuthService;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.hasKey;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -50,9 +52,9 @@ class AuthControllerTest {
   @Test
   void whenRegisterWithValidData_thenReturnData() throws EmailAlreadyInUseException {
 
-    User user = setUpUserRegister();
+    JwtAuthenticationResponse jwt = setUpResponse();
 
-    when(authService.registerUser(any(RegisterRequest.class))).thenReturn(user);
+    when(authService.registerUser(any(RegisterRequest.class))).thenReturn(jwt);
 
     RestAssured.defaultParser = Parser.JSON;
     RestAssuredMockMvc.given()
@@ -63,9 +65,17 @@ class AuthControllerTest {
         .assertThat()
         .statusCode(200)
         .and()
-        .body("email", is(user.getEmail()))
+        .body("accessToken", is(jwt.getAccessToken()))
         .and()
-        .body("name", is(user.getName()));
+        .body("tokenType", is(jwt.getTokenType()))
+        .and()
+        .body("user.superUser", is(jwt.getUser().isSuperUser()))
+        .and()
+        .body("user.email", is(jwt.getUser().getEmail()))
+        .and()
+        .body("user.name", is(jwt.getUser().getName()))
+        .and()
+        .body("$", not(hasKey("password")));
 
     verify(authService, times(1)).registerUser(any());
   }
@@ -92,9 +102,10 @@ class AuthControllerTest {
   @Test
   void whenLoginWithValidCredentials_thenReturnToken() {
 
-    JwtAuthenticationResponse jwt = new JwtAuthenticationResponse("valid token");
+    JwtAuthenticationResponse jwt = setUpResponse();
 
     when(authService.authenticateUser(any(LoginRequest.class))).thenReturn(jwt);
+
     RestAssured.defaultParser = Parser.JSON;
     RestAssuredMockMvc.given()
         .header("Content-Type", "application/json")
@@ -106,16 +117,27 @@ class AuthControllerTest {
         .and()
         .body("accessToken", is(jwt.getAccessToken()))
         .and()
-        .body("tokenType", is(jwt.getTokenType()));
+        .body("tokenType", is(jwt.getTokenType()))
+        .and()
+        .body("user.superUser", is(jwt.getUser().isSuperUser()))
+        .and()
+        .body("user.email", is(jwt.getUser().getEmail()))
+        .and()
+        .body("user.name", is(jwt.getUser().getName()))
+        .and()
+        .body("$", not(hasKey("password")));
+
     verify(authService, times(1)).authenticateUser(any());
   }
 
-  User setUpUserRegister() {
+  JwtAuthenticationResponse setUpResponse() {
     User user = new User();
     user.setEmail("test@email.com");
     user.setPassword("password");
     user.setUserId(1L);
     user.setName("Test");
-    return user;
+    user.setSuperUser(true);
+
+    return new JwtAuthenticationResponse("valid token", user);
   }
 }

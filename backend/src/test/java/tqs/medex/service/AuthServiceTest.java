@@ -132,7 +132,7 @@ class AuthServiceTest {
 
     JwtAuthenticationResponse response = authService.authenticateUser(valid);
 
-    assertThat(response.isSuperUser()).isFalse();
+    assertThat(response.getUser().isSuperUser()).isFalse();
     assertThat(response.getAccessToken()).contains("valid token");
     assertThat(response.getTokenType()).contains("Bearer");
 
@@ -143,7 +143,7 @@ class AuthServiceTest {
   @Test
   void whenRegisterWithValidData_thenReturnSuccess() throws EmailAlreadyInUseException {
 
-    assertThat(authService.registerUser(validRegister)).isEqualTo(registeredUser);
+    assertThat(authService.registerUser(validRegister).getUser()).isEqualTo(registeredUser);
 
     verify(repository, VerificationModeFactory.times(1)).findByEmail(any());
     verify(repository, VerificationModeFactory.times(1)).save(any());
