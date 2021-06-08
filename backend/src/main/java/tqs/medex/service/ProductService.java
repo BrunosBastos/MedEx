@@ -51,11 +51,11 @@ public class ProductService {
     if (productPOJO.getPrice() != 0) {
       product.setPrice(productPOJO.getPrice());
     }
-    if (productPOJO.getStock() == null) {
-      product.setStock(product.getStock());
+    if (productPOJO.getStock() != null) {
+      product.setStock(productPOJO.getStock());
     }
-    if (productPOJO.getImageUrl() == null) {
-      product.setImageUrl(product.getImageUrl());
+    if (productPOJO.getImageUrl() != null) {
+      product.setImageUrl(productPOJO.getImageUrl());
     }
     return productrepository.save(product);
   }
