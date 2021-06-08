@@ -26,7 +26,8 @@ public class Product {
   @JoinColumn(name = "supplier_id", referencedColumnName = "id")
   private Supplier supplier;
 
-  public Product(String name, String description, int stock, double price, String imageUrl) {
+  public Product(long id, String name, String description, int stock, double price, String imageUrl) {
+    this.id = id;
     this.name = name;
     this.stock = stock;
     this.price = price;
