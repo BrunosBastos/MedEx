@@ -183,7 +183,7 @@ const ShopCartList = () => {
                             {product.id}
                           </TableCell>
                           <TableCell>
-                            {product.supplier}
+                            {product.supplier.name}
                           </TableCell>
                           <TableCell>
                             {product.price}

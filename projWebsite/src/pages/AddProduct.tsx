@@ -62,7 +62,8 @@ const AddProduct = () => {
   const [supplierslist, setSuppliersList] = useState([]); 
   const [suplier, setSupplier] = useState(1);
   const navigate = useNavigate();
-  
+  const [image, setImage] = useState("");
+
   const handleSubmit = (supplier) => {
     //@ts-ignore
     let name: string = document.getElementById('prodname').value;
@@ -95,10 +96,15 @@ const AddProduct = () => {
       })
   }
 
+  
   const handleChange = (event) => {
     setSupplier(event.target.value);
   };
-
+  
+  const setImageUrl = (event) => {
+    setImage(event.target.value);
+  }
+  
   useEffect( () => {
     SupplierService.getSuppliers()
       .then( (res) => {
@@ -164,11 +170,11 @@ const AddProduct = () => {
                           }}
                         >
                           <Avatar
-
                             sx={{
                               height: 160,
                               width: 160
                             }}
+                            src={image}
                           />
                         </Box>
                         <div className={classes.root} >
@@ -179,6 +185,7 @@ const AddProduct = () => {
                             required
                             variant="outlined"
                             id="prodphoto"
+                            onChange={setImageUrl}
                           />
                         </div>
                       </Grid>
