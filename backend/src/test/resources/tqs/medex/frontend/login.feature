@@ -1,15 +1,16 @@
 Feature: Login as a Client
 
   Background:
-    Given I already have an account
-    And I navigate to 'http://localhost:3000/login'
+    Given I am a Client trying to log in
 
   Scenario: Introduce Invalid Information to Login
     When I insert my email 'henrique@gmail.com'
-    And I insert my password 'wrong'
-    Then I see a message an error appear
+    And I insert a wrong password
+    And I press the login button
+    Then A failed logged in message should appear
 
   Scenario: Introduce Valid Information to Login
-    When I insert my email 'henrique@gmail.com'
-    And I insert my password 'string'
-    Then I see a message appear logged in and I am redirected to another page
+    And I insert my email 'henrique@gmail.com'
+    And I insert my correct password
+    And I press the login button
+    Then A successfully logged in message should appear
