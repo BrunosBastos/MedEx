@@ -73,8 +73,8 @@ class SupplierControllerTest {
   @Test
   @WithMockUser(value = "test")
   void whenGetAllSuppliers_thenReturnSuppliers() {
-    Supplier supplier = new Supplier("Pharmacy", 50, 50);
-    Supplier supplier2 = new Supplier("Pharmacy2", 60, 60);
+    Supplier supplier = new Supplier(3L, "Pharmacy", 50, 50);
+    Supplier supplier2 = new Supplier(4L, "Pharmacy2", 60, 60);
     when(supplierService.getSuppliers()).thenReturn(Arrays.asList(supplier, supplier2));
     RestAssuredMockMvc.given()
         .when()
@@ -129,7 +129,7 @@ class SupplierControllerTest {
   }
 
   public Supplier setUpObject() {
-    Supplier supplier = new Supplier("Pharmacy", 50, 50);
+    Supplier supplier = new Supplier(3L, "Pharmacy", 50, 50);
     supplier.setId(1L);
     return supplier;
   }

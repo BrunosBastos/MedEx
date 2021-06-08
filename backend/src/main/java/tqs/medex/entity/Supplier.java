@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Table
 public class Supplier {
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   private String name;
@@ -18,7 +18,8 @@ public class Supplier {
 
   private double lon;
 
-  public Supplier(String name, double lat, double lon) {
+  public Supplier(long id, String name, double lat, double lon) {
+    this.id = id;
     this.name = name;
     this.lat = lat;
     this.lon = lon;

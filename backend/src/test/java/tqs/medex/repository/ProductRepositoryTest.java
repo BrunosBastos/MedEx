@@ -52,8 +52,10 @@ class ProductRepositoryTest {
 
   @Test
   void givenSetOfProducts_whenFindAll_thenReturnSet() {
-    Product product = new Product("ProductTest", "A description", 1, 4.99, IMAGE_URL);
-    Product product2 = new Product("SecondProduct", "A description", 5, 2.99, IMAGE_URL);
+    Product product = new Product();
+    product.setName("ProductTest");
+    Product product2 = new Product();
+    product2.setName("SecondProduct");
     Arrays.asList(product, product2)
         .forEach(
             prod -> {
