@@ -90,11 +90,15 @@ const handleSubmit = (supplier) => {
 const AddProduct = () => {
   const [supplierslist, setSuppliersList] = useState([]); 
   const [suplier, setSupplier] = useState(1);
+  const [image, setImage] = useState("");
 
+  
   const handleChange = (event) => {
     setSupplier(event.target.value);
   };
-
+  const setImageUrl = (event) => {
+    setImage(event.target.value);
+  }
   useEffect( () => {
     SupplierService.getSuppliers()
       .then( (res) => {
@@ -160,11 +164,11 @@ const AddProduct = () => {
                           }}
                         >
                           <Avatar
-
                             sx={{
                               height: 160,
                               width: 160
                             }}
+                            src={image}
                           />
                         </Box>
                         <div className={classes.root} >
@@ -175,6 +179,7 @@ const AddProduct = () => {
                             required
                             variant="outlined"
                             id="prodphoto"
+                            onChange={setImageUrl}
                           />
                         </div>
                       </Grid>
