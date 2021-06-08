@@ -16,9 +16,6 @@ import tqs.medex.pojo.ProductPOJO;
 import tqs.medex.repository.ProductRepository;
 import tqs.medex.repository.SupplierRepository;
 
-import java.util.Arrays;
-import java.util.List;
-
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 
@@ -40,16 +37,10 @@ class ProductControllerIT {
   @Test
   @WithMockUser(value = "test")
   void whenGetProducts_thenReturnValidResponse() {
-    Supplier supplier = new Supplier("Pharmacy", -201, 50);
-    supplierRepository.save(supplier);
-    Product product = new Product("ProductTest", "A description", 1, 4.99, null);
-    Product product2 = new Product("ProductTest2", "A description2", 4, 0.99, null);
-    List<Product> listproducts = Arrays.asList(product, product2);
-    listproducts.forEach(
-        prod -> {
-          prod.setSupplier(supplier);
-          productRepository.save(prod);
-        });
+    Product product = getExistingObject();
+    Product product2 = productRepository.findByName("ProductTest2").orElse(null);
+    Supplier supplier = supplierRepository.findByName("Pharmacy").orElse(null);
+
     RestAssuredMockMvc.given()
         .when()
         .get("api/v1/products")
@@ -75,8 +66,7 @@ class ProductControllerIT {
   @Test
   @WithMockUser(value = "test")
   void whenGetProductById_thenReturnProduct() {
-    Product product = setUpObject();
-    productRepository.save(product);
+    Product product = getExistingObject();
     long id = product.getId();
     RestAssuredMockMvc.given()
         .when()
@@ -104,12 +94,11 @@ class ProductControllerIT {
   @Test
   @WithMockUser(value = "test")
   void whenAddProduct_thenReturnProduct() {
-    Supplier supplier = new Supplier("Pharmacy", -201, 50);
-    supplier = supplierRepository.save(supplier);
-    Product product = new Product("ProductTest", "A description", 1, 4.99, null);
-    product.setSupplier(supplier);
+    Product product = getExistingObject();
+
     ProductPOJO productPOJO =
-        new ProductPOJO("ProductTest", "A description", 1, 4.99, null, supplier.getId());
+        new ProductPOJO(
+            "ProductTest", "A description", 1, 4.99, null, product.getSupplier().getId());
     RestAssuredMockMvc.given()
         .header("Content-Type", "application/json")
         .body(productPOJO)
@@ -130,9 +119,15 @@ class ProductControllerIT {
   @Test
   @WithMockUser(value = "test")
   void whenAddInvalidProductSupplier_thenReturnBadRequest() {
-    Product product = setUpObject();
-    product = productRepository.save(product);
-    ProductPOJO productPOJO = new ProductPOJO("ProductTest", "A description", 1, 4.99, null, -2);
+    Product product = getExistingObject();
+    ProductPOJO productPOJO =
+        new ProductPOJO(
+            product.getName(),
+            product.getDescription(),
+            product.getStock(),
+            product.getPrice(),
+            product.getImageUrl(),
+            -2);
     RestAssuredMockMvc.given()
         .header("Content-Type", "application/json")
         .body(productPOJO)
@@ -145,11 +140,9 @@ class ProductControllerIT {
   @Test
   @WithMockUser(value = "test")
   void whenUpdateProduct_thenReturnValidResponse() {
-    Product product = setUpObject();
-    productRepository.save(product);
+    Product product = getExistingObject();
     long id = product.getId();
-    ProductPOJO productPOJO =
-        new ProductPOJO("ProductUpdated", "descriptionUpdated", 5, 2.99, null, 1L);
+    ProductPOJO productPOJO = setUpObjectPojo();
 
     RestAssuredMockMvc.given()
         .header("Content-Type", "application/json")
@@ -165,10 +158,7 @@ class ProductControllerIT {
   @Test
   @WithMockUser(value = "test")
   void whenUpdateProductByInvalidId_thenReturnBadRequest() {
-    Product product = setUpObject();
-    productRepository.save(product);
-    ProductPOJO productPOJO =
-        new ProductPOJO("ProductUpdated", "descriptionUpdated", 5, 2.99, null, 1L);
+    ProductPOJO productPOJO = setUpObjectPojo();
 
     RestAssuredMockMvc.given()
         .header("Content-Type", "application/json")
@@ -179,11 +169,11 @@ class ProductControllerIT {
         .statusCode(400);
   }
 
-  public Product setUpObject() {
-    Supplier supplier = new Supplier("Pharmacy", -201, 50);
-    supplierRepository.save(supplier);
-    Product product = new Product("ProductTest", "A description", 1, 4.99, null);
-    product.setSupplier(supplier);
-    return product;
+  public ProductPOJO setUpObjectPojo() {
+    return new ProductPOJO("ProductUpdated", "descriptionUpdated", 5, 2.99, null, 1L);
+  }
+
+  public Product getExistingObject() {
+    return productRepository.findByName("ProductTest").orElse(null);
   }
 }

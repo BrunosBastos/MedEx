@@ -29,8 +29,24 @@ class ProductRepositoryTest {
   }
 
   @Test
+  void whenFindProductByExistingName_thenReturnProduct() {
+    Product product = new Product();
+    entityManager.persistAndFlush(product);
+    Product productdb = productRepository.findByName(product.getName()).orElse(null);
+    assertThat(productdb).isNotNull();
+    assertThat(productdb.getId()).isEqualTo(product.getId());
+    assertThat(productdb.getName()).isEqualTo(product.getName());
+  }
+
+  @Test
   void whenInvalidId_thenReturnNull() {
     Product productdb = productRepository.findById(-99L).orElse(null);
+    assertThat(productdb).isNull();
+  }
+
+  @Test
+  void whenInvalidName_thenReturnNull() {
+    Product productdb = productRepository.findByName("Non-Existing Product").orElse(null);
     assertThat(productdb).isNull();
   }
 

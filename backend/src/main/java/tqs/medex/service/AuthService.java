@@ -40,7 +40,7 @@ public class AuthService {
     String jwt = tokenProvider.generateToken(authentication);
     CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
 
-    return new JwtAuthenticationResponse(jwt, user);
+    return new JwtAuthenticationResponse(jwt, user.getUser());
   }
 
   public JwtAuthenticationResponse registerUser(RegisterRequest request)
@@ -52,6 +52,7 @@ public class AuthService {
     }
 
     User user = new User();
+    user.setName(request.getName());
     user.setEmail(request.getEmail());
     user.setPassword(passwordEncoder.encode(request.getPassword()));
 
