@@ -15,7 +15,19 @@ import FacebookIcon from 'src/icons/Facebook';
 import GoogleIcon from 'src/icons/Google';
 import AuthentService from 'src/services/authentService';
 import useAuthStore from 'src/stores/useAuthStore';
+import { toast } from 'react-toastify';
 
+const notifySuccess = (msg) => {
+  toast.success(msg, {
+    position: toast.POSITION.TOP_CENTER
+    });
+}
+
+const notifyError = (msg) => {
+  toast.error(msg, {
+    position: toast.POSITION.TOP_CENTER
+    });
+}
 
 const Login = () => {
   const navigate = useNavigate();
@@ -56,7 +68,13 @@ const Login = () => {
                 if (res && res.accessToken) {
                   useAuthStore.getState().login(res.accessToken, res.user)
                   navigate('/app/dashboard', { replace: true });
+                  notifySuccess("Successfully logged in")
                 }
+                if(res.error)
+                  notifyError("Login failed")
+              })
+              .catch( (error) => {
+                notifyError("Login failed")
               })
             }}
           >

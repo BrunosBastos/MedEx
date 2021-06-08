@@ -16,12 +16,25 @@ import React from 'react';
 import { makeStyles, Theme, useTheme } from '@material-ui/core/styles';
 import AuthentService from 'src/services/authentService';
 import useAuthStore from 'src/stores/useAuthStore';
+import { toast } from 'react-toastify';
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
     width: 500,
   },
 }));
+
+const notifySuccess = (msg) => {
+  toast.success(msg, {
+    position: toast.POSITION.TOP_CENTER
+    });
+}
+
+const notifyError = (msg) => {
+  toast.error(msg, {
+    position: toast.POSITION.TOP_CENTER
+    });
+}
 
 const Register = () => {
   const navigate = useNavigate();
@@ -68,8 +81,14 @@ const Register = () => {
                 .then((res) => {
                   if (res && res.user) {
                     useAuthStore.getState().login(res.accessToken, res.user)
+                    notifySuccess("Successfully registered")
                     navigate('/app/dashboard', { replace: true });
                   }
+                  if(res.error)
+                    notifyError("Registration failed")
+                })
+                .catch( (error) => {
+                  notifyError("Registration failed")
                 })
               }}
             >
@@ -102,7 +121,7 @@ const Register = () => {
                     error={Boolean(touched.name && errors.name)}
                     fullWidth
                     helperText={touched.name && errors.name}
-                    label="First name"
+                    label="Name"
                     margin="normal"
                     name="name"
                     onBlur={handleBlur}
