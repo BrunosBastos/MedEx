@@ -29,9 +29,8 @@ class SupplierServiceTest {
 
   @BeforeEach
   void setUp() {
-    Supplier supplier = new Supplier("Pharmacy", 50, 50);
-    supplier.setId(1L);
-    Supplier supplier2 = new Supplier("AnotherPharmacy", 60, 60);
+    Supplier supplier = new Supplier(1L, "Pharmacy", 50, 50);
+    Supplier supplier2 = new Supplier(2L, "AnotherPharmacy", 60, 60);
     List<Supplier> suppliers = Arrays.asList(supplier, supplier2);
     when(supplierRepository.findById(supplier.getId())).thenReturn(Optional.of(supplier));
     when(supplierRepository.findAll()).thenReturn(suppliers);
@@ -40,8 +39,8 @@ class SupplierServiceTest {
 
   @Test
   void whenGetSuppliers_thenReturnSuppliers() {
-    Supplier supplier = new Supplier("Pharmacy", 50, 50);
-    Supplier supplier2 = new Supplier("AnotherPharmacy", 60, 60);
+    Supplier supplier = new Supplier(1L, "Pharmacy", 50, 50);
+    Supplier supplier2 = new Supplier(2L, "AnotherPharmacy", 60, 60);
     List<Supplier> supplierList = supplierService.getSuppliers();
     assertThat(supplierList)
         .hasSize(2)
@@ -96,8 +95,7 @@ class SupplierServiceTest {
   }
 
   public Supplier setUpObject() {
-    Supplier supplier = new Supplier("Pharmacy", 50, 50);
-    supplier.setId(1L);
+    Supplier supplier = new Supplier(1L, "Pharmacy", 50, 50);
     return supplier;
   }
 

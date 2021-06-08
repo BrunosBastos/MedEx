@@ -18,8 +18,10 @@ class SupplierRepositoryTest {
 
   @Test
   void givenSetOfSuppliers_whenFindAll_thenReturnSet() {
-    Supplier supplier = new Supplier("Pharmacy", 50, 50);
-    Supplier supplier2 = new Supplier("AnotherPharmacy", 60, 60);
+    Supplier supplier = new Supplier();
+    supplier.setName("Pharmacy");
+    Supplier supplier2 = new Supplier();
+    supplier2.setName("AnotherPharmacy");
     Arrays.asList(supplier, supplier2)
         .forEach(
             sup -> {
@@ -56,7 +58,8 @@ class SupplierRepositoryTest {
 
   @Test
   void whenFindSupplierByExistingName_thenReturnSupplier() {
-    Supplier supplier = new Supplier("Pharmacy", 50, 50);
+    Supplier supplier = new Supplier();
+    supplier.setName("Pharmacy");
     entityManager.persistAndFlush(supplier);
     Supplier suppliedb = supplierRepository.findByName(supplier.getName()).orElse(null);
     assertThat(suppliedb).isNotNull();
