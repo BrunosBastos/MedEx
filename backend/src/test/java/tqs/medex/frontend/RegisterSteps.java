@@ -39,14 +39,25 @@ public class RegisterSteps {
     registerPage.insertName(name);
   }
 
+  @When("I insert an email like {string}")
+  public void insertUsedEmail(String email) {
+    registerPage.insertEmail(email);
+  }
+
   @When("I insert an email in use like {string}")
-  public void insertUsedEmail(String usedEmail) {
+  public void insertEmail(String usedEmail) {
     registerPage.insertEmail(usedEmail);
   }
 
   @And("I press the register button")
   public void pressRegisterButton() {
     registerPage.pressRegister();
+  }
+
+  @Then("A successfully registered message should appear")
+  public void RegisterSuccessResponse() {
+    errorMessage.checkSuccessMessage("Successfully registered");
+    driver.quit();
   }
 
   @Then("A failed registered message should appear")

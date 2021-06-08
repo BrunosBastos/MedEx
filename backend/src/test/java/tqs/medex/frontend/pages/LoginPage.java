@@ -2,6 +2,11 @@ package tqs.medex.frontend.pages;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class LoginPage {
   private final WebDriver driver;
@@ -19,6 +24,12 @@ public class LoginPage {
     driver.findElement(By.name("email")).sendKeys(email);
     driver.findElement(By.name("password")).sendKeys(password);
     driver.findElement(By.cssSelector(".MuiButton-label")).click();
+    final WebDriverWait wait = new WebDriverWait(driver, 10);
+    wait.until(
+        ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".Toastify__toast-body")));
+    assertThat(
+        driver.findElement(By.cssSelector(".Toastify__toast-body")).getText(),
+        is("Successfully logged in"));
   }
 
   public void insertEmail(String email) {

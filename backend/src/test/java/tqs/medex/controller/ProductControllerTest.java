@@ -37,8 +37,8 @@ class ProductControllerTest {
   @Test
   @WithMockUser(value = "test")
   void whenGetProducts_thenReturnProducts() {
-    Product product = new Product("ProductTest", "A description", 1, 4.99, IMAGE_URL);
-    Product product2 = new Product("ProductTest2", "A description2", 4, 0.99, IMAGE_URL);
+    Product product = new Product(1L, "ProductTest", "A description", 1, 4.99, IMAGE_URL);
+    Product product2 = new Product(2L, "ProductTest2", "A description2", 4, 0.99, IMAGE_URL);
     when(productService.listProducts()).thenReturn(Arrays.asList(product, product2));
     RestAssuredMockMvc.given()
         .when()
@@ -137,7 +137,7 @@ class ProductControllerTest {
     ProductPOJO productPOJO =
         new ProductPOJO("ProductUpdated", "descriptionUpdated", 5, 2.99, IMAGE_URL, 1L);
     Product product_update =
-        new Product("ProductUpdated", "descriptionUpdated", 5, 2.99, IMAGE_URL);
+        new Product(3L, "ProductUpdated", "descriptionUpdated", 5, 2.99, IMAGE_URL);
     product_update.setId(2L);
     when(productService.updateProduct(Mockito.anyLong(), Mockito.any(ProductPOJO.class)))
         .thenReturn(product_update);
@@ -174,7 +174,7 @@ class ProductControllerTest {
 
   public Product setUpObject() {
     Supplier supplier = new Supplier();
-    Product product = new Product("ProductTest", "A description", 1, 4.99, IMAGE_URL);
+    Product product = new Product(1L, "ProductTest", "A description", 1, 4.99, IMAGE_URL);
     product.setId(1L);
     product.setSupplier(supplier);
     return product;

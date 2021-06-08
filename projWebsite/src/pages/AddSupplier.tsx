@@ -13,6 +13,7 @@ import {
   TextField,
 } from '@material-ui/core';
 import SupplierService from "../services/supplierService";
+import { useNavigate } from 'react-router-dom';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -47,33 +48,36 @@ const notifyError = (msg) => {
 }
 
 
-const handleSubmit = () => {
-  //@ts-ignore
-  let name: string = document.getElementById('supplier_name').value;
-  //@ts-ignore
-  let lat: number = document.getElementById('supplier_lat').value;
-  //@ts-ignore
-  let lon: number = document.getElementById('supplier_lon').value;
-
-  SupplierService.addNewSupplier(name, lat, lon)
-    .then( (res) => {
-      return res.json();
-    })
-    .then( (res) => {
-      if(res.error){
-        notifyError("Error Adding Supplier")
-      } else{
-        notifySuccess("Success Adding a New Supplier!")
-      }
-    })
-    .catch( (error) => {
-      notifyError("Something went wrong")
-    })
-}
 
 
 
 const AddSupplier = () => {
+  const navigate = useNavigate();
+  
+  const handleSubmit = () => {
+    //@ts-ignore
+    let name: string = document.getElementById('supplier_name').value;
+    //@ts-ignore
+    let lat: number = document.getElementById('supplier_lat').value;
+    //@ts-ignore
+    let lon: number = document.getElementById('supplier_lon').value;
+  
+    SupplierService.addNewSupplier(name, lat, lon)
+      .then( (res) => {
+        return res.json();
+      })
+      .then( (res) => {
+        if(res.error){
+          notifyError("Failed adding a new supplier")
+        } else{
+          navigate('/app/dashboard', { replace: true });
+          notifySuccess("Successfully added a new supplier")
+        }
+      })
+      .catch( (error) => {
+        notifyError("Failed adding a new supplier")
+      })
+  }
 
   return (
     <>
@@ -94,7 +98,7 @@ const AddSupplier = () => {
           >
             <Grid
               item
-              lg={12}
+              lg={8}
               md={12}
               xs={12}
             >
@@ -116,7 +120,7 @@ const AddSupplier = () => {
                       <Grid
                         pt={2}
                         container
-                        md={8}
+                        md={12}
                         xs={12}
                         >
                         <Grid

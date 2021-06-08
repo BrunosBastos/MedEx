@@ -36,12 +36,10 @@ class ProductServiceTest {
 
   @BeforeEach
   void setUp() {
-    Supplier supplier = new Supplier();
-    supplier.setId(1L);
-    Product product = new Product("ProductTest", "A description", 1, 4.99, IMAGE_URL);
-    product.setId(1L);
+    Supplier supplier = new Supplier(1L, "Pharmacy", 50, 50);
+    Product product = new Product(1L, "ProductTest", "A description", 1, 4.99, IMAGE_URL);
     product.setSupplier(supplier);
-    Product product2 = new Product("SecondProduct", "A description", 5, 2.99, IMAGE_URL);
+    Product product2 = new Product(2L, "SecondProduct", "A description", 5, 2.99, IMAGE_URL);
     List<Product> productList = Arrays.asList(product, product2);
     when(productRepository.findById(product.getId())).thenReturn(Optional.of(product));
     when(productRepository.findById(product2.getId())).thenReturn(Optional.of(product2));
@@ -51,8 +49,8 @@ class ProductServiceTest {
 
   @Test
   void given2Products_whenGetProducts_thenReturn2Records() {
-    Product product = new Product("ProductTest", "A description", 1, 4.99, IMAGE_URL);
-    Product product2 = new Product("SecondProduct", "A description", 5, 2.99, IMAGE_URL);
+    Product product = new Product(1L, "ProductTest", "A description", 1, 4.99, IMAGE_URL);
+    Product product2 = new Product(2L, "SecondProduct", "A description", 5, 2.99, IMAGE_URL);
     List<Product> productList = productService.listProducts();
     assertThat(productList)
         .hasSize(2)
@@ -78,11 +76,9 @@ class ProductServiceTest {
 
   @Test
   void whenAddProduct_thenReturnProduct() {
-    Supplier supplier = new Supplier();
-    supplier.setId(1L);
+    Supplier supplier = new Supplier(1L, "Pharmacy", 50, 50);
     when(supplierRepository.findById(supplier.getId())).thenReturn(Optional.of(supplier));
-    Product product = new Product("ProductTest", "A description", 1, 4.99, IMAGE_URL);
-    product.setId(1L);
+    Product product = new Product(1L, "ProductTest", "A description", 1, 4.99, IMAGE_URL);
     product.setSupplier(supplier);
     ProductPOJO productPOJO = setUpObjectPOJO();
     Product saved_product = productService.addNewProduct(productPOJO);
@@ -101,8 +97,7 @@ class ProductServiceTest {
   @Test
   void whenUpdateProduct_thenReturnProduct() {
     Product productupdated =
-        new Product("ProductUpdated", "descriptionUpdatedd", 5, 2.99, IMAGE_URL);
-    productupdated.setId(1L);
+        new Product(1L, "ProductUpdated", "descriptionUpdatedd", 5, 2.99, IMAGE_URL);
     when(productRepository.save(Mockito.any(Product.class))).thenReturn(productupdated);
     ProductPOJO updatePOJO =
         new ProductPOJO("ProductUpdated", "descriptionUpdatedd", 5, 2.99, IMAGE_URL, 1L);

@@ -64,6 +64,5 @@ public class ListProductsPage {
                     ".MuiGrid-root:nth-child(1) > .MuiPaper-root .MuiGrid-root > .MuiTypography-root"))
             .getText(),
         is(price + " €"));
-    driver.close();
   }
 }
