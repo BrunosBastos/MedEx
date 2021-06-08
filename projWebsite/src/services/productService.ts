@@ -57,7 +57,7 @@ class ProductService {
                 headers: {
                     'accept': 'application/json',
                     'Content-Type': 'application/json',
-                    'Authorization' : "Bearer "+ TEST_TOKEN
+                    'Authorization' : "Bearer "+ useAuthStore.getState().token
                 },
                 body: JSON.stringify({
                     name: name, 
