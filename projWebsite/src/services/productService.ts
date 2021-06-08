@@ -1,4 +1,6 @@
-import {MEDEX_API_BASE_URL, TEST_TOKEN} from '../config/index';
+import { MEDEX_API_BASE_URL } from '../config/index';
+import useAuthStore from 'src/stores/useAuthStore';
+
 
 class ProductService {
     addnewProduct(name:string, description: string,address:string, price: number, stock: number, photo: string, supplier: number ){
@@ -9,7 +11,7 @@ class ProductService {
             headers: {
                 'accept': 'application/json',
                 'Content-Type': 'application/json',
-                'Authorization' : "Bearer "+ TEST_TOKEN
+                'Authorization' : "Bearer "+ useAuthStore.getState().token
             },
             body: JSON.stringify({
                 name: name, 

@@ -20,6 +20,7 @@ import {
 import ProductService from "../services/productService";
 import SupplierService from "../services/supplierService";
 import { number } from 'prop-types';
+import { useNavigate } from 'react-router-dom';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -54,42 +55,45 @@ const notifyError = (msg) => {
 }
 
 
-const handleSubmit = (supplier) => {
-  //@ts-ignore
-  let name: string = document.getElementById('prodname').value;
-  //@ts-ignore
-  let description: string = document.getElementById('proddescription').value;
-  //@ts-ignore
-  let address: string = document.getElementById('prodaddress').value;
-  //@ts-ignore
-  let stock: number = document.getElementById('prodstock').value;
-  //@ts-ignore
-  let price: number = document.getElementById('prodprice').value;
-  //@ts-ignore
-  let photo: string = document.getElementById('prodphoto').value;
-  ProductService.addnewProduct(name,description,address,price,stock,photo,supplier)
-    .then( (res) => {
-      return res.json();
-    })
-    .then( (res) => {
-      
-      if(res.error){
-        notifyError("Error Creating Product")
-      }
-      else{
-        notifySuccess("Success Adding new Product!")
-      }
-    })
-    .catch( (error) => {
-      notifyError("Something went wrong")
-    })
-}
 
 
 
 const AddProduct = () => {
   const [supplierslist, setSuppliersList] = useState([]); 
   const [suplier, setSupplier] = useState(1);
+  const navigate = useNavigate();
+  
+  const handleSubmit = (supplier) => {
+    //@ts-ignore
+    let name: string = document.getElementById('prodname').value;
+    //@ts-ignore
+    let description: string = document.getElementById('proddescription').value;
+    //@ts-ignore
+    let address: string = document.getElementById('prodaddress').value;
+    //@ts-ignore
+    let stock: number = document.getElementById('prodstock').value;
+    //@ts-ignore
+    let price: number = document.getElementById('prodprice').value;
+    //@ts-ignore
+    let photo: string = document.getElementById('prodphoto').value;
+    ProductService.addnewProduct(name,description,address,price,stock,photo,supplier)
+      .then( (res) => {
+        return res.json();
+      })
+      .then( (res) => {
+        
+        if(res.error){
+          notifyError("Error Creating Product")
+        }
+        else{
+          navigate('/app/dashboard', { replace: true });
+          notifySuccess("Success Adding new Product!")
+        }
+      })
+      .catch( (error) => {
+        notifyError("Something went wrong")
+      })
+  }
 
   const handleChange = (event) => {
     setSupplier(event.target.value);
