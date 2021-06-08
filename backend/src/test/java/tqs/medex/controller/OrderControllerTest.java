@@ -1,8 +1,8 @@
 package tqs.medex.controller;
 
-import com.shapesecurity.salvation2.Values.Hash;
 import io.restassured.http.ContentType;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,21 +11,19 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
-import tqs.medex.entity.Order;
-import tqs.medex.entity.OrderProduct;
-import tqs.medex.entity.Product;
+import tqs.medex.entity.*;
 import tqs.medex.pojo.CreateOrderPOJO;
+import tqs.medex.repository.UserRepository;
+import tqs.medex.security.CustomUserDetailsService;
 import tqs.medex.service.OrderService;
-import tqs.medex.service.ProductService;
-
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Map;
-
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -36,20 +34,22 @@ class OrderControllerTest {
     @MockBean
     private OrderService orderService;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @BeforeEach
     void setUp() {
         RestAssuredMockMvc.mockMvc(mvc);
     }
 
     @Test
-    @WithMockUser(value = "test")
+    @WithUserDetails(value = "test")
     void whenAddNewOrder_thenReturnOrder() {
-
         var newOrder = setUpAddOrderValid();
 
         var order = setUpValidOrder();
 
-        when(orderService.addNewOrder(any(CreateOrderPOJO.class))).thenReturn(order);
+        when(orderService.addNewOrder(any(CreateOrderPOJO.class), anyLong())).thenReturn(order);
         RestAssuredMockMvc.given().body(newOrder).contentType(ContentType.JSON)
                 .when()
                 .post("api/v1/orders")
@@ -61,16 +61,15 @@ class OrderControllerTest {
                 .and().body("products[0].productAmount", is(10))
                 .and().body("products[1].productAmount", is(20));
 
-        verify(orderService, times(1)).addNewOrder(any());
+        verify(orderService, times(1)).addNewOrder(any(), 1);
     }
 
     @Test
-    @WithMockUser(value = "test")
     void whenAddOrderWithInvalidProducts_thenReturnBadRequest() {
 
         var newOrder = setUpAddOrderInvalid();
 
-        when(orderService.addNewOrder(any(CreateOrderPOJO.class))).thenReturn(null);
+        when(orderService.addNewOrder(any(CreateOrderPOJO.class), anyLong())).thenReturn(null);
         RestAssuredMockMvc.given().body(newOrder).contentType(ContentType.JSON)
                 .when()
                 .post("api/v1/orders")
@@ -78,27 +77,17 @@ class OrderControllerTest {
                 .assertThat()
                 .statusCode(400).statusLine("400 Product Not Found");
 
-        verify(orderService, times(1)).addNewOrder(any());
+        verify(orderService, times(1)).addNewOrder(any(), 1);
 
 
     }
 
     CreateOrderPOJO setUpAddOrderValid() {
-        CreateOrderPOJO newOrder = new CreateOrderPOJO();
-        newOrder.setLat(10);
-        newOrder.setLon(20);
-        newOrder.setProducts(Map.of(1, 10, 2, 4));
-
-        return newOrder;
+        return new CreateOrderPOJO(10, 20, Map.of(1L, 10, 2L, 4));
     }
 
     CreateOrderPOJO setUpAddOrderInvalid() {
-        CreateOrderPOJO newOrder = new CreateOrderPOJO();
-        newOrder.setLat(10);
-        newOrder.setLon(20);
-        newOrder.setProducts(Map.of(1000, 0, 1, 4));
-
-        return newOrder;
+        return new CreateOrderPOJO(10, 20, Map.of(1000L, 0, 1L, 4));
     }
 
     Order setUpValidOrder() {
@@ -107,17 +96,12 @@ class OrderControllerTest {
         Product p2 = new Product();
         p2.setId(2L);
 
-        OrderProduct op1 = new OrderProduct();
-        op1.setProduct(p1);
-        op1.setProductAmount(10);
+        Order order = new Order(10, 20);
 
-        OrderProduct op2 = new OrderProduct();
-        op2.setProduct(p2);
-        op2.setProductAmount(20);
+        OrderProduct op1 = new OrderProduct(order, p1, 10);
 
-        Order order = new Order();
-        order.setLat(10);
-        order.setLon(20);
+        OrderProduct op2 = new OrderProduct(order, p2, 20);
+
         order.setProducts(Arrays.asList(op1, op2));
 
         return order;

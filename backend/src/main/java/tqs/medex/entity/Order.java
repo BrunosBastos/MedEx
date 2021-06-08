@@ -4,6 +4,7 @@ import lombok.Data;
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -16,6 +17,7 @@ public class Order {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "client_id", referencedColumnName = "id")
     private Client client;
 
     @Column
@@ -32,5 +34,12 @@ public class Order {
 
     @OneToMany(mappedBy = "order")
     private List<OrderProduct> products = new ArrayList<>();
+
+    public Order(double lat, double lon) {
+        this.lat = lat;
+        this.lon = lon;
+        this.delivered = false;
+        this.orderDate = new Timestamp(System.currentTimeMillis());
+    }
 
 }
