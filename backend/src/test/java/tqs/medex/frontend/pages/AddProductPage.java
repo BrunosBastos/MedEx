@@ -8,7 +8,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class AddProductPage {
 
-  private WebDriver driver;
+  private final WebDriver driver;
 
   public AddProductPage(WebDriver driver) {
     this.driver = driver;
