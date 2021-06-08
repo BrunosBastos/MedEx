@@ -13,22 +13,23 @@ import tqs.medex.repository.UserRepository;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-  @Autowired private UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-  @SneakyThrows
-  @Override
-  public UserDetails loadUserByUsername(String email) {
+    @SneakyThrows
+    @Override
+    public UserDetails loadUserByUsername(String email) {
 
-    User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+        User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
 
-    return new CustomUserDetails(user);
-  }
+        return new CustomUserDetails(user);
+    }
 
-  @SneakyThrows
-  public UserDetails loadUserById(long id) {
+    @SneakyThrows
+    public UserDetails loadUserById(long id) {
 
-    User user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+        User user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
 
-    return new CustomUserDetails(user);
-  }
+        return new CustomUserDetails(user);
+    }
 }

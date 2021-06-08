@@ -11,20 +11,20 @@ import javax.validation.constraints.Min;
 @AllArgsConstructor
 public class ProductPOJO {
 
-  private String name;
+    private String name;
 
-  private String description;
+    private String description;
 
-  @Min(value = 0, message = "Stock Cannot be less than zero")
-  private int stock;
+    @Min(value = 0, message = "Stock Cannot be less than zero")
+    private int stock;
 
-  @Min(value = 0, message = "price cannot be less than zero")
-  private double price;
+    @Min(value = 0, message = "price cannot be less than zero")
+    private double price;
 
-  private String imageUrl;
-  private long supplier;
+    private String imageUrl;
+    private long supplier;
 
-  public Integer getStock() {
-    return this.stock;
-  }
+    public Integer getStock() {
+        return this.stock;
+    }
 }

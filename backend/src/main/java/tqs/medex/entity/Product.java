@@ -10,35 +10,37 @@ import java.util.Set;
 @Data
 @Table
 public class Product {
-  @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  private String name;
+    private String name;
 
-  private String description;
+    private String description;
 
-  private int stock;
+    private int stock;
 
-  private double price;
+    private double price;
 
-  private String imageUrl;
+    private String imageUrl;
 
-  @ManyToOne(cascade = CascadeType.MERGE)
-  @JoinColumn(name = "supplier_id", referencedColumnName = "id")
-  private Supplier supplier;
-
-  @OneToMany(mappedBy = "product")
-  private Set<OrderProduct> orders = new HashSet<>();
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "supplier_id", referencedColumnName = "id")
+    private Supplier supplier;
 
 
-  public Product(String name, String description, int stock, double price, String imageUrl) {
-    this.name = name;
-    this.stock = stock;
-    this.price = price;
-    this.description = description;
-    this.imageUrl = imageUrl;
-  }
+    @OneToMany(mappedBy = "product")
+    private Set<PurchaseProduct> purchases = new HashSet<>();
 
-  public Product() {}
+    public Product(long id, String name, String description, int stock, double price, String imageUrl) {
+        this.id = id;
+        this.name = name;
+        this.stock = stock;
+        this.price = price;
+        this.description = description;
+        this.imageUrl = imageUrl;
+    }
+
+    public Product() {
+    }
 }

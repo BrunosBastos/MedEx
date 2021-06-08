@@ -2,20 +2,24 @@ package tqs.medex.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import javax.persistence.*;
 
 @Entity
 @Table
-@Getter @Setter
+@Getter
+@Setter
 @AllArgsConstructor
-@IdClass(OrderProductPK.class)
-public class OrderProduct {
+@NoArgsConstructor
+@IdClass(PurchaseProductPK.class)
+public class PurchaseProduct {
 
     @Id
     @ManyToOne
-    @JoinColumn(name = "order", referencedColumnName = "id")
-    private Order order;
+    @JoinColumn(name = "purchase", referencedColumnName = "id")
+    private Purchase purchase;
 
     @Id
     @ManyToOne

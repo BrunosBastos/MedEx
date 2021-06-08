@@ -8,23 +8,24 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @Embeddable
-@Getter @Setter
-public class OrderProductPK implements Serializable {
+@Getter
+@Setter
+public class PurchaseProductPK implements Serializable {
 
     private long product;
-    private long order;
+    private long purchase;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        OrderProductPK that = (OrderProductPK) o;
+        PurchaseProductPK that = (PurchaseProductPK) o;
         return product == that.product &&
-                order == that.order;
+                purchase == that.purchase;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(product, order);
+        return Objects.hash(product, purchase);
     }
 }

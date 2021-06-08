@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import tqs.medex.entity.User;
 import tqs.medex.exception.EmailAlreadyInUseException;
 import tqs.medex.pojo.JwtAuthenticationResponse;
 import tqs.medex.pojo.LoginRequest;
@@ -18,22 +17,23 @@ import tqs.medex.service.AuthService;
 @RequestMapping("/api/v1")
 public class AuthController {
 
-  @Autowired private AuthService service;
+    @Autowired
+    private AuthService service;
 
-  @PostMapping("/register")
-  public ResponseEntity<User> register(@RequestBody RegisterRequest request) {
+    @PostMapping("/register")
+    public ResponseEntity<JwtAuthenticationResponse> register(@RequestBody RegisterRequest request) {
 
-    try {
-      User user = service.registerUser(request);
-      return ResponseEntity.status(HttpStatus.OK).body(user);
-    } catch (EmailAlreadyInUseException e) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        try {
+            JwtAuthenticationResponse jwt = service.registerUser(request);
+            return ResponseEntity.status(HttpStatus.OK).body(jwt);
+        } catch (EmailAlreadyInUseException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
     }
-  }
 
-  @PostMapping("/login")
-  public ResponseEntity<JwtAuthenticationResponse> login(@RequestBody LoginRequest request) {
-    JwtAuthenticationResponse jwt = service.authenticateUser(request);
-    return ResponseEntity.status(HttpStatus.OK).body(jwt);
-  }
+    @PostMapping("/login")
+    public ResponseEntity<JwtAuthenticationResponse> login(@RequestBody LoginRequest request) {
+        JwtAuthenticationResponse jwt = service.authenticateUser(request);
+        return ResponseEntity.status(HttpStatus.OK).body(jwt);
+    }
 }

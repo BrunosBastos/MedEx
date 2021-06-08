@@ -13,54 +13,59 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 class SupplierRepositoryTest {
-  @Autowired private TestEntityManager entityManager;
-  @Autowired private SupplierRepository supplierRepository;
+    @Autowired
+    private TestEntityManager entityManager;
+    @Autowired
+    private SupplierRepository supplierRepository;
 
-  @Test
-  void givenSetOfSuppliers_whenFindAll_thenReturnSet() {
-    Supplier supplier = new Supplier("Pharmacy", 50, 50);
-    Supplier supplier2 = new Supplier("AnotherPharmacy", 60, 60);
-    Arrays.asList(supplier, supplier2)
-        .forEach(
-            sup -> {
-              entityManager.persistAndFlush(sup);
-            });
-    List<Supplier> supplierList = supplierRepository.findAll();
-    assertThat(supplierList)
-        .hasSize(2)
-        .extracting(Supplier::getName)
-        .contains(supplier.getName(), supplier2.getName());
-  }
+    @Test
+    void givenSetOfSuppliers_whenFindAll_thenReturnSet() {
+        Supplier supplier = new Supplier();
+        supplier.setName("Pharmacy");
+        Supplier supplier2 = new Supplier();
+        supplier2.setName("AnotherPharmacy");
+        Arrays.asList(supplier, supplier2)
+                .forEach(
+                        sup -> {
+                            entityManager.persistAndFlush(sup);
+                        });
+        List<Supplier> supplierList = supplierRepository.findAll();
+        assertThat(supplierList)
+                .hasSize(2)
+                .extracting(Supplier::getName)
+                .contains(supplier.getName(), supplier2.getName());
+    }
 
-  @Test
-  void whenFindSupplierByExistingId_thenReturnSupplier() {
-    Supplier supplier = new Supplier();
-    entityManager.persistAndFlush(supplier);
-    Supplier suppliedb = supplierRepository.findById(supplier.getId()).orElse(null);
-    assertThat(suppliedb).isNotNull();
-    assertThat(suppliedb.getId()).isEqualTo(supplier.getId());
-    assertThat(suppliedb.getName()).isEqualTo(supplier.getName());
-  }
+    @Test
+    void whenFindSupplierByExistingId_thenReturnSupplier() {
+        Supplier supplier = new Supplier();
+        entityManager.persistAndFlush(supplier);
+        Supplier suppliedb = supplierRepository.findById(supplier.getId()).orElse(null);
+        assertThat(suppliedb).isNotNull();
+        assertThat(suppliedb.getId()).isEqualTo(supplier.getId());
+        assertThat(suppliedb.getName()).isEqualTo(supplier.getName());
+    }
 
-  @Test
-  void whenInvalidId_thenReturnNull() {
-    Supplier suppliedb = supplierRepository.findById(-99L).orElse(null);
-    assertThat(suppliedb).isNull();
-  }
+    @Test
+    void whenInvalidId_thenReturnNull() {
+        Supplier suppliedb = supplierRepository.findById(-99L).orElse(null);
+        assertThat(suppliedb).isNull();
+    }
 
-  @Test
-  void whenInvalidName_thenReturnNull() {
-    Supplier suppliedb = supplierRepository.findByName("----").orElse(null);
-    assertThat(suppliedb).isNull();
-  }
+    @Test
+    void whenInvalidName_thenReturnNull() {
+        Supplier suppliedb = supplierRepository.findByName("----").orElse(null);
+        assertThat(suppliedb).isNull();
+    }
 
-  @Test
-  void whenFindSupplierByExistingName_thenReturnSupplier() {
-    Supplier supplier = new Supplier("Pharmacy", 50, 50);
-    entityManager.persistAndFlush(supplier);
-    Supplier suppliedb = supplierRepository.findByName(supplier.getName()).orElse(null);
-    assertThat(suppliedb).isNotNull();
-    assertThat(suppliedb.getId()).isEqualTo(supplier.getId());
-    assertThat(suppliedb.getName()).isEqualTo(supplier.getName());
-  }
+    @Test
+    void whenFindSupplierByExistingName_thenReturnSupplier() {
+        Supplier supplier = new Supplier();
+        supplier.setName("Pharmacy");
+        entityManager.persistAndFlush(supplier);
+        Supplier suppliedb = supplierRepository.findByName(supplier.getName()).orElse(null);
+        assertThat(suppliedb).isNotNull();
+        assertThat(suppliedb.getId()).isEqualTo(supplier.getId());
+        assertThat(suppliedb.getName()).isEqualTo(supplier.getName());
+    }
 }

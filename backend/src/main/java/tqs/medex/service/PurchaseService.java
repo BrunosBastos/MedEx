@@ -2,20 +2,20 @@ package tqs.medex.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tqs.medex.entity.Order;
-import tqs.medex.entity.OrderProduct;
-import tqs.medex.pojo.CreateOrderPOJO;
+import tqs.medex.entity.Purchase;
+import tqs.medex.entity.PurchaseProduct;
+import tqs.medex.pojo.CreatePurchasePOJO;
 import tqs.medex.repository.OrderProductRepository;
-import tqs.medex.repository.OrderRepository;
+import tqs.medex.repository.PurchaseRepository;
 import tqs.medex.repository.ProductRepository;
 
 import java.util.ArrayList;
 
 @Service
-public class OrderService {
+public class PurchaseService {
 
     @Autowired
-    OrderRepository orderRepository;
+    PurchaseRepository orderRepository;
 
     @Autowired
     OrderProductRepository orderProductRepository;
@@ -24,10 +24,10 @@ public class OrderService {
     ProductRepository productRepository;
 
 
-    public Order addNewOrder(CreateOrderPOJO newOrder, long userId) {
+    public Purchase addNewOrder(CreatePurchasePOJO newOrder, long userId) {
 
-        var order = new Order(newOrder.getLat(), newOrder.getLon());
-        var orderProducts = new ArrayList<OrderProduct>();
+        var order = new Purchase(newOrder.getLat(), newOrder.getLon());
+        var orderProducts = new ArrayList<PurchaseProduct>();
         // iterates the provided products and checks if they exist and the stock is correct
         for (Long pId : newOrder.getProducts().keySet()) {
 
@@ -40,11 +40,11 @@ public class OrderService {
             if (product.get().getStock() < newOrder.getProducts().get(pId)) {
                 return null;
             }
-            var orderProduct = new OrderProduct(order, product.get(), newOrder.getProducts().get(product.get().getId()));
+            var orderProduct = new PurchaseProduct(order, product.get(), newOrder.getProducts().get(product.get().getId()));
             orderProducts.add(orderProduct);
         }
         orderRepository.save(order);
-        for(OrderProduct op : orderProducts){
+        for (PurchaseProduct op : orderProducts) {
             orderProductRepository.save(op);
         }
         order.setProducts(orderProducts);

@@ -14,15 +14,15 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 public class SupplierPOJO {
 
-  @NotBlank
-  @Size(min = 4, max = 50)
-  private String name;
+    @NotBlank
+    @Size(min = 4, max = 50)
+    private String name;
 
-  @DecimalMin(value = "-90.00", message = "Latitude Cannot be less than -90.00")
-  @DecimalMax(value = "90.00", message = "Latitude Cannot be less than 90.00")
-  private double lat;
+    @DecimalMin(value = "-90.00", message = "Latitude Cannot be less than -90.00")
+    @DecimalMax(value = "90.00", message = "Latitude Cannot be less than 90.00")
+    private double lat;
 
-  @DecimalMin(value = "-180.00", message = "Longitude Cannot be less than -180.00")
-  @DecimalMax(value = "180.00", message = "Longitude Cannot be less than 180.00")
-  private double lon;
+    @DecimalMin(value = "-180.00", message = "Longitude Cannot be less than -180.00")
+    @DecimalMax(value = "180.00", message = "Longitude Cannot be less than 180.00")
+    private double lon;
 }

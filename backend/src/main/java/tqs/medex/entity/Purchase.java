@@ -1,24 +1,26 @@
 package tqs.medex.entity;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Entity
 @Data
 @Table
-public class Order {
+@NoArgsConstructor
+public class Purchase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "client_id", referencedColumnName = "id")
-    private Client client;
+    @JoinColumn(name = "user_id", referencedColumnName = "userId")
+    private User user;
 
     @Column
     private Timestamp orderDate;
@@ -32,10 +34,10 @@ public class Order {
     @Column
     private double lon;
 
-    @OneToMany(mappedBy = "order")
-    private List<OrderProduct> products = new ArrayList<>();
+    @OneToMany(mappedBy = "purchase")
+    private List<PurchaseProduct> products = new ArrayList<>();
 
-    public Order(double lat, double lon) {
+    public Purchase(double lat, double lon) {
         this.lat = lat;
         this.lon = lon;
         this.delivered = false;

@@ -6,8 +6,10 @@ import lombok.Setter;
 
 import java.util.Map;
 
-@Getter @Setter @AllArgsConstructor
-public class CreateOrderPOJO {
+@Getter
+@Setter
+@AllArgsConstructor
+public class CreatePurchasePOJO {
 
     private double lat;
 
