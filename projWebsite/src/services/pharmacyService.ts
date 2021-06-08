@@ -1,4 +1,5 @@
-import {MEDEX_API_BASE_URL, TEST_TOKEN} from '../config/index';
+import { MEDEX_API_BASE_URL } from '../config/index';
+import useAuthStore from 'src/stores/useAuthStore';
 
 class PharmacyService {
 
