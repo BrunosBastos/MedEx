@@ -42,7 +42,7 @@ public class AuthService {
     String jwt = tokenProvider.generateToken(authentication);
     User user = ((CustomUserDetails) authentication.getPrincipal()).getUser();
 
-    return new JwtAuthenticationResponse(jwt, user.getUser());
+    return new JwtAuthenticationResponse(jwt, user);
   }
 
   public JwtAuthenticationResponse registerUser(RegisterRequest request)
