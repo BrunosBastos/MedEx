@@ -1,8 +1,11 @@
 package tqs.medex.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Data
@@ -26,7 +29,12 @@ public class Product {
   @JoinColumn(name = "supplier_id", referencedColumnName = "id")
   private Supplier supplier;
 
-  public Product(long id, String name, String description, int stock, double price, String imageUrl) {
+  @OneToMany(mappedBy = "product")
+  @JsonIgnore
+  private Set<PurchaseProduct> purchases = new HashSet<>();
+
+  public Product(
+      long id, String name, String description, int stock, double price, String imageUrl) {
     this.id = id;
     this.name = name;
     this.stock = stock;

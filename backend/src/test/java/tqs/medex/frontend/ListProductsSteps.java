@@ -13,12 +13,14 @@ public class ListProductsSteps {
   private final ListProductsPage listProductsPage;
   private final WebDriver driver;
   private final LoginPage loginPage;
+
   public ListProductsSteps() {
     WebDriverManager.firefoxdriver().setup();
     driver = new FirefoxDriver();
     loginPage = new LoginPage(driver);
     listProductsPage = new ListProductsPage(driver);
   }
+
   @Given("I am logged in as the pharmacy owner And I am on the list products page")
   public void logInAndSwitchPage() {
     loginPage.loggInAs("clara@gmail.com", "string");
@@ -36,6 +38,4 @@ public class ListProductsSteps {
     listProductsPage.checkInformationinProduct(name, price);
     driver.quit();
   }
-
-
 }

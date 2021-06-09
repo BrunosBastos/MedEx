@@ -31,8 +31,7 @@ class LoadDatabase {
       users.save(clientUser);
       Supplier supplier = new Supplier(1L, "Pharmacy", 50, 50);
       Supplier supplier2 = new Supplier(2L, "Pharmacy2", 60, 60);
-      Arrays.asList(supplier, supplier2)
-          .forEach(suppliers::save);
+      Arrays.asList(supplier, supplier2).forEach(suppliers::save);
       Product product = new Product(1L, "ProductTest", "A description", 1, 4.99, null);
       Product product2 = new Product(2L, "ProductTest2", "A description2", 4, 0.99, null);
       List<Product> productList = Arrays.asList(product, product2);
