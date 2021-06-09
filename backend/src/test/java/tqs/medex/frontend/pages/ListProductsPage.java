@@ -66,8 +66,15 @@ public class ListProductsPage {
         is(price + " €"));
   }
 
-    public void addProducts() {
-      driver.findElement(By.cssSelector(".MuiGrid-root:nth-child(1) > .MuiPaper-root .MuiButton-root .MuiTypography-root")).click();
-      driver.findElement(By.cssSelector(".MuiGrid-root:nth-child(2) > .MuiPaper-root .MuiButton-root path")).click();
-    }
+  public void addProducts() {
+    driver
+        .findElement(
+            By.cssSelector(
+                ".MuiGrid-root:nth-child(1) > .MuiPaper-root .MuiButton-root .MuiTypography-root"))
+        .click();
+    driver
+        .findElement(
+            By.cssSelector(".MuiGrid-root:nth-child(2) > .MuiPaper-root .MuiButton-root path"))
+        .click();
+  }
 }
