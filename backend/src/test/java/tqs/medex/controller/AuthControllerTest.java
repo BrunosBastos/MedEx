@@ -1,6 +1,7 @@
 package tqs.medex.controller;
 
 import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import io.restassured.parsing.Parser;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,8 +19,7 @@ import tqs.medex.pojo.LoginRequest;
 import tqs.medex.pojo.RegisterRequest;
 import tqs.medex.service.AuthService;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.Matchers.hasKey;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -64,6 +64,7 @@ class AuthControllerTest {
         .then()
         .assertThat()
         .statusCode(200)
+        .contentType(ContentType.JSON)
         .and()
         .body("accessToken", is(jwt.getAccessToken()))
         .and()
@@ -75,13 +76,13 @@ class AuthControllerTest {
         .and()
         .body("user.name", is(jwt.getUser().getName()))
         .and()
-        .body("$", not(hasKey("password")));
+        .body("$", not(hasKey("user.password")));
 
     verify(authService, times(1)).registerUser(any());
   }
 
   @Test
-  void whenRegisterWithInValidData_thenReturnEmailAlreadyInUseException()
+  void whenRegisterWithInvalidData_thenReturnEmailAlreadyInUseException()
       throws EmailAlreadyInUseException {
 
     when(authService.registerUser(any(RegisterRequest.class)))
@@ -94,7 +95,8 @@ class AuthControllerTest {
         .post("api/v1/register")
         .then()
         .assertThat()
-        .statusCode(400);
+        .statusCode(400)
+        .contentType(nullValue());
 
     verify(authService, times(1)).registerUser(any());
   }
@@ -114,6 +116,7 @@ class AuthControllerTest {
         .then()
         .assertThat()
         .statusCode(200)
+        .contentType(ContentType.JSON)
         .and()
         .body("accessToken", is(jwt.getAccessToken()))
         .and()
@@ -125,7 +128,25 @@ class AuthControllerTest {
         .and()
         .body("user.name", is(jwt.getUser().getName()))
         .and()
-        .body("$", not(hasKey("password")));
+        .body("$", not(hasKey("user.password")));
+
+    verify(authService, times(1)).authenticateUser(any());
+  }
+
+  @Test
+  void whenLoginWithInvalidCredentials_thenReturnToken() {
+
+    when(authService.authenticateUser(any(LoginRequest.class))).thenThrow(RuntimeException.class);
+
+    RestAssured.defaultParser = Parser.JSON;
+    RestAssuredMockMvc.given()
+        .header("Content-Type", "application/json")
+        .body(loginRequest)
+        .post("api/v1/login")
+        .then()
+        .assertThat()
+        .statusCode(401)
+        .contentType(nullValue());
 
     verify(authService, times(1)).authenticateUser(any());
   }
