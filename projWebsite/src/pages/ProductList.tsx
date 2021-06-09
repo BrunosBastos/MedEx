@@ -48,20 +48,20 @@ const ProductList = () => {
           >
             {products && 
               products.map((prod) => {
-                
-              return (
-                <Grid
-                  item
-                  key={prod.id}
-                  lg={4}
-                  md={6}
-                  xs={12}
-                >
-                  <ProductCard product={prod} />
-                </Grid>
-                )
-              }
-              )
+                if (prod.stock > 0) {
+                  return (
+                    <Grid
+                      item
+                      key={prod.id}
+                      lg={4}
+                      md={6}
+                      xs={12}
+                    >
+                      <ProductCard product={prod} />
+                    </Grid>
+                  )
+                }
+              })
             }
             
           </Grid>
