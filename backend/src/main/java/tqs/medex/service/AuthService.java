@@ -21,54 +21,50 @@ import java.util.Optional;
 @Service
 public class AuthService {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+  @Autowired private AuthenticationManager authenticationManager;
 
-    @Autowired
-    private UserRepository userRepository;
+  @Autowired private UserRepository userRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+  @Autowired private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private JwtTokenProvider tokenProvider;
+  @Autowired private JwtTokenProvider tokenProvider;
 
-    public JwtAuthenticationResponse authenticateUser(LoginRequest request) {
+  public JwtAuthenticationResponse authenticateUser(LoginRequest request) {
 
-        Authentication authentication =
-                authenticationManager.authenticate(
-                        new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+    Authentication authentication =
+        authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+    SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        String jwt = tokenProvider.generateToken(authentication);
-        CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
+    String jwt = tokenProvider.generateToken(authentication);
+    CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
 
-        return new JwtAuthenticationResponse(jwt, user.getUser());
+    return new JwtAuthenticationResponse(jwt, user.getUser());
+  }
+
+  public JwtAuthenticationResponse registerUser(RegisterRequest request)
+      throws EmailAlreadyInUseException {
+
+    Optional<User> dbUser = userRepository.findByEmail(request.getEmail());
+    if (dbUser.isPresent()) {
+      throw new EmailAlreadyInUseException();
     }
 
-    public JwtAuthenticationResponse registerUser(RegisterRequest request)
-            throws EmailAlreadyInUseException {
+    User user = new User();
+    user.setName(request.getName());
+    user.setEmail(request.getEmail());
+    user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        Optional<User> dbUser = userRepository.findByEmail(request.getEmail());
-        if (dbUser.isPresent()) {
-            throw new EmailAlreadyInUseException();
-        }
+    user = userRepository.save(user);
 
-        User user = new User();
-        user.setName(request.getName());
-        user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
+    Authentication authentication =
+        authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+    SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        user = userRepository.save(user);
+    String jwt = tokenProvider.generateToken(authentication);
 
-        Authentication authentication =
-                authenticationManager.authenticate(
-                        new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        String jwt = tokenProvider.generateToken(authentication);
-
-        return new JwtAuthenticationResponse(jwt, user);
-    }
+    return new JwtAuthenticationResponse(jwt, user);
+  }
 }

@@ -30,116 +30,114 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase
 class AuthControllerTest {
-    RegisterRequest registerRequest;
-    LoginRequest loginRequest;
-    @Autowired
-    private MockMvc mvc;
-    @MockBean
-    private AuthService authService;
+  RegisterRequest registerRequest;
+  LoginRequest loginRequest;
+  @Autowired private MockMvc mvc;
+  @MockBean private AuthService authService;
 
-    @BeforeEach
-    void setUp() {
-        registerRequest = new RegisterRequest();
-        registerRequest.setPassword("password");
-        registerRequest.setEmail("test@email.com");
-        registerRequest.setName("Test");
+  @BeforeEach
+  void setUp() {
+    registerRequest = new RegisterRequest();
+    registerRequest.setPassword("password");
+    registerRequest.setEmail("test@email.com");
+    registerRequest.setName("Test");
 
-        loginRequest = new LoginRequest();
-        loginRequest.setEmail("test@email.com");
-        loginRequest.setPassword("password");
+    loginRequest = new LoginRequest();
+    loginRequest.setEmail("test@email.com");
+    loginRequest.setPassword("password");
 
-        RestAssuredMockMvc.mockMvc(mvc);
-    }
+    RestAssuredMockMvc.mockMvc(mvc);
+  }
 
-    @Test
-    void whenRegisterWithValidData_thenReturnData() throws EmailAlreadyInUseException {
+  @Test
+  void whenRegisterWithValidData_thenReturnData() throws EmailAlreadyInUseException {
 
-        JwtAuthenticationResponse jwt = setUpResponse();
+    JwtAuthenticationResponse jwt = setUpResponse();
 
-        when(authService.registerUser(any(RegisterRequest.class))).thenReturn(jwt);
+    when(authService.registerUser(any(RegisterRequest.class))).thenReturn(jwt);
 
-        RestAssured.defaultParser = Parser.JSON;
-        RestAssuredMockMvc.given()
-                .header("Content-Type", "application/json")
-                .body(registerRequest)
-                .post("api/v1/register")
-                .then()
-                .assertThat()
-                .statusCode(200)
-                .and()
-                .body("accessToken", is(jwt.getAccessToken()))
-                .and()
-                .body("tokenType", is(jwt.getTokenType()))
-                .and()
-                .body("user.superUser", is(jwt.getUser().isSuperUser()))
-                .and()
-                .body("user.email", is(jwt.getUser().getEmail()))
-                .and()
-                .body("user.name", is(jwt.getUser().getName()))
-                .and()
-                .body("$", not(hasKey("password")));
+    RestAssured.defaultParser = Parser.JSON;
+    RestAssuredMockMvc.given()
+        .header("Content-Type", "application/json")
+        .body(registerRequest)
+        .post("api/v1/register")
+        .then()
+        .assertThat()
+        .statusCode(200)
+        .and()
+        .body("accessToken", is(jwt.getAccessToken()))
+        .and()
+        .body("tokenType", is(jwt.getTokenType()))
+        .and()
+        .body("user.superUser", is(jwt.getUser().isSuperUser()))
+        .and()
+        .body("user.email", is(jwt.getUser().getEmail()))
+        .and()
+        .body("user.name", is(jwt.getUser().getName()))
+        .and()
+        .body("$", not(hasKey("password")));
 
-        verify(authService, times(1)).registerUser(any());
-    }
+    verify(authService, times(1)).registerUser(any());
+  }
 
-    @Test
-    void whenRegisterWithInValidData_thenReturnEmailAlreadyInUseException()
-            throws EmailAlreadyInUseException {
+  @Test
+  void whenRegisterWithInValidData_thenReturnEmailAlreadyInUseException()
+      throws EmailAlreadyInUseException {
 
-        when(authService.registerUser(any(RegisterRequest.class)))
-                .thenThrow(new EmailAlreadyInUseException());
+    when(authService.registerUser(any(RegisterRequest.class)))
+        .thenThrow(new EmailAlreadyInUseException());
 
-        RestAssured.defaultParser = Parser.JSON;
-        RestAssuredMockMvc.given()
-                .header("Content-Type", "application/json")
-                .body(registerRequest)
-                .post("api/v1/register")
-                .then()
-                .assertThat()
-                .statusCode(400);
+    RestAssured.defaultParser = Parser.JSON;
+    RestAssuredMockMvc.given()
+        .header("Content-Type", "application/json")
+        .body(registerRequest)
+        .post("api/v1/register")
+        .then()
+        .assertThat()
+        .statusCode(400);
 
-        verify(authService, times(1)).registerUser(any());
-    }
+    verify(authService, times(1)).registerUser(any());
+  }
 
-    @Test
-    void whenLoginWithValidCredentials_thenReturnToken() {
+  @Test
+  void whenLoginWithValidCredentials_thenReturnToken() {
 
-        JwtAuthenticationResponse jwt = setUpResponse();
+    JwtAuthenticationResponse jwt = setUpResponse();
 
-        when(authService.authenticateUser(any(LoginRequest.class))).thenReturn(jwt);
+    when(authService.authenticateUser(any(LoginRequest.class))).thenReturn(jwt);
 
-        RestAssured.defaultParser = Parser.JSON;
-        RestAssuredMockMvc.given()
-                .header("Content-Type", "application/json")
-                .body(loginRequest)
-                .post("api/v1/login")
-                .then()
-                .assertThat()
-                .statusCode(200)
-                .and()
-                .body("accessToken", is(jwt.getAccessToken()))
-                .and()
-                .body("tokenType", is(jwt.getTokenType()))
-                .and()
-                .body("user.superUser", is(jwt.getUser().isSuperUser()))
-                .and()
-                .body("user.email", is(jwt.getUser().getEmail()))
-                .and()
-                .body("user.name", is(jwt.getUser().getName()))
-                .and()
-                .body("$", not(hasKey("password")));
+    RestAssured.defaultParser = Parser.JSON;
+    RestAssuredMockMvc.given()
+        .header("Content-Type", "application/json")
+        .body(loginRequest)
+        .post("api/v1/login")
+        .then()
+        .assertThat()
+        .statusCode(200)
+        .and()
+        .body("accessToken", is(jwt.getAccessToken()))
+        .and()
+        .body("tokenType", is(jwt.getTokenType()))
+        .and()
+        .body("user.superUser", is(jwt.getUser().isSuperUser()))
+        .and()
+        .body("user.email", is(jwt.getUser().getEmail()))
+        .and()
+        .body("user.name", is(jwt.getUser().getName()))
+        .and()
+        .body("$", not(hasKey("password")));
 
-        verify(authService, times(1)).authenticateUser(any());
-    }
+    verify(authService, times(1)).authenticateUser(any());
+  }
 
-    JwtAuthenticationResponse setUpResponse() {
-        User user = new User();
-        user.setEmail("test@email.com");
-        user.setPassword("password");
-        user.setUserId(1L);
-        user.setName("Test");
-        user.setSuperUser(true);
+  JwtAuthenticationResponse setUpResponse() {
+    User user = new User();
+    user.setEmail("test@email.com");
+    user.setPassword("password");
+    user.setUserId(1L);
+    user.setName("Test");
+    user.setSuperUser(true);
 
-        return new JwtAuthenticationResponse("valid token", user);
-    }
+    return new JwtAuthenticationResponse("valid token", user);
+  }
 }

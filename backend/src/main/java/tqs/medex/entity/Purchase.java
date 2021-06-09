@@ -14,34 +14,29 @@ import java.util.List;
 @NoArgsConstructor
 public class Purchase {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "userId")
-    private User user;
+  @ManyToOne
+  @JoinColumn(name = "user_id", referencedColumnName = "userId")
+  private User user;
 
-    @Column
-    private Timestamp orderDate;
+  @Column private Timestamp orderDate;
 
-    @Column
-    private boolean delivered;
+  @Column private boolean delivered;
 
-    @Column
-    private double lat;
+  @Column private double lat;
 
-    @Column
-    private double lon;
+  @Column private double lon;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "purchase")
-    private List<PurchaseProduct> products = new ArrayList<>();
+  @OneToMany(fetch = FetchType.EAGER, mappedBy = "purchase")
+  private List<PurchaseProduct> products = new ArrayList<>();
 
-    public Purchase(double lat, double lon) {
-        this.lat = lat;
-        this.lon = lon;
-        this.delivered = false;
-        this.orderDate = new Timestamp(System.currentTimeMillis());
-    }
-
+  public Purchase(double lat, double lon) {
+    this.lat = lat;
+    this.lon = lon;
+    this.delivered = false;
+    this.orderDate = new Timestamp(System.currentTimeMillis());
+  }
 }

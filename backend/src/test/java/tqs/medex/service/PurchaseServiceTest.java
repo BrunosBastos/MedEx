@@ -25,87 +25,82 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class PurchaseServiceTest {
 
-    @Mock(lenient = true)
-    private ProductRepository productRepository;
+  @Mock(lenient = true)
+  private ProductRepository productRepository;
 
-    @Mock(lenient = true)
-    private PurchaseRepository orderRepository;
+  @Mock(lenient = true)
+  private PurchaseRepository orderRepository;
 
-    @Mock(lenient = true)
-    private PurchaseProductRepository orderProductRepository;
+  @Mock(lenient = true)
+  private PurchaseProductRepository orderProductRepository;
 
+  @InjectMocks private PurchaseService orderService;
 
-    @InjectMocks
-    private PurchaseService orderService;
+  private CreatePurchasePOJO newOrder;
+  private Product p1;
+  private Product p2;
+  private Purchase validOrder;
+  private PurchaseProduct orderp1;
+  private PurchaseProduct orderp2;
 
-    private CreatePurchasePOJO newOrder;
-    private Product p1;
-    private Product p2;
-    private Purchase validOrder;
-    private PurchaseProduct orderp1;
-    private PurchaseProduct orderp2;
+  @BeforeEach
+  void setUp() {
 
-    @BeforeEach
-    void setUp() {
+    newOrder = new CreatePurchasePOJO(50, 20, Map.of(1L, 10, 2L, 5));
 
-        newOrder = new CreatePurchasePOJO(50, 20, Map.of(1L, 10, 2L, 5));
+    p1 = new Product(1, "ProductTest1", "A description", 20, 4.99, "");
+    p2 = new Product(2, "ProductTest2", "A description", 10, 4.99, "");
 
-        p1 = new Product(1, "ProductTest1", "A description", 20, 4.99, "");
-        p2 = new Product(2, "ProductTest2", "A description", 10, 4.99, "");
+    p1.setId(1L);
+    p2.setId(2L);
 
-        p1.setId(1L);
-        p2.setId(2L);
+    validOrder = new Purchase(newOrder.getLat(), newOrder.getLon());
 
-        validOrder = new Purchase(newOrder.getLat(), newOrder.getLon());
+    orderp1 = new PurchaseProduct(validOrder, p1, 10);
+    orderp2 = new PurchaseProduct(validOrder, p2, 5);
 
-        orderp1 = new PurchaseProduct(validOrder, p1, 10);
-        orderp2 = new PurchaseProduct(validOrder, p2, 5);
+    when(productRepository.findById(1L)).thenReturn(Optional.of(p1));
+    when(productRepository.findById(2L)).thenReturn(Optional.of(p2));
+    when(productRepository.findById(3L)).thenReturn(Optional.empty());
+  }
 
-        when(productRepository.findById(1L)).thenReturn(Optional.of(p1));
-        when(productRepository.findById(2L)).thenReturn(Optional.of(p2));
-        when(productRepository.findById(3L)).thenReturn(Optional.empty());
+  @Test
+  void whenAddNewOrderWithValidData_thenReturnOrder() {
 
+    var order = orderService.addNewPurchase(newOrder, new User());
+    assertThat(order.isDelivered()).isFalse();
+    assertThat(order.getLat()).isEqualTo(newOrder.getLat());
+    assertThat(order.getLon()).isEqualTo(newOrder.getLon());
+    assertThat(order.getProducts()).hasSize(2);
+    assertThat(order.getProducts()).hasOnlyElementsOfType(PurchaseProduct.class);
+
+    for (PurchaseProduct purchaseProduct : order.getProducts()) {
+
+      var product = purchaseProduct.getProduct();
+      if (product.getId() == 1L) {
+        assertThat(product.getStock()).isEqualTo(10);
+      } else {
+        assertThat(product.getStock()).isEqualTo(5);
+      }
     }
+  }
 
-    @Test
-    void whenAddNewOrderWithValidData_thenReturnOrder() {
+  @Test
+  void whenAddNewOrderWithInvalidProductAmount_thenReturnNull() {
+    CreatePurchasePOJO invalidOrderByProductAmount =
+        new CreatePurchasePOJO(10, 20, Map.of(1L, 300, 2L, 5));
 
-        var order = orderService.addNewPurchase(newOrder, new User());
-        assertThat(order.isDelivered()).isFalse();
-        assertThat(order.getLat()).isEqualTo(newOrder.getLat());
-        assertThat(order.getLon()).isEqualTo(newOrder.getLon());
-        assertThat(order.getProducts()).hasSize(2);
-        assertThat(order.getProducts()).hasOnlyElementsOfType(PurchaseProduct.class);
+    var order = orderService.addNewPurchase(invalidOrderByProductAmount, new User());
+    assertThat(order).isNull();
+  }
 
-        for (PurchaseProduct purchaseProduct : order.getProducts()) {
+  @Test
+  @WithMockUser(value = "henrique@gmail.com")
+  void whenAddNewProductWithInvalidProductId_thenReturnNull() {
+    CreatePurchasePOJO invalidOrderByProductId =
+        new CreatePurchasePOJO(10, 20, Map.of(3L, 10, 2L, 5));
 
-            var product = purchaseProduct.getProduct();
-            if (product.getId() == 1L) {
-                assertThat(product.getStock()).isEqualTo(10);
-            } else {
-                assertThat(product.getStock()).isEqualTo(5);
-            }
-
-        }
-
-    }
-
-    @Test
-    void whenAddNewOrderWithInvalidProductAmount_thenReturnNull() {
-        CreatePurchasePOJO invalidOrderByProductAmount = new CreatePurchasePOJO(10, 20, Map.of(1L, 300, 2L, 5));
-
-        var order = orderService.addNewPurchase(invalidOrderByProductAmount, new User());
-        assertThat(order).isNull();
-    }
-
-    @Test
-    @WithMockUser(value = "henrique@gmail.com")
-    void whenAddNewProductWithInvalidProductId_thenReturnNull() {
-        CreatePurchasePOJO invalidOrderByProductId = new CreatePurchasePOJO(10, 20, Map.of(3L, 10, 2L, 5));
-
-        var order = orderService.addNewPurchase(invalidOrderByProductId, new User());
-        assertThat(order).isNull();
-
-    }
-
+    var order = orderService.addNewPurchase(invalidOrderByProductId, new User());
+    assertThat(order).isNull();
+  }
 }

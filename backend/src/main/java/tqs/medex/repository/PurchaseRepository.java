@@ -5,5 +5,4 @@ import org.springframework.stereotype.Repository;
 import tqs.medex.entity.Purchase;
 
 @Repository
-public interface PurchaseRepository extends JpaRepository<Purchase, Long> {
-}
+public interface PurchaseRepository extends JpaRepository<Purchase, Long> {}

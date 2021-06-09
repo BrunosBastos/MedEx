@@ -11,9 +11,8 @@ import tqs.medex.MedExApplication;
 @CucumberOptions(plugin = {"pretty"})
 @CucumberContextConfiguration
 @SpringBootTest(
-        classes = MedExApplication.class,
-        webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
-        properties = {"security.basic.enabled=false"})
+    classes = MedExApplication.class,
+    webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
+    properties = {"security.basic.enabled=false"})
 @AutoConfigureTestDatabase
-public class CucumberTestRunner {
-}
+public class CucumberTestRunner {}

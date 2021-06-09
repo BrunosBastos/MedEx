@@ -12,26 +12,25 @@ import java.util.Optional;
 @Service
 public class SupplierService {
 
-    @Autowired
-    SupplierRepository supplierRepository;
+  @Autowired SupplierRepository supplierRepository;
 
-    public Supplier addSupplier(SupplierPOJO supplierPOJO) {
-        var s = new Supplier();
-        Optional<Supplier> existentobj = supplierRepository.findByName(supplierPOJO.getName());
-        if (existentobj.isPresent()) {
-            return null;
-        }
-        s.setName(supplierPOJO.getName());
-        s.setLat(supplierPOJO.getLat());
-        s.setLon(supplierPOJO.getLon());
-        return supplierRepository.save(s);
+  public Supplier addSupplier(SupplierPOJO supplierPOJO) {
+    var s = new Supplier();
+    Optional<Supplier> existentobj = supplierRepository.findByName(supplierPOJO.getName());
+    if (existentobj.isPresent()) {
+      return null;
     }
+    s.setName(supplierPOJO.getName());
+    s.setLat(supplierPOJO.getLat());
+    s.setLon(supplierPOJO.getLon());
+    return supplierRepository.save(s);
+  }
 
-    public Supplier getSupplier(long id) {
-        return supplierRepository.findById(id).orElse(null);
-    }
+  public Supplier getSupplier(long id) {
+    return supplierRepository.findById(id).orElse(null);
+  }
 
-    public List<Supplier> getSuppliers() {
-        return supplierRepository.findAll();
-    }
+  public List<Supplier> getSuppliers() {
+    return supplierRepository.findAll();
+  }
 }

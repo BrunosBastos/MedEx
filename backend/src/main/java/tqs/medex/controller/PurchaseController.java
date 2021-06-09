@@ -20,24 +20,23 @@ import javax.validation.Valid;
 @RequestMapping("/api/v1")
 public class PurchaseController {
 
-    @Autowired
-    private PurchaseService orderService;
+  @Autowired private PurchaseService orderService;
 
-    @Autowired
-    private UserRepository userRepository;
+  @Autowired private UserRepository userRepository;
 
-    @PostMapping("/purchases")
-    public ResponseEntity<Object> addNewProduct(@Valid @RequestBody CreatePurchasePOJO order, Authentication authentication) throws UserNotFoundException {
-        var user = userRepository.findByEmail(authentication.getName()).orElseThrow(UserNotFoundException::new);
+  @PostMapping("/purchases")
+  public ResponseEntity<Object> addNewProduct(
+      @Valid @RequestBody CreatePurchasePOJO order, Authentication authentication)
+      throws UserNotFoundException {
+    var user =
+        userRepository
+            .findByEmail(authentication.getName())
+            .orElseThrow(UserNotFoundException::new);
 
-        var newOrder = orderService.addNewPurchase(order, user);
-        if (newOrder == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Product Quantity");
-        }
-        return ResponseEntity.status(HttpStatus.CREATED).body(newOrder);
-
-
+    var newOrder = orderService.addNewPurchase(order, user);
+    if (newOrder == null) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Product Quantity");
     }
-
-
+    return ResponseEntity.status(HttpStatus.CREATED).body(newOrder);
+  }
 }

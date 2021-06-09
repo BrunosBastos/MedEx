@@ -25,115 +25,113 @@ import static org.hamcrest.Matchers.hasSize;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class SupplierControllerIT {
 
-    @Autowired
-    private MockMvc mvc;
-    @Autowired
-    private SupplierRepository supplierRepository;
+  @Autowired private MockMvc mvc;
+  @Autowired private SupplierRepository supplierRepository;
 
-    @BeforeEach
-    void setUp() {
-        RestAssuredMockMvc.mockMvc(mvc);
-    }
+  @BeforeEach
+  void setUp() {
+    RestAssuredMockMvc.mockMvc(mvc);
+  }
 
-    @Test
-    @WithMockUser(value = "test")
-    void whenAddSupplier_thenReturnValidResponse() {
-        SupplierPOJO supplierPOJO = setUpObjectPOJO();
+  @Test
+  @WithMockUser(value = "test")
+  void whenAddSupplier_thenReturnValidResponse() {
+    SupplierPOJO supplierPOJO = setUpObjectPOJO();
 
-        RestAssuredMockMvc.given()
-                .header("Content-Type", "application/json")
-                .body(supplierPOJO)
-                .post("api/v1/suppliers")
-                .then()
-                .assertThat()
-                .statusCode(201)
-                .and()
-                .body("name", is(supplierPOJO.getName()))
-                .and()
-                .body("lat", is((float) supplierPOJO.getLat()))
-                .and()
-                .body("lon", is((float) supplierPOJO.getLon()));
+    RestAssuredMockMvc.given()
+        .header("Content-Type", "application/json")
+        .body(supplierPOJO)
+        .post("api/v1/suppliers")
+        .then()
+        .assertThat()
+        .statusCode(201)
+        .and()
+        .body("name", is(supplierPOJO.getName()))
+        .and()
+        .body("lat", is((float) supplierPOJO.getLat()))
+        .and()
+        .body("lon", is((float) supplierPOJO.getLon()));
 
-        assertThat(supplierRepository.findByName(supplierPOJO.getName())).isPresent();
-    }
+    assertThat(supplierRepository.findByName(supplierPOJO.getName())).isPresent();
+  }
 
-    @Test
-    @WithMockUser(value = "test")
-    void whenAddInvalidSupplier_thenReturnInvalidResponse() {
-        SupplierPOJO supplierPOJO = setInvalidUpObjectPOJO();
+  @Test
+  @WithMockUser(value = "test")
+  void whenAddInvalidSupplier_thenReturnInvalidResponse() {
+    SupplierPOJO supplierPOJO = setInvalidUpObjectPOJO();
 
-        RestAssuredMockMvc.given()
-                .header("Content-Type", "application/json")
-                .body(supplierPOJO)
-                .post("api/v1/suppliers")
-                .then()
-                .assertThat()
-                .statusCode(400);
-    }
+    RestAssuredMockMvc.given()
+        .header("Content-Type", "application/json")
+        .body(supplierPOJO)
+        .post("api/v1/suppliers")
+        .then()
+        .assertThat()
+        .statusCode(400);
+  }
 
-    @Test
-    @WithMockUser(value = "test")
-    void whenGetSuppliers_thenReturnValidResponse() {
-        Supplier supplier = getExistingSupplier();
-        Supplier supplier2 = getExistingSupplier2();
+  @Test
+  @WithMockUser(value = "test")
+  void whenGetSuppliers_thenReturnValidResponse() {
+    Supplier supplier = getExistingSupplier();
+    Supplier supplier2 = getExistingSupplier2();
 
-        RestAssuredMockMvc.given()
-                .when()
-                .get("api/v1/suppliers")
-                .then()
-                .assertThat()
-                .statusCode(200)
-                .and()
-                .body("", hasSize(2))
-                .and()
-                .body("[0].name", Matchers.is(supplier.getName()))
-                .and()
-                .body("[1].name", Matchers.is(supplier2.getName()));
-    }
+    RestAssuredMockMvc.given()
+        .when()
+        .get("api/v1/suppliers")
+        .then()
+        .assertThat()
+        .statusCode(200)
+        .and()
+        .body("", hasSize(2))
+        .and()
+        .body("[0].name", Matchers.is(supplier.getName()))
+        .and()
+        .body("[1].name", Matchers.is(supplier2.getName()));
+  }
 
-    @Test
-    @WithMockUser(value = "test")
-    void whenGetSupplierById_thenReturnValidResponse() {
-        Supplier supplier = getExistingSupplier();
-        long id = supplier.getId();
+  @Test
+  @WithMockUser(value = "test")
+  void whenGetSupplierById_thenReturnValidResponse() {
+    Supplier supplier = getExistingSupplier();
+    long id = supplier.getId();
 
-        RestAssuredMockMvc.given()
-                .when()
-                .get("api/v1/suppliers/" + id)
-                .then()
-                .assertThat()
-                .statusCode(200)
-                .and()
-                .body("id", Matchers.is(supplier.getId().intValue()))
-                .and()
-                .body("name", Matchers.is(supplier.getName()));
-    }
+    RestAssuredMockMvc.given()
+        .when()
+        .get("api/v1/suppliers/" + id)
+        .then()
+        .assertThat()
+        .statusCode(200)
+        .and()
+        .body("id", Matchers.is(supplier.getId().intValue()))
+        .and()
+        .body("name", Matchers.is(supplier.getName()));
+  }
 
-    @Test
-    @WithMockUser(value = "test")
-    void whenGetSupplierByInvalidId_thenReturnBadRequest() {
-        RestAssuredMockMvc.given()
-                .when()
-                .get("api/v1/suppliers/-99")
-                .then()
-                .assertThat()
-                .statusCode(400)
-                .statusLine("400 Supplier Not Found");
-    }
+  @Test
+  @WithMockUser(value = "test")
+  void whenGetSupplierByInvalidId_thenReturnBadRequest() {
+    RestAssuredMockMvc.given()
+        .when()
+        .get("api/v1/suppliers/-99")
+        .then()
+        .assertThat()
+        .statusCode(400)
+        .statusLine("400 Supplier Not Found");
+  }
 
-    public SupplierPOJO setUpObjectPOJO() {
-        return new SupplierPOJO("New Pharmacy", 50, 50);
-    }
+  public SupplierPOJO setUpObjectPOJO() {
+    return new SupplierPOJO("New Pharmacy", 50, 50);
+  }
 
-    public SupplierPOJO setInvalidUpObjectPOJO() {
-        return new SupplierPOJO("Pharmacy", 50, 50);
-    }
+  public SupplierPOJO setInvalidUpObjectPOJO() {
+    return new SupplierPOJO("Pharmacy", 50, 50);
+  }
 
-    public Supplier getExistingSupplier() {
-        return supplierRepository.findByName("Pharmacy").orElse(null);
-    }
+  public Supplier getExistingSupplier() {
+    return supplierRepository.findByName("Pharmacy").orElse(null);
+  }
 
-    public Supplier getExistingSupplier2() {
-        return supplierRepository.findByName("Pharmacy2").orElse(null);
-    }
+  public Supplier getExistingSupplier2() {
+    return supplierRepository.findByName("Pharmacy2").orElse(null);
+  }
 }

@@ -15,20 +15,15 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long userId;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private long userId;
 
-    @Column
-    private String email;
+  @Column private String email;
 
-    @JsonIgnore
-    @Column
-    private String password;
+  @JsonIgnore @Column private String password;
 
-    @Column
-    private boolean isSuperUser;
+  @Column private boolean isSuperUser;
 
-    @Column
-    private String name;
+  @Column private String name;
 }

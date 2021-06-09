@@ -17,17 +17,16 @@ import javax.persistence.*;
 @IdClass(PurchaseProductPK.class)
 public class PurchaseProduct {
 
-    @Id
-    @ManyToOne
-    @JsonIgnore
-    @JoinColumn(name = "purchase", referencedColumnName = "id")
-    private Purchase purchase;
+  @Id
+  @ManyToOne
+  @JsonIgnore
+  @JoinColumn(name = "purchase", referencedColumnName = "id")
+  private Purchase purchase;
 
-    @Id
-    @ManyToOne
-    @JoinColumn(name = "product", referencedColumnName = "id")
-    private Product product;
+  @Id
+  @ManyToOne
+  @JoinColumn(name = "product", referencedColumnName = "id")
+  private Product product;
 
-    @Column
-    private int productAmount;
+  @Column private int productAmount;
 }

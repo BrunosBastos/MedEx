@@ -12,57 +12,57 @@ import tqs.medex.frontend.pages.ErrorMessage;
 import tqs.medex.frontend.pages.RegisterPage;
 
 public class RegisterSteps {
-    private WebDriver driver;
-    private RegisterPage registerPage;
-    private ErrorMessage errorMessage;
+  private WebDriver driver;
+  private RegisterPage registerPage;
+  private ErrorMessage errorMessage;
 
-    @Before
-    public void setUp() {
-        WebDriverManager.firefoxdriver().setup();
-        driver = new FirefoxDriver();
-        registerPage = new RegisterPage(driver);
-        errorMessage = new ErrorMessage(driver);
-    }
+  @Before
+  public void setUp() {
+    WebDriverManager.firefoxdriver().setup();
+    driver = new FirefoxDriver();
+    registerPage = new RegisterPage(driver);
+    errorMessage = new ErrorMessage(driver);
+  }
 
-    @Given("I am a Client trying to register")
-    public void goToLoginPage() {
-        registerPage.goTo();
-    }
+  @Given("I am a Client trying to register")
+  public void goToLoginPage() {
+    registerPage.goTo();
+  }
 
-    @And("I insert a password like {string}")
-    public void insertPassword(String password) {
-        registerPage.insertPassword(password);
-    }
+  @And("I insert a password like {string}")
+  public void insertPassword(String password) {
+    registerPage.insertPassword(password);
+  }
 
-    @And("I insert a name like {string}")
-    public void insertName(String name) {
-        registerPage.insertName(name);
-    }
+  @And("I insert a name like {string}")
+  public void insertName(String name) {
+    registerPage.insertName(name);
+  }
 
-    @When("I insert an email like {string}")
-    public void insertUsedEmail(String email) {
-        registerPage.insertEmail(email);
-    }
+  @When("I insert an email like {string}")
+  public void insertUsedEmail(String email) {
+    registerPage.insertEmail(email);
+  }
 
-    @When("I insert an email in use like {string}")
-    public void insertEmail(String usedEmail) {
-        registerPage.insertEmail(usedEmail);
-    }
+  @When("I insert an email in use like {string}")
+  public void insertEmail(String usedEmail) {
+    registerPage.insertEmail(usedEmail);
+  }
 
-    @And("I press the register button")
-    public void pressRegisterButton() {
-        registerPage.pressRegister();
-    }
+  @And("I press the register button")
+  public void pressRegisterButton() {
+    registerPage.pressRegister();
+  }
 
-    @Then("A successfully registered message should appear")
-    public void RegisterSuccessResponse() {
-        errorMessage.checkSuccessMessage("Successfully registered");
-        driver.quit();
-    }
+  @Then("A successfully registered message should appear")
+  public void RegisterSuccessResponse() {
+    errorMessage.checkSuccessMessage("Successfully registered");
+    driver.quit();
+  }
 
-    @Then("A failed registered message should appear")
-    public void RegisterErrorResponse() {
-        errorMessage.checkSuccessMessage("Registration failed");
-        driver.quit();
-    }
+  @Then("A failed registered message should appear")
+  public void RegisterErrorResponse() {
+    errorMessage.checkSuccessMessage("Registration failed");
+    driver.quit();
+  }
 }

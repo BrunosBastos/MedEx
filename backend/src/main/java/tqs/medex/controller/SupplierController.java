@@ -14,30 +14,29 @@ import javax.validation.Valid;
 @RequestMapping("/api/v1")
 public class SupplierController {
 
-    @Autowired
-    private SupplierService service;
+  @Autowired private SupplierService service;
 
-    @PostMapping("/suppliers")
-    public ResponseEntity<Object> addNewSupplier(@Valid @RequestBody SupplierPOJO supplierPOJO) {
-        var supplier = service.addSupplier(supplierPOJO);
-        if (supplier == null) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "There is already supplier with this name.");
-        }
-        return ResponseEntity.status(HttpStatus.CREATED).body(supplier);
+  @PostMapping("/suppliers")
+  public ResponseEntity<Object> addNewSupplier(@Valid @RequestBody SupplierPOJO supplierPOJO) {
+    var supplier = service.addSupplier(supplierPOJO);
+    if (supplier == null) {
+      throw new ResponseStatusException(
+          HttpStatus.BAD_REQUEST, "There is already supplier with this name.");
     }
+    return ResponseEntity.status(HttpStatus.CREATED).body(supplier);
+  }
 
-    @GetMapping("/suppliers")
-    public ResponseEntity<Object> getAllSuppliers() {
-        return ResponseEntity.status(HttpStatus.OK).body(service.getSuppliers());
-    }
+  @GetMapping("/suppliers")
+  public ResponseEntity<Object> getAllSuppliers() {
+    return ResponseEntity.status(HttpStatus.OK).body(service.getSuppliers());
+  }
 
-    @GetMapping("/suppliers/{id}")
-    public ResponseEntity<Object> getSupplier(@PathVariable long id) {
-        var supplier = service.getSupplier(id);
-        if (supplier == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Supplier Not Found");
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(supplier);
+  @GetMapping("/suppliers/{id}")
+  public ResponseEntity<Object> getSupplier(@PathVariable long id) {
+    var supplier = service.getSupplier(id);
+    if (supplier == null) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Supplier Not Found");
     }
+    return ResponseEntity.status(HttpStatus.OK).body(supplier);
+  }
 }
