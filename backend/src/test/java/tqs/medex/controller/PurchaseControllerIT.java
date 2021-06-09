@@ -11,15 +11,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
+import tqs.medex.entity.Purchase;
+import tqs.medex.entity.User;
 import tqs.medex.pojo.CreatePurchasePOJO;
 import tqs.medex.repository.ProductRepository;
 import tqs.medex.repository.PurchaseRepository;
+import tqs.medex.repository.UserRepository;
 
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase
@@ -33,9 +35,42 @@ class PurchaseControllerIT {
 
   @Autowired private PurchaseRepository purchaseRepository;
 
+  @Autowired private UserRepository userRepository;
   @BeforeEach
   void setUp() {
     RestAssuredMockMvc.mockMvc(mvc);
+  }
+
+
+  @Test
+  @WithMockUser(value = "henrique@gmail.com")
+  void whenGetPurchasesAndisNotSuperUser_thenReturnUserPurchases(){
+    User user = userRepository.findByEmail("henrique@gmail.com").orElse(null);
+    assertThat(user).isNotNull();
+    var purchases = purchaseRepository.findAllByUser_UserId(user.getUserId());
+    RestAssuredMockMvc.given()
+            .get("api/v1/purchases")
+            .then()
+            .assertThat()
+            .statusCode(200)
+            .body("", hasSize(purchases.size()))
+            .and()
+            .body("user.userId", everyItem(is(user.getUserId().intValue())));
+  }
+
+  @Test
+  @WithMockUser(value = "clara@gmail.com")
+  void whenGetPurchasesAndisSuperUser_thenReturnAllPurchases(){
+    User user = userRepository.findByEmail("clara@gmail.com").orElse(null);
+    assertThat(user).isNotNull();
+    var purchases = purchaseRepository.findAll();
+    RestAssuredMockMvc.given()
+            .get("api/v1/purchases")
+            .then()
+            .assertThat()
+            .statusCode(200)
+            .and()
+            .body("", hasSize(purchases.size()));
   }
 
   @Test
