@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,7 +30,8 @@ public class AuthService {
 
   @Autowired private JwtTokenProvider tokenProvider;
 
-  public JwtAuthenticationResponse authenticateUser(LoginRequest request) {
+  public JwtAuthenticationResponse authenticateUser(LoginRequest request)
+      throws AuthenticationException {
 
     Authentication authentication =
         authenticationManager.authenticate(
@@ -38,7 +40,7 @@ public class AuthService {
     SecurityContextHolder.getContext().setAuthentication(authentication);
 
     String jwt = tokenProvider.generateToken(authentication);
-    CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
+    User user = ((CustomUserDetails) authentication.getPrincipal()).getUser();
 
     return new JwtAuthenticationResponse(jwt, user.getUser());
   }
@@ -54,6 +56,7 @@ public class AuthService {
     User user = new User();
     user.setName(request.getName());
     user.setEmail(request.getEmail());
+    user.setName(request.getName());
     user.setPassword(passwordEncoder.encode(request.getPassword()));
 
     user = userRepository.save(user);

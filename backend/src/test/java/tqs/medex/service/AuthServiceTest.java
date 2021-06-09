@@ -35,6 +35,7 @@ import static org.mockito.Mockito.when;
 class AuthServiceTest {
 
   LoginRequest valid;
+  LoginRequest invalid;
   RegisterRequest validRegister;
   RegisterRequest invalidRegister;
   User registeredUser;
@@ -59,6 +60,10 @@ class AuthServiceTest {
     valid = new LoginRequest();
     valid.setEmail("valid@test.com");
     valid.setPassword("test");
+
+    invalid = new LoginRequest();
+    invalid.setEmail("invalid@test.com");
+    invalid.setPassword("test");
 
     validRegister = new RegisterRequest();
     validRegister.setName("Test");
@@ -118,26 +123,37 @@ class AuthServiceTest {
     when(authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(valid.getEmail(), valid.getPassword())))
         .thenReturn(auth);
+    when(authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(invalid.getEmail(), invalid.getPassword())))
+        .thenThrow(RuntimeException.class);
 
     when(tokenProvider.generateToken(auth)).thenReturn("valid token");
 
     when(repository.findByEmail(validRegister.getEmail())).thenReturn(Optional.empty());
     when(repository.save(any())).thenReturn(registeredUser);
-
     when(repository.findByEmail("usedemail@test.com")).thenReturn(Optional.of(registeredUser));
   }
 
   @Test
-  void whenLoginWithValidCredentials_thenReturnValidToken() {
+  void whenLoginWithValidCredentials_thenReturnValidData() {
 
     JwtAuthenticationResponse response = authService.authenticateUser(valid);
 
-    assertThat(response.getUser().isSuperUser()).isFalse();
+    assertThat(response.getUser()).isEqualTo(registeredUser);
     assertThat(response.getAccessToken()).contains("valid token");
     assertThat(response.getTokenType()).contains("Bearer");
 
     verify(authenticationManager, VerificationModeFactory.times(1)).authenticate(any());
     verify(tokenProvider, VerificationModeFactory.times(1)).generateToken(any());
+  }
+
+  @Test
+  void whenLoginWithInvalidCredentials_thenThrowException() {
+
+    assertThrows(RuntimeException.class, () -> authService.authenticateUser(invalid));
+
+    verify(authenticationManager, VerificationModeFactory.times(1)).authenticate(any());
+    verify(tokenProvider, VerificationModeFactory.times(0)).generateToken(any());
   }
 
   @Test

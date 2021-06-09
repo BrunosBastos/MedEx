@@ -21,7 +21,6 @@ public class AuthController {
 
   @PostMapping("/register")
   public ResponseEntity<JwtAuthenticationResponse> register(@RequestBody RegisterRequest request) {
-
     try {
       JwtAuthenticationResponse jwt = service.registerUser(request);
       return ResponseEntity.status(HttpStatus.OK).body(jwt);
@@ -32,7 +31,11 @@ public class AuthController {
 
   @PostMapping("/login")
   public ResponseEntity<JwtAuthenticationResponse> login(@RequestBody LoginRequest request) {
-    JwtAuthenticationResponse jwt = service.authenticateUser(request);
-    return ResponseEntity.status(HttpStatus.OK).body(jwt);
+    try {
+      JwtAuthenticationResponse jwt = service.authenticateUser(request);
+      return ResponseEntity.status(HttpStatus.OK).body(jwt);
+    } catch (RuntimeException e) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+    }
   }
 }
