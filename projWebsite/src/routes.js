@@ -14,7 +14,7 @@ import AddProduct from './pages/AddProduct.tsx';
 import AddSupplier from './pages/AddSupplier.tsx';
 import PharmacyProductDetails from './pages/PharmarcyProductDetails.tsx';
 import ShoppingCart from './pages/ShoppingCart.tsx';
-
+import OrderDetails from './pages/OrderDetails.tsx'
 const routes = [
   {
     path: 'app',
@@ -29,6 +29,7 @@ const routes = [
       { path: 'addProduct', element: <AddProduct />},
       { path: 'addSupplier', element: <AddSupplier />},
       { path: 'product/:id', element: <PharmacyProductDetails />},
+      { path: 'order/:id', element: <OrderDetails />},
       { path: 'shoppingCart', element: <ShoppingCart />},
       { path: '*', element: <Navigate to="/404" /> }
     ]

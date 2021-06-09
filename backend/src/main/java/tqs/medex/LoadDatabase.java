@@ -29,7 +29,6 @@ class LoadDatabase {
       User clientUser =
           new User(2L, "henrique@gmail.com", encoder.encode("string"), false, "henrique");
       users.save(clientUser);
-
       Supplier supplier = new Supplier(1L, "Pharmacy", 50, 50);
       Supplier supplier2 = new Supplier(2L, "Pharmacy2", 60, 60);
       Arrays.asList(supplier, supplier2).forEach(suppliers::save);
