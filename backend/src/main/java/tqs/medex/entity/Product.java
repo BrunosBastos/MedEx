@@ -1,5 +1,6 @@
 package tqs.medex.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -30,6 +31,7 @@ public class Product {
 
 
     @OneToMany(mappedBy = "product")
+    @JsonIgnore
     private Set<PurchaseProduct> purchases = new HashSet<>();
 
     public Product(long id, String name, String description, int stock, double price, String imageUrl) {

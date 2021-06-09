@@ -9,16 +9,19 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import tqs.medex.entity.Product;
 import tqs.medex.entity.Purchase;
 import tqs.medex.entity.PurchaseProduct;
-import tqs.medex.entity.Product;
+import tqs.medex.entity.User;
 import tqs.medex.pojo.CreatePurchasePOJO;
+import tqs.medex.repository.UserRepository;
 import tqs.medex.service.PurchaseService;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -30,22 +33,32 @@ import static org.mockito.Mockito.*;
 class PurchaseControllerTest {
     @Autowired
     private MockMvc mvc;
+
     @MockBean
     private PurchaseService orderService;
+
+    @MockBean
+    private UserRepository userRepository;
 
     @BeforeEach
     void setUp() {
         RestAssuredMockMvc.mockMvc(mvc);
+
+        User user = new User();
+        user.setUserId(1L);
+        user.setEmail("henrique@gmail.com");
+
+        when(userRepository.findByEmail("henrique@gmail.com")).thenReturn(Optional.of(user));
     }
 
     @Test
-    @WithUserDetails(value = "henrique@gmail.com")
+    @WithMockUser(value = "henrique@gmail.com")
     void whenAddNewOrder_thenReturnOrder() {
         var newOrder = setUpAddOrderValid();
 
         var order = setUpValidOrder();
 
-        when(orderService.addNewOrder(any(CreatePurchasePOJO.class), anyLong())).thenReturn(order);
+        when(orderService.addNewPurchase(any(CreatePurchasePOJO.class), any(User.class))).thenReturn(order);
         RestAssuredMockMvc.given().body(newOrder).contentType(ContentType.JSON)
                 .when()
                 .post("api/v1/purchases")
@@ -57,24 +70,25 @@ class PurchaseControllerTest {
                 .and().body("products[0].productAmount", is(10))
                 .and().body("products[1].productAmount", is(20));
 
-        verify(orderService, times(1)).addNewOrder(any(), 1);
+        verify(userRepository, times(1)).findByEmail("henrique@gmail.com");
+        verify(orderService, times(1)).addNewPurchase(any(), any(User.class));
     }
 
     @Test
-    @WithUserDetails(value = "henrique@gmail.com")
+    @WithMockUser(value = "henrique@gmail.com")
     void whenAddOrderWithInvalidProducts_thenReturnBadRequest() {
 
         var newOrder = setUpAddOrderInvalid();
 
-        when(orderService.addNewOrder(any(CreatePurchasePOJO.class), anyLong())).thenReturn(null);
+        when(orderService.addNewPurchase(any(CreatePurchasePOJO.class), any(User.class))).thenReturn(null);
         RestAssuredMockMvc.given().body(newOrder).contentType(ContentType.JSON)
                 .when()
                 .post("api/v1/purchases")
                 .then()
                 .assertThat()
-                .statusCode(400).statusLine("400 Product Not Found");
+                .statusCode(400).statusLine("400 Invalid Product Quantity");
 
-        verify(orderService, times(1)).addNewOrder(any(), 1);
+        verify(orderService, times(1)).addNewPurchase(any(), any(User.class));
 
 
     }

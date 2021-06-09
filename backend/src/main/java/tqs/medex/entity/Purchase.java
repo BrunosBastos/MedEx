@@ -34,7 +34,7 @@ public class Purchase {
     @Column
     private double lon;
 
-    @OneToMany(mappedBy = "purchase")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "purchase")
     private List<PurchaseProduct> products = new ArrayList<>();
 
     public Purchase(double lat, double lon) {

@@ -6,13 +6,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.test.context.support.WithMockUser;
+import tqs.medex.entity.Product;
 import tqs.medex.entity.Purchase;
 import tqs.medex.entity.PurchaseProduct;
-import tqs.medex.entity.Product;
+import tqs.medex.entity.User;
 import tqs.medex.pojo.CreatePurchasePOJO;
-import tqs.medex.repository.OrderProductRepository;
-import tqs.medex.repository.PurchaseRepository;
 import tqs.medex.repository.ProductRepository;
+import tqs.medex.repository.PurchaseProductRepository;
+import tqs.medex.repository.PurchaseRepository;
 
 import java.util.Map;
 import java.util.Optional;
@@ -21,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class PurchaseServiceTest {
+class PurchaseServiceTest {
 
     @Mock(lenient = true)
     private ProductRepository productRepository;
@@ -30,7 +32,7 @@ public class PurchaseServiceTest {
     private PurchaseRepository orderRepository;
 
     @Mock(lenient = true)
-    private OrderProductRepository orderProductRepository;
+    private PurchaseProductRepository orderProductRepository;
 
 
     @InjectMocks
@@ -63,23 +65,28 @@ public class PurchaseServiceTest {
         when(productRepository.findById(2L)).thenReturn(Optional.of(p2));
         when(productRepository.findById(3L)).thenReturn(Optional.empty());
 
-        when(orderRepository.save(validOrder)).thenReturn(validOrder);
-        when(orderProductRepository.save(orderp1)).thenReturn(orderp1);
-        when(orderProductRepository.save(orderp2)).thenReturn(orderp2);
-        when(orderProductRepository.save(orderp1).getProduct().getId()).thenReturn(1L);
-        when(orderProductRepository.save(orderp2).getProduct().getId()).thenReturn(2L);
-
     }
 
     @Test
     void whenAddNewOrderWithValidData_thenReturnOrder() {
 
-        var order = orderService.addNewOrder(newOrder, 1L);
+        var order = orderService.addNewPurchase(newOrder, new User());
         assertThat(order.isDelivered()).isFalse();
         assertThat(order.getLat()).isEqualTo(newOrder.getLat());
         assertThat(order.getLon()).isEqualTo(newOrder.getLon());
         assertThat(order.getProducts()).hasSize(2);
         assertThat(order.getProducts()).hasOnlyElementsOfType(PurchaseProduct.class);
+
+        for (PurchaseProduct purchaseProduct : order.getProducts()) {
+
+            var product = purchaseProduct.getProduct();
+            if (product.getId() == 1L) {
+                assertThat(product.getStock()).isEqualTo(10);
+            } else {
+                assertThat(product.getStock()).isEqualTo(5);
+            }
+
+        }
 
     }
 
@@ -87,15 +94,16 @@ public class PurchaseServiceTest {
     void whenAddNewOrderWithInvalidProductAmount_thenReturnNull() {
         CreatePurchasePOJO invalidOrderByProductAmount = new CreatePurchasePOJO(10, 20, Map.of(1L, 300, 2L, 5));
 
-        var order = orderService.addNewOrder(invalidOrderByProductAmount, 1L);
+        var order = orderService.addNewPurchase(invalidOrderByProductAmount, new User());
         assertThat(order).isNull();
     }
 
     @Test
+    @WithMockUser(value = "henrique@gmail.com")
     void whenAddNewProductWithInvalidProductId_thenReturnNull() {
         CreatePurchasePOJO invalidOrderByProductId = new CreatePurchasePOJO(10, 20, Map.of(3L, 10, 2L, 5));
 
-        var order = orderService.addNewOrder(invalidOrderByProductId, 1L);
+        var order = orderService.addNewPurchase(invalidOrderByProductId, new User());
         assertThat(order).isNull();
 
     }

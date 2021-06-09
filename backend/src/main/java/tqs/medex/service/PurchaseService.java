@@ -4,10 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tqs.medex.entity.Purchase;
 import tqs.medex.entity.PurchaseProduct;
+import tqs.medex.entity.User;
 import tqs.medex.pojo.CreatePurchasePOJO;
-import tqs.medex.repository.OrderProductRepository;
-import tqs.medex.repository.PurchaseRepository;
 import tqs.medex.repository.ProductRepository;
+import tqs.medex.repository.PurchaseProductRepository;
+import tqs.medex.repository.PurchaseRepository;
 
 import java.util.ArrayList;
 
@@ -15,21 +16,22 @@ import java.util.ArrayList;
 public class PurchaseService {
 
     @Autowired
-    PurchaseRepository orderRepository;
+    PurchaseRepository purchaseRepository;
 
     @Autowired
-    OrderProductRepository orderProductRepository;
+    PurchaseProductRepository purchaseProductRepository;
 
     @Autowired
     ProductRepository productRepository;
 
 
-    public Purchase addNewOrder(CreatePurchasePOJO newOrder, long userId) {
+    public Purchase addNewPurchase(CreatePurchasePOJO newPurchase, User user) {
 
-        var order = new Purchase(newOrder.getLat(), newOrder.getLon());
-        var orderProducts = new ArrayList<PurchaseProduct>();
+        var purchase = new Purchase(newPurchase.getLat(), newPurchase.getLon());
+        purchase.setUser(user);
+        var purchaseProducts = new ArrayList<PurchaseProduct>();
         // iterates the provided products and checks if they exist and the stock is correct
-        for (Long pId : newOrder.getProducts().keySet()) {
+        for (Long pId : newPurchase.getProducts().keySet()) {
 
             var product = productRepository.findById(pId);
             // checks if the product exists
@@ -37,17 +39,22 @@ public class PurchaseService {
                 return null;
             }
             // checks if the product has enough stock
-            if (product.get().getStock() < newOrder.getProducts().get(pId)) {
+            if (product.get().getStock() < newPurchase.getProducts().get(pId)) {
                 return null;
             }
-            var orderProduct = new PurchaseProduct(order, product.get(), newOrder.getProducts().get(product.get().getId()));
-            orderProducts.add(orderProduct);
+            var purchaseProduct = new PurchaseProduct(purchase, product.get(), newPurchase.getProducts().get(product.get().getId()));
+            purchaseProducts.add(purchaseProduct);
         }
-        orderRepository.save(order);
-        for (PurchaseProduct op : orderProducts) {
-            orderProductRepository.save(op);
+        purchaseRepository.save(purchase);
+        // creates PurchaseProduct entities and updates products stock
+        for (PurchaseProduct op : purchaseProducts) {
+            var product = op.getProduct();
+            product.setStock(product.getStock() - op.getProductAmount());
+            op.setProduct(product);
+            productRepository.save(product);
+            purchaseProductRepository.save(op);
         }
-        order.setProducts(orderProducts);
-        return order;
+        purchase.setProducts(purchaseProducts);
+        return purchase;
     }
 }
