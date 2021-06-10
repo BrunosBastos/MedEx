@@ -19,7 +19,8 @@ import tqs.medex.pojo.LoginRequest;
 import tqs.medex.pojo.RegisterRequest;
 import tqs.medex.service.AuthService;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.hasKey;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -96,7 +97,7 @@ class AuthControllerTest {
         .then()
         .assertThat()
         .statusCode(400)
-        .contentType(nullValue());
+        .statusLine("400 This email is already in use");
 
     verify(authService, times(1)).registerUser(any());
   }
@@ -146,7 +147,7 @@ class AuthControllerTest {
         .then()
         .assertThat()
         .statusCode(401)
-        .contentType(nullValue());
+        .statusLine("401 The credentials provided are incorrect");
 
     verify(authService, times(1)).authenticateUser(any());
   }

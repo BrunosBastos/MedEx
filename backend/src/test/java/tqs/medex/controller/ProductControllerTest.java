@@ -1,5 +1,6 @@
 package tqs.medex.controller;
 
+import io.restassured.http.ContentType;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,6 +47,7 @@ class ProductControllerTest {
         .then()
         .assertThat()
         .statusCode(200)
+        .contentType(ContentType.JSON)
         .and()
         .body("", hasSize(2))
         .and()
@@ -70,6 +72,7 @@ class ProductControllerTest {
         .then()
         .assertThat()
         .statusCode(200)
+        .contentType(ContentType.JSON)
         .and()
         .body("name", is(product.getName()))
         .and()
@@ -104,6 +107,7 @@ class ProductControllerTest {
         .then()
         .assertThat()
         .statusCode(201)
+        .contentType(ContentType.JSON)
         .and()
         .body("name", is(product.getName()))
         .and()
@@ -148,6 +152,7 @@ class ProductControllerTest {
         .then()
         .assertThat()
         .statusCode(200)
+        .contentType(ContentType.JSON)
         .and()
         .body("name", is(product_update.getName()));
     verify(productService, times(1))

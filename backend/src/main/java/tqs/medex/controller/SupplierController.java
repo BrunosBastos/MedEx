@@ -21,7 +21,7 @@ public class SupplierController {
     var supplier = service.addSupplier(supplierPOJO);
     if (supplier == null) {
       throw new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, "There is already supplier with this name.");
+          HttpStatus.BAD_REQUEST, "There is already supplier with this name");
     }
     return ResponseEntity.status(HttpStatus.CREATED).body(supplier);
   }
