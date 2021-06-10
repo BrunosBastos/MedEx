@@ -98,7 +98,7 @@ class ProductControllerIT {
 
     ProductPOJO productPOJO =
         new ProductPOJO(
-            "ProductTest", "A description", 1, 4.99, null, product.getSupplier().getId());
+            "ProductTest", "A description", 10, 4.99, null, product.getSupplier().getId());
     RestAssuredMockMvc.given()
         .header("Content-Type", "application/json")
         .body(productPOJO)
