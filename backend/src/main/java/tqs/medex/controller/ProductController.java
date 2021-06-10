@@ -18,13 +18,13 @@ public class ProductController {
   @Autowired ProductService productService;
 
   @GetMapping("/products")
-  public ResponseEntity<Object> getProducts() {
+  public ResponseEntity<List<Product>> getProducts() {
     List<Product> productList = productService.listProducts();
     return ResponseEntity.status(HttpStatus.OK).body(productList);
   }
 
   @GetMapping("/products/{id}")
-  public ResponseEntity<Object> getProduct(@PathVariable long id) {
+  public ResponseEntity<Product> getProduct(@PathVariable long id) {
     var product = productService.getProductDetails(id);
     if (product == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Product Not Found");
@@ -33,7 +33,7 @@ public class ProductController {
   }
 
   @PostMapping("/products")
-  public ResponseEntity<Object> addNewProduct(@Valid @RequestBody ProductPOJO product) {
+  public ResponseEntity<Product> addNewProduct(@Valid @RequestBody ProductPOJO product) {
     var product1 = productService.addNewProduct(product);
     if (product1 == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Supplier Not Found");
@@ -42,7 +42,7 @@ public class ProductController {
   }
 
   @PutMapping("/products/{id}")
-  public ResponseEntity<Object> updateProduct(
+  public ResponseEntity<Product> updateProduct(
       @Valid @RequestBody ProductPOJO productPOJO, @PathVariable long id) {
     var product = productService.updateProduct(id, productPOJO);
     if (product == null) {

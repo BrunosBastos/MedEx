@@ -12,7 +12,8 @@ import tqs.medex.pojo.RegisterRequest;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasKey;
+import static org.hamcrest.Matchers.is;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -82,7 +83,8 @@ class AuthControllerIT {
         .post(baseUrl + port + "/api/v1/register")
         .then()
         .statusCode(400)
-        .contentType(emptyString());
+        .contentType(ContentType.JSON)
+        .body("message", is("This email is already in use"));
   }
 
   @Test
@@ -124,6 +126,7 @@ class AuthControllerIT {
         .post(baseUrl + port + "/api/v1/login")
         .then()
         .statusCode(401)
-        .contentType(emptyString());
+        .contentType(ContentType.JSON)
+        .body("message", is("The credentials provided are incorrect"));
   }
 }

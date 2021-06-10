@@ -1,5 +1,6 @@
 package tqs.medex.controller;
 
+import io.restassured.http.ContentType;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,6 +48,7 @@ class ProductControllerIT {
         .then()
         .assertThat()
         .statusCode(200)
+        .contentType(ContentType.JSON)
         .and()
         .body("", hasSize(2))
         .and()
@@ -74,6 +76,7 @@ class ProductControllerIT {
         .then()
         .assertThat()
         .statusCode(200)
+        .contentType(ContentType.JSON)
         .and()
         .body("name", is(product.getName()))
         .and()
@@ -88,7 +91,8 @@ class ProductControllerIT {
         .get("/api/v1/products/" + -99)
         .then()
         .assertThat()
-        .statusCode(400);
+        .statusCode(400)
+        .statusLine("400 Product Not Found");
   }
 
   @Test
@@ -106,6 +110,7 @@ class ProductControllerIT {
         .then()
         .assertThat()
         .statusCode(201)
+        .contentType(ContentType.JSON)
         .and()
         .body("name", is(product.getName()))
         .and()
@@ -134,7 +139,8 @@ class ProductControllerIT {
         .post("api/v1/products")
         .then()
         .assertThat()
-        .statusCode(400);
+        .statusCode(400)
+        .statusLine("400 Supplier Not Found");
   }
 
   @Test
@@ -151,6 +157,7 @@ class ProductControllerIT {
         .then()
         .assertThat()
         .statusCode(200)
+        .contentType(ContentType.JSON)
         .and()
         .body("name", is(productPOJO.getName()));
   }
@@ -166,7 +173,8 @@ class ProductControllerIT {
         .put("api/v1/products/-99")
         .then()
         .assertThat()
-        .statusCode(400);
+        .statusCode(400)
+        .statusLine("400 Product Not Found");
   }
 
   public ProductPOJO setUpObjectPojo() {

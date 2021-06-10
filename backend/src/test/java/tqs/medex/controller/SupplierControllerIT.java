@@ -1,5 +1,6 @@
 package tqs.medex.controller;
 
+import io.restassured.http.ContentType;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,6 +46,7 @@ class SupplierControllerIT {
         .then()
         .assertThat()
         .statusCode(201)
+        .contentType(ContentType.JSON)
         .and()
         .body("name", is(supplierPOJO.getName()))
         .and()
@@ -66,7 +68,8 @@ class SupplierControllerIT {
         .post("api/v1/suppliers")
         .then()
         .assertThat()
-        .statusCode(400);
+        .statusCode(400)
+        .statusLine("400 There is already supplier with this name");
   }
 
   @Test
@@ -81,6 +84,7 @@ class SupplierControllerIT {
         .then()
         .assertThat()
         .statusCode(200)
+        .contentType(ContentType.JSON)
         .and()
         .body("", hasSize(2))
         .and()
@@ -101,6 +105,7 @@ class SupplierControllerIT {
         .then()
         .assertThat()
         .statusCode(200)
+        .contentType(ContentType.JSON)
         .and()
         .body("id", Matchers.is(supplier.getId().intValue()))
         .and()

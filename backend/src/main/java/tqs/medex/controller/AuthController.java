@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import tqs.medex.exception.EmailAlreadyInUseException;
 import tqs.medex.pojo.JwtAuthenticationResponse;
 import tqs.medex.pojo.LoginRequest;
@@ -25,7 +26,7 @@ public class AuthController {
       JwtAuthenticationResponse jwt = service.registerUser(request);
       return ResponseEntity.status(HttpStatus.OK).body(jwt);
     } catch (EmailAlreadyInUseException e) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This email is already in use");
     }
   }
 
@@ -35,7 +36,8 @@ public class AuthController {
       JwtAuthenticationResponse jwt = service.authenticateUser(request);
       return ResponseEntity.status(HttpStatus.OK).body(jwt);
     } catch (RuntimeException e) {
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+      throw new ResponseStatusException(
+          HttpStatus.UNAUTHORIZED, "The credentials provided are incorrect");
     }
   }
 }
