@@ -15,6 +15,7 @@ import FacebookIcon from 'src/icons/Facebook';
 import GoogleIcon from 'src/icons/Google';
 import AuthentService from 'src/services/authentService';
 import useAuthStore from 'src/stores/useAuthStore';
+import useShopCartStore from 'src/stores/useShopCartStore';
 import { toast } from 'react-toastify';
 
 const notifySuccess = (msg) => {
@@ -67,6 +68,7 @@ const Login = () => {
               .then((res) => {
                 if (res && res.accessToken) {
                   useAuthStore.getState().login(res.accessToken, res.user)
+                  useShopCartStore.getState().removeAllProducts();
                   navigate('/app/dashboard', { replace: true });
                   notifySuccess("Successfully logged in")
                 }
