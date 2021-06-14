@@ -23,12 +23,12 @@ class PurchaseRepositoryTest {
     @Autowired
     private PurchaseRepository purchaseRepository;
     @Autowired private TestEntityManager entityManager;
+    private User user;
 
     @Test
-    @Ignore("Some issue on the pipeline")
     void givenSetOfPurchases_whenFindAllByUserId_thenReturnSet(){
         var purchases = setUpPurchases();
-        var purchases_db = purchaseRepository.findAllByUser_UserId(1L);
+        var purchases_db = purchaseRepository.findAllByUser_UserId(user.getUserId());
         assertThat(purchases_db).hasSize(2)
                 .extracting(Purchase::getId).containsAll(
                 purchases.stream().map( Purchase::getId).collect( Collectors.toList() ));
@@ -46,8 +46,9 @@ class PurchaseRepositoryTest {
 
 
     List<Purchase> setUpPurchases() {
-        User user = new User();
+        user = new User();
         entityManager.persistAndFlush(user);
+        System.out.println(user.getUserId());
         Product p1 = new Product();
         Product p2 = new Product();
         entityManager.persistAndFlush(p1);
