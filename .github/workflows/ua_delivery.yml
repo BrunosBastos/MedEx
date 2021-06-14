@@ -14,6 +14,8 @@ jobs:
     - name: docker login
       env:
         DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        echo $DOCKER_PASSWORD | docker login https://docker.pkg.github.com -u BrunosBastos --password-stdin
     - name: Run deployment
       run: |
         docker-compose up -d
