@@ -15,7 +15,7 @@ jobs:
       env:
         DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }} 
       run: |
-        cat $DOCKER_PASSWORD | docker login https://docker.pkg.github.com -u BrunosBastos --password-stdin     
+        echo $DOCKER_PASSWORD | docker login https://docker.pkg.github.com -u BrunosBastos --password-stdin     
     - name: Build backend
       run: |
         docker build ./backend -t docker.pkg.github.com/brunosbastos/medex/backend:latest
