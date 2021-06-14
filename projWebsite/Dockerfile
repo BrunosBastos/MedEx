@@ -15,7 +15,7 @@ COPY package.json yarn.lock ./
 #install dependencies:
 RUN npm install yarn
 
-RUN yarn install --frozen-lockfile
+RUN yarn install
 
 # Arguments
 ARG REACT_APP_API_BASE_URL
