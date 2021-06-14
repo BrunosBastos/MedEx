@@ -14,7 +14,7 @@ COPY package.json package-lock.json ./
 #install dependencies:
 RUN npm install yarn
 
-RUN yarn clean
+RUN yarn clear
 RUN yarn install
 
 # Arguments
