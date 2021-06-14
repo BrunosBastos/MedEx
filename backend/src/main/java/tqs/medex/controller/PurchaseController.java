@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import tqs.medex.entity.Purchase;
 import tqs.medex.exception.UserNotFoundException;
 import tqs.medex.pojo.CreatePurchasePOJO;
 import tqs.medex.repository.UserRepository;
