@@ -6,7 +6,8 @@ WORKDIR ./
 # add `//node_modules/.bin` to $PATH
 ENV PATH ./node_modules/.bin:$PATH
 
-COPY package.json package-lock.json ./
+COPY package.json yarn.lock ./
+
 
 #use the minified build file for production, not now - npm start is for development.
 #COPY ./build/* ./public/
@@ -14,7 +15,7 @@ COPY package.json package-lock.json ./
 #install dependencies:
 RUN npm install yarn
 
-RUN yarn install --force
+RUN yarn install --frozen-lockfile
 
 # Arguments
 ARG REACT_APP_API_BASE_URL
