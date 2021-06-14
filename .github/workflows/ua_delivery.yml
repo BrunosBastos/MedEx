@@ -2,12 +2,14 @@
 name: Run Delivery
 
 on:
-  pull_request:
-      branches:
-          - main
+  workflow_run:
+    workflows: ["Push to DockerHub"]
+    types:
+      - completed
 
 jobs:
   build:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: self-hosted
     steps:
     - uses: actions/checkout@v2
@@ -18,4 +20,5 @@ jobs:
         echo $DOCKER_PASSWORD | docker login https://docker.pkg.github.com -u BrunosBastos --password-stdin
     - name: Run deployment
       run: |
+        docker-compose down
         docker-compose up -d
