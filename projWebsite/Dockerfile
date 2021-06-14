@@ -14,7 +14,7 @@ COPY package.json package-lock.json ./
 #install dependencies:
 RUN npm install yarn
 
-RUN yarn install --check-files
+RUN yarn install --force
 
 # Arguments
 ARG REACT_APP_API_BASE_URL
