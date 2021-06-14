@@ -1,3 +1,4 @@
+
 version: '3.2'
 
 # Define services
@@ -10,6 +11,8 @@ services:
     ports:
       - "8080:8080"
     restart: always
+    depends_on:
+      - db # This service depends on mysql. Start that first.
     environment: # Pass environment variables to the service
       SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/medex
       SPRING_DATASOURCE_USERNAME: admin
@@ -25,8 +28,30 @@ services:
     ports:
       - "3000:3000"
     restart: always
+    depends_on:
+      - app-server
     networks:
       - frontend
+
+  # Database Service (Mysql)
+  db:
+    image: mysql:5.7
+    ports:
+      - "3306:3306"
+    restart: always
+    environment:
+      MYSQL_DATABASE: medex
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin_pass
+      MYSQL_ROOT_PASSWORD: 0x1c0e6ae
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - backend
+
+# Volumes
+volumes:
+  db-data:
 
 # Networks to be created to facilitate communication between containers
 networks:
