@@ -29,6 +29,13 @@ public class PurchaseService {
       return purchaseRepository.findAll();
   }
 
+  public Purchase getPurchaseDetails(User user, long purchaseid) {
+      if(!user.isSuperUser()){
+        return purchaseRepository.findByIdAndUser_UserId(purchaseid,user.getUserId()).orElse(null);
+      }
+      return purchaseRepository.findById(purchaseid).orElse(null);
+  }
+
   public Purchase addNewPurchase(CreatePurchasePOJO newPurchase, User user) {
 
     var purchase = new Purchase(newPurchase.getLat(), newPurchase.getLon());

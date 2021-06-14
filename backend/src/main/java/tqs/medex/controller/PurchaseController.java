@@ -33,6 +33,16 @@ public class PurchaseController {
     var purchases = orderService.getPurchases(user);
     return ResponseEntity.status(HttpStatus.OK).body(purchases);
   }
+  @GetMapping("/purchases/{id}")
+  public ResponseEntity<Object> getPurchase ( Authentication authentication, @PathVariable Long id) throws UserNotFoundException {
+    var usr = userRepository.findByEmail(authentication.getName())
+            .orElseThrow(UserNotFoundException::new);
+    var purchase = orderService.getPurchaseDetails(usr, id);
+    if (purchase == null){
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Purchase not found");
+    }
+    return ResponseEntity.status(HttpStatus.OK).body(purchase);
+  }
 
   @PostMapping("/purchases")
   public ResponseEntity<Object> addNewProduct(

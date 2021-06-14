@@ -75,6 +75,59 @@ class PurchaseControllerIT {
 
   @Test
   @WithMockUser(value = "henrique@gmail.com")
+  void whenGetPurchaseByIdAndisNotSuperUser_thenReturnUserPurchase(){
+    User user = userRepository.findByEmail("henrique@gmail.com").orElse(null);
+    assertThat(user).isNotNull();
+    Purchase purchase = purchaseRepository.findByIdAndUser_UserId(1L,user.getUserId()).orElse(null);
+    assertThat(purchase).isNotNull();
+    RestAssuredMockMvc.given()
+            .get("api/v1/purchases/" + 1L)
+            .then()
+            .assertThat()
+            .statusCode(200)
+            .and()
+            .and()
+            .body("id",is(purchase.getId().intValue()))
+            .body("products.product.id", hasSize(purchase.getProducts().size()))
+            .and()
+            .body("user.email", is(user.getEmail()));
+  }
+
+  @Test
+  @WithMockUser(value = "clara@gmail.com")
+  void whenGetPurchaseByIdAndisSuperUser_thenReturnPurchase(){
+    User user = userRepository.findByEmail("clara@gmail.com").orElse(null);
+    assertThat(user).isNotNull();
+    Purchase purchase = purchaseRepository.findById(1L).orElse(null);
+    assertThat(purchase).isNotNull();
+    RestAssuredMockMvc.given()
+            .get("api/v1/purchases/" + 1L)
+            .then()
+            .assertThat()
+            .statusCode(200)
+            .and()
+            .and()
+            .body("id",is(purchase.getId().intValue()))
+            .body("products.product.id", hasSize(purchase.getProducts().size()));
+  }
+
+
+  @Test
+  @WithMockUser(value = "henrique@gmail.com")
+  void whenGetNonUserPurchaseByIdAndisNotSuperUser_thenReturnBadRequest(){
+    User user = userRepository.findByEmail("henrique@gmail.com").orElse(null);
+    assertThat(user).isNotNull();
+    RestAssuredMockMvc.given()
+            .get("api/v1/purchases/" + 2L)
+            .then()
+            .assertThat()
+            .statusCode(400)
+            .statusLine("400 Purchase not found");
+  }
+
+
+  @Test
+  @WithMockUser(value = "henrique@gmail.com")
   void whenAddPurchaseWithValidData_thenReturnValidResponse() {
 
     CreatePurchasePOJO purchasePOJO = new CreatePurchasePOJO(10, 20, Map.of(1L, 1, 2L, 2));

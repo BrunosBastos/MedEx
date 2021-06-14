@@ -40,23 +40,24 @@ class PurchaseServiceTest {
   @InjectMocks private PurchaseService orderService;
 
   private CreatePurchasePOJO newOrder;
-  private Product p1;
-  private Product p2;
-  private Purchase validOrder;
   private User user;
   private User superuser;
   @BeforeEach
   void setUp() {
-
+    user = new User();
+    superuser = new User();
+    user.setUserId(1L);
+    superuser.setUserId(2L);
+    superuser.setSuperUser(true);
     newOrder = new CreatePurchasePOJO(50, 20, Map.of(1L, 10, 2L, 5));
 
-    p1 = new Product(1, "ProductTest1", "A description", 20, 4.99, "");
-    p2 = new Product(2, "ProductTest2", "A description", 10, 4.99, "");
+    Product p1 = new Product(1, "ProductTest1", "A description", 20, 4.99, "");
+    Product p2 = new Product(2, "ProductTest2", "A description", 10, 4.99, "");
 
     p1.setId(1L);
     p2.setId(2L);
 
-    validOrder = new Purchase(newOrder.getLat(), newOrder.getLon());
+    Purchase validOrder = new Purchase(newOrder.getLat(), newOrder.getLon());
 
     PurchaseProduct orderp1 = new PurchaseProduct(validOrder, p1, 10);
     PurchaseProduct orderp2 = new PurchaseProduct(validOrder, p2, 5);
@@ -67,8 +68,6 @@ class PurchaseServiceTest {
   }
   @Test
   void whenGetPurchasesWithNonSuperUser_thenReturnUserPurchases(){
-    user = new User();
-    user.setUserId(1L);
     var purchases = setupPurchasesVisibleforUser();
     when(purchaseRepository.findAllByUser_UserId(Mockito.anyLong())).thenReturn(purchases);
     var purchase_mocked_list = orderService.getPurchases(user);
@@ -80,14 +79,49 @@ class PurchaseServiceTest {
             purchases.stream().map( Purchase::getUser).collect( Collectors.toList() ));
     verifyFindAllByUserIdIsCalledOnce();
   }
+
+  @Test
+  void whenGetPurchaseByIdWithSuperUser_thenReturnPurchase(){
+
+    var purchase = setupPurchaseVisibleforUserAndSuperUser();
+    when(purchaseRepository.findById(Mockito.anyLong())).thenReturn(Optional.ofNullable(purchase));
+    assertThat(purchase).isNotNull();
+    var purchase_mocked_object = orderService.getPurchaseDetails(superuser,purchase.getId());
+    assertThat(purchase_mocked_object).isNotNull();
+    assertThat(purchase_mocked_object.getId()).isEqualTo(purchase.getId());
+    verifyFindByIdIsCalledOnce();
+  }
+
+  @Test
+  void whenGetPurchaseByIdWithNonSuperUser_thenReturnUserPurchase(){
+    var purchase = setupPurchaseVisibleforUserAndSuperUser();
+    when(purchaseRepository.findByIdAndUser_UserId(Mockito.anyLong(),Mockito.anyLong()))
+            .thenReturn(Optional.ofNullable(purchase));
+    assertThat(purchase).isNotNull();
+    var purchase_mocked_object = orderService.getPurchaseDetails(user,purchase.getId());
+    assertThat(purchase_mocked_object).isNotNull();
+    assertThat(purchase_mocked_object.getId()).isEqualTo(purchase.getId());
+    assertThat(purchase_mocked_object.getUser().getUserId()).isEqualTo(user.getUserId());
+    verifyFindAllByPurchaseIdAndUserIdisCalledOnce();
+  }
+
+  @Test
+  void whenGetNonUserPurchaseById_thenReturnNull(){
+    var purchase = setupPurchaseVisibleforSuperUser();
+    when(purchaseRepository.findByIdAndUser_UserId(Mockito.anyLong(),Mockito.anyLong())).thenReturn(Optional.empty());
+    var purchase_mocked_object = orderService.getPurchaseDetails(user,purchase.getId());
+    assertThat(purchase_mocked_object).isNull();
+    verifyFindAllByPurchaseIdAndUserIdisCalledOnce();
+
+  }
+
+
+
   @Test
   void whenGetPurchasesWithSuperUser_thenReturnAllPurchases(){
-    user = new User();
-    user.setUserId(1L);
-    user.setSuperUser(true);
     var purchases = setupPurchasesVisibleforSuperUser();
     when(purchaseRepository.findAll()).thenReturn(purchases);
-    var purchase_mocked_list = orderService.getPurchases(user);
+    var purchase_mocked_list = orderService.getPurchases(superuser);
     assertThat(purchase_mocked_list).hasSize(2)
             .extracting(Purchase::getId).containsAll(
             purchases.stream().map( Purchase::getId).collect( Collectors.toList() ));
@@ -134,7 +168,28 @@ class PurchaseServiceTest {
     var order = orderService.addNewPurchase(invalidOrderByProductId, new User());
     assertThat(order).isNull();
   }
-
+  Purchase setupPurchaseVisibleforUserAndSuperUser(){
+    Product p1 = new Product();
+    p1.setId(1L);
+    Product p2 = new Product();
+    p2.setId(2L);
+    Purchase order = new Purchase(10, 20);
+    PurchaseProduct op1 = new PurchaseProduct(order, p1, 10);
+    order.setUser(user);
+    order.setId(1L);
+    return order;
+  }
+  Purchase setupPurchaseVisibleforSuperUser(){
+    Product p1 = new Product();
+    p1.setId(1L);
+    Product p2 = new Product();
+    p2.setId(2L);
+    Purchase order = new Purchase(10, 20);
+    PurchaseProduct op1 = new PurchaseProduct(order, p1, 10);
+    order.setUser(superuser);
+    order.setId(1L);
+    return order;
+  }
   List<Purchase> setupPurchasesVisibleforUser() {
     Product p1 = new Product();
     p1.setId(1L);
@@ -167,6 +222,14 @@ class PurchaseServiceTest {
   void verifyFindAllByUserIdIsCalledOnce(){
     Mockito.verify(purchaseRepository, VerificationModeFactory.times(1))
             .findAllByUser_UserId(Mockito.anyLong());
+  }
+  void verifyFindByIdIsCalledOnce(){
+    Mockito.verify(purchaseRepository, VerificationModeFactory.times(1))
+            .findById(Mockito.anyLong());
+  }
+  void verifyFindAllByPurchaseIdAndUserIdisCalledOnce(){
+    Mockito.verify(purchaseRepository, VerificationModeFactory.times(1))
+            .findByIdAndUser_UserId(Mockito.anyLong(), Mockito.anyLong());
   }
 
   void verifyFindAllisCalledOnce(){

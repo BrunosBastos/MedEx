@@ -33,6 +33,15 @@ class PurchaseRepositoryTest {
 
     }
 
+    @Test
+    void givenSetOfPurchases_whenFindAllByIdAndUserId(){
+        var purchases = setUpPurchases();
+        var purchases_db = purchaseRepository.findByIdAndUser_UserId(1L,1L);
+        assertThat(purchases_db).isPresent();
+        assertThat(purchases_db.get().getId()).isEqualTo(1L);
+        assertThat(purchases_db.get().getUser().getUserId()).isEqualTo(1L);
+    }
+
 
     List<Purchase> setUpPurchases() {
         User user = new User();
