@@ -4,6 +4,7 @@ import io.restassured.http.ContentType;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -19,10 +20,9 @@ import tqs.medex.pojo.CreatePurchasePOJO;
 import tqs.medex.repository.UserRepository;
 import tqs.medex.service.PurchaseService;
 
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
@@ -37,17 +37,131 @@ class PurchaseControllerTest {
 
   @MockBean private UserRepository userRepository;
 
+  private User user;
+  private User admin;
   @BeforeEach
   void setUp() {
     RestAssuredMockMvc.mockMvc(mvc);
 
-    User user = new User();
+    user = new User();
     user.setUserId(1L);
     user.setEmail("henrique@gmail.com");
-
+    admin = new User();
+    admin.setEmail("clara@gmail.com");
+    admin.setSuperUser(true);
     when(userRepository.findByEmail("henrique@gmail.com")).thenReturn(Optional.of(user));
+    when(userRepository.findByEmail("clara@gmail.com")).thenReturn(Optional.of(admin));
   }
 
+  @Test
+  @WithMockUser(value = "clara@gmail.com")
+  void whenGetPurchasesAndisSuperUser_thenReturnUserPurchases() {
+    var orders = setupMultipleValidOrdersVisibleforUser();
+    when(orderService.getPurchases(any(User.class)))
+            .thenReturn(orders);
+    RestAssuredMockMvc.given()
+            .when()
+            .get("api/v1/purchases")
+            .then()
+            .assertThat()
+            .statusCode(200)
+            .and()
+            .body("", hasSize(1))
+            .and()
+            .body("[0].lat", is((float) orders.get(0).getLat()))
+            .and()
+            .body("[0].lon", is((float) orders.get(0).getLon()))
+            .and()
+            .body("[0].products", hasSize(orders.get(0).getProducts().size()))
+            .body("[0].user.email", is(orders.get(0).getUser().getEmail()));
+    verify(userRepository, times(1)).findByEmail("clara@gmail.com");
+    verify(orderService, times(1)).getPurchases(any(User.class));
+  }
+
+  @Test
+  @WithMockUser(value = "henrique@gmail.com")
+  void whenGetPurchasesAndisNotSuperUser_thenReturnUserPurchases() {
+    var orders = setupMultipleValidOrdersVisibleforSuperUser();
+    when(orderService.getPurchases(any(User.class)))
+            .thenReturn(orders);
+    RestAssuredMockMvc.given()
+            .when()
+            .get("api/v1/purchases")
+            .then()
+            .assertThat()
+            .statusCode(200)
+            .and()
+            .body("", hasSize(2))
+            .and()
+            .body("[0].lat", is((float) orders.get(0).getLat()))
+            .and()
+            .body("[0].lon", is((float) orders.get(0).getLon()))
+            .and()
+            .body("[0].products", hasSize(orders.get(0).getProducts().size()))
+            .and()
+            .body("[1].products", hasSize(orders.get(1).getProducts().size()))
+            .and()
+            .body("[0].user.email", is(orders.get(0).getUser().getEmail()))
+            .and()
+            .body("[1].user.email", is(orders.get(1).getUser().getEmail()));
+    verify(userRepository, times(1)).findByEmail("henrique@gmail.com");
+    verify(orderService, times(1)).getPurchases(any(User.class));
+  }
+  @Test
+  @WithMockUser(value = "henrique@gmail.com")
+  void whenGetPurchaseByIdAndisNotSuperUser_thenReturnPurchase(){
+    Purchase purchase = setUpValidOrder();
+    purchase.setId(1L);
+    when(orderService.getPurchaseDetails(Mockito.any(User.class), Mockito.anyLong())).thenReturn(purchase);
+    RestAssuredMockMvc.given()
+            .when()
+            .get("api/v1/purchases/" + 1L)
+            .then()
+            .assertThat()
+            .statusCode(200)
+            .and()
+            .body("products.product.id", hasSize(2))
+            .and()
+            .body("user.email", is(user.getEmail()));
+    verify(userRepository, times(1)).findByEmail("henrique@gmail.com");
+    verify(orderService, times(1)).getPurchaseDetails(any(User.class),Mockito.anyLong());
+  }
+
+  @Test
+  @WithMockUser(value = "henrique@gmail.com")
+  void whenGetPurchaseByInvalidId_thenReturnBadRequest(){
+    when(orderService.getPurchaseDetails(Mockito.any(User.class), Mockito.anyLong())).thenReturn(null);
+    RestAssuredMockMvc.given()
+            .when()
+            .get("api/v1/purchases/" + -99L)
+            .then()
+            .assertThat()
+            .statusCode(400)
+            .statusLine("400 Purchase not found");
+    verify(userRepository, times(1)).findByEmail("henrique@gmail.com");
+    verify(orderService, times(1)).getPurchaseDetails(any(User.class),Mockito.anyLong());
+  }
+
+
+  @Test
+  @WithMockUser("clara@gmail.com")
+  void whenGetPurchaseByIdAndisSuperUser_thenReturnPurchase() {
+    Purchase purchase = setUpValidOrder();
+    purchase.setId(1L);
+    when(orderService.getPurchaseDetails(Mockito.any(User.class), Mockito.anyLong())).thenReturn(purchase);
+    RestAssuredMockMvc.given()
+            .when()
+            .get("api/v1/purchases/" + 1L)
+            .then()
+            .assertThat()
+            .statusCode(200)
+            .body("products.product.id", hasSize(2))
+            .and()
+            //checking that the admin can retrieve every users purchases
+            .body("user.email", not(is(admin.getEmail())));
+    verify(userRepository, times(1)).findByEmail("clara@gmail.com");
+    verify(orderService, times(1)).getPurchaseDetails(any(User.class),Mockito.anyLong());
+  }
   @Test
   @WithMockUser(value = "henrique@gmail.com")
   void whenAddNewOrder_thenReturnOrder() {
@@ -122,7 +236,39 @@ class PurchaseControllerTest {
     PurchaseProduct op2 = new PurchaseProduct(order, p2, 20);
 
     order.setProducts(Arrays.asList(op1, op2));
-
+    order.setUser(user);
     return order;
   }
+  List<Purchase> setupMultipleValidOrdersVisibleforSuperUser() {
+    Product p1 = new Product();
+    p1.setId(1L);
+    Product p2 = new Product();
+    p2.setId(2L);
+    Purchase order = new Purchase(10, 20);
+    Purchase order2 = new Purchase(30,40);
+    PurchaseProduct op1 = new PurchaseProduct(order, p1, 10);
+
+    PurchaseProduct op2 = new PurchaseProduct(order, p2, 20);
+    order.setUser(user);
+    order2.setUser(admin);
+    order.setProducts(Arrays.asList(op1, op2));
+    return Arrays.asList(order,order2);
+  }
+
+  List<Purchase> setupMultipleValidOrdersVisibleforUser() {
+    Product p1 = new Product();
+    p1.setId(1L);
+    Product p2 = new Product();
+    p2.setId(2L);
+    Purchase order = new Purchase(10, 20);
+    Purchase order2 = new Purchase(30,40);
+    PurchaseProduct op1 = new PurchaseProduct(order, p1, 10);
+
+    PurchaseProduct op2 = new PurchaseProduct(order, p2, 20);
+    order.setUser(user);
+    order2.setUser(admin);
+    order.setProducts(Arrays.asList(op1, op2));
+    return Collections.singletonList(order);
+  }
+
 }
