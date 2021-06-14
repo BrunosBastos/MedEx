@@ -1,0 +1,16 @@
+
+name: Run Delivery
+
+on:
+  pull_request:
+      branches:
+          - main
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+    - uses: actions/checkout@v2     
+    - name: Run deployment
+      run: |
+        docker-compose up -d
