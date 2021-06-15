@@ -15,8 +15,11 @@ class LoadDatabase {
 
   @Bean
   CommandLineRunner initDatabase(
-          UserRepository users, ProductRepository products, SupplierRepository suppliers,
-          PurchaseRepository purchaseRepository, PurchaseProductRepository purchaseProductRepository) {
+      UserRepository users,
+      ProductRepository products,
+      SupplierRepository suppliers,
+      PurchaseRepository purchaseRepository,
+      PurchaseProductRepository purchaseProductRepository) {
 
     return args -> {
       var encoder = new BCryptPasswordEncoder();
@@ -38,17 +41,16 @@ class LoadDatabase {
             products.save(prod);
           });
       var order = new Purchase(10, 20);
-      var order2 = new Purchase(30,40);
+      var order2 = new Purchase(30, 40);
       var op1 = new PurchaseProduct(order, product, 10);
       var op2 = new PurchaseProduct(order, product2, 20);
       order.setProducts(Arrays.asList(op1, op2));
-      order2.setProducts(Arrays.asList(op1,op2));
-      purchaseRepository.saveAll(Arrays.asList(order,order2));
-      purchaseProductRepository.saveAll(Arrays.asList(op1,op2));
+      order2.setProducts(Arrays.asList(op1, op2));
+      purchaseRepository.saveAll(Arrays.asList(order, order2));
+      purchaseProductRepository.saveAll(Arrays.asList(op1, op2));
       order.setUser(clientUser);
       order2.setUser(adminUser);
-      purchaseRepository.saveAll(Arrays.asList(order,order2));
-
+      purchaseRepository.saveAll(Arrays.asList(order, order2));
     };
   }
 }

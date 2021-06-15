@@ -9,8 +9,9 @@ import tqs.medex.pojo.CreatePurchasePOJO;
 import tqs.medex.repository.ProductRepository;
 import tqs.medex.repository.PurchaseProductRepository;
 import tqs.medex.repository.PurchaseRepository;
-import java.util.List;
+
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class PurchaseService {
@@ -21,19 +22,18 @@ public class PurchaseService {
 
   @Autowired ProductRepository productRepository;
 
-
   public List<Purchase> getPurchases(User user) {
-      if(!user.isSuperUser()){
-        return purchaseRepository.findAllByUser_UserId(user.getUserId());
-      }
-      return purchaseRepository.findAll();
+    if (!user.isSuperUser()) {
+      return purchaseRepository.findAllByUser_UserId(user.getUserId());
+    }
+    return purchaseRepository.findAll();
   }
 
   public Purchase getPurchaseDetails(User user, long purchaseid) {
-      if(!user.isSuperUser()){
-        return purchaseRepository.findByIdAndUser_UserId(purchaseid,user.getUserId()).orElse(null);
-      }
-      return purchaseRepository.findById(purchaseid).orElse(null);
+    if (!user.isSuperUser()) {
+      return purchaseRepository.findByIdAndUser_UserId(purchaseid, user.getUserId()).orElse(null);
+    }
+    return purchaseRepository.findById(purchaseid).orElse(null);
   }
 
   public Purchase addNewPurchase(CreatePurchasePOJO newPurchase, User user) {
