@@ -36,95 +36,94 @@ class PurchaseControllerIT {
   @Autowired private PurchaseRepository purchaseRepository;
 
   @Autowired private UserRepository userRepository;
+
   @BeforeEach
   void setUp() {
     RestAssuredMockMvc.mockMvc(mvc);
   }
 
-
   @Test
   @WithMockUser(value = "henrique@gmail.com")
-  void whenGetPurchasesAndisNotSuperUser_thenReturnUserPurchases(){
+  void whenGetPurchasesAndisNotSuperUser_thenReturnUserPurchases() {
     User user = userRepository.findByEmail("henrique@gmail.com").orElse(null);
     assertThat(user).isNotNull();
     var purchases = purchaseRepository.findAllByUser_UserId(user.getUserId());
     RestAssuredMockMvc.given()
-            .get("api/v1/purchases")
-            .then()
-            .assertThat()
-            .statusCode(200)
-            .body("", hasSize(purchases.size()))
-            .and()
-            .body("user.userId", everyItem(is(user.getUserId().intValue())));
+        .get("api/v1/purchases")
+        .then()
+        .assertThat()
+        .statusCode(200)
+        .body("", hasSize(purchases.size()))
+        .and()
+        .body("user.userId", everyItem(is(user.getUserId().intValue())));
   }
 
   @Test
   @WithMockUser(value = "clara@gmail.com")
-  void whenGetPurchasesAndisSuperUser_thenReturnAllPurchases(){
+  void whenGetPurchasesAndisSuperUser_thenReturnAllPurchases() {
     User user = userRepository.findByEmail("clara@gmail.com").orElse(null);
     assertThat(user).isNotNull();
     var purchases = purchaseRepository.findAll();
     RestAssuredMockMvc.given()
-            .get("api/v1/purchases")
-            .then()
-            .assertThat()
-            .statusCode(200)
-            .and()
-            .body("", hasSize(purchases.size()));
+        .get("api/v1/purchases")
+        .then()
+        .assertThat()
+        .statusCode(200)
+        .and()
+        .body("", hasSize(purchases.size()));
   }
 
   @Test
   @WithMockUser(value = "henrique@gmail.com")
-  void whenGetPurchaseByIdAndisNotSuperUser_thenReturnUserPurchase(){
+  void whenGetPurchaseByIdAndisNotSuperUser_thenReturnUserPurchase() {
     User user = userRepository.findByEmail("henrique@gmail.com").orElse(null);
     assertThat(user).isNotNull();
-    Purchase purchase = purchaseRepository.findByIdAndUser_UserId(1L,user.getUserId()).orElse(null);
+    Purchase purchase =
+        purchaseRepository.findByIdAndUser_UserId(1L, user.getUserId()).orElse(null);
     assertThat(purchase).isNotNull();
     RestAssuredMockMvc.given()
-            .get("api/v1/purchases/" + 1L)
-            .then()
-            .assertThat()
-            .statusCode(200)
-            .and()
-            .and()
-            .body("id",is(purchase.getId().intValue()))
-            .body("products.product.id", hasSize(purchase.getProducts().size()))
-            .and()
-            .body("user.email", is(user.getEmail()));
+        .get("api/v1/purchases/" + 1L)
+        .then()
+        .assertThat()
+        .statusCode(200)
+        .and()
+        .and()
+        .body("id", is(purchase.getId().intValue()))
+        .body("products.product.id", hasSize(purchase.getProducts().size()))
+        .and()
+        .body("user.email", is(user.getEmail()));
   }
 
   @Test
   @WithMockUser(value = "clara@gmail.com")
-  void whenGetPurchaseByIdAndisSuperUser_thenReturnPurchase(){
+  void whenGetPurchaseByIdAndisSuperUser_thenReturnPurchase() {
     User user = userRepository.findByEmail("clara@gmail.com").orElse(null);
     assertThat(user).isNotNull();
     Purchase purchase = purchaseRepository.findById(1L).orElse(null);
     assertThat(purchase).isNotNull();
     RestAssuredMockMvc.given()
-            .get("api/v1/purchases/" + 1L)
-            .then()
-            .assertThat()
-            .statusCode(200)
-            .and()
-            .and()
-            .body("id",is(purchase.getId().intValue()))
-            .body("products.product.id", hasSize(purchase.getProducts().size()));
+        .get("api/v1/purchases/" + 1L)
+        .then()
+        .assertThat()
+        .statusCode(200)
+        .and()
+        .and()
+        .body("id", is(purchase.getId().intValue()))
+        .body("products.product.id", hasSize(purchase.getProducts().size()));
   }
-
 
   @Test
   @WithMockUser(value = "henrique@gmail.com")
-  void whenGetNonUserPurchaseByIdAndisNotSuperUser_thenReturnBadRequest(){
+  void whenGetNonUserPurchaseByIdAndisNotSuperUser_thenReturnBadRequest() {
     User user = userRepository.findByEmail("henrique@gmail.com").orElse(null);
     assertThat(user).isNotNull();
     RestAssuredMockMvc.given()
-            .get("api/v1/purchases/" + 2L)
-            .then()
-            .assertThat()
-            .statusCode(400)
-            .statusLine("400 Purchase not found");
+        .get("api/v1/purchases/" + 2L)
+        .then()
+        .assertThat()
+        .statusCode(400)
+        .statusLine("400 Purchase not found");
   }
-
 
   @Test
   @WithMockUser(value = "henrique@gmail.com")
