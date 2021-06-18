@@ -15,4 +15,4 @@ import tqs.medex.MedExApplication;
     webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
     properties = {"security.basic.enabled=false"})
 @AutoConfigureTestDatabase
-public class CucumberTestRunner {}
+public class CucumberTestRunnerIT {}
