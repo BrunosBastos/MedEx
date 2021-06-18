@@ -33,8 +33,9 @@ jobs:
       - name: Test Frontend
         run: |
           cd projWebsite
-          npm install
-          npm start &
+          npm install yarn
+          yarn install
+          yarn start &
       - name: Build and analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
