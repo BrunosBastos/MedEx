@@ -22,7 +22,7 @@ public class AddSupplierSteps {
     WebDriverManager.firefoxdriver().setup();
     FirefoxOptions options = new FirefoxOptions();
     options.addArguments("--headless");
-    driver = new FirefoxDriver();
+    driver = new FirefoxDriver(options);
     loginPage = new LoginPage(driver);
     addSupplierPage = new AddSupplierPage(driver);
     errorMessage = new ErrorMessage(driver);

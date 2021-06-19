@@ -19,7 +19,7 @@ public class ListProductsSteps {
     WebDriverManager.firefoxdriver().setup();
     FirefoxOptions options = new FirefoxOptions();
     options.addArguments("--headless");
-    driver = new FirefoxDriver();
+    driver = new FirefoxDriver(options);
     loginPage = new LoginPage(driver);
     listProductsPage = new ListProductsPage(driver);
   }

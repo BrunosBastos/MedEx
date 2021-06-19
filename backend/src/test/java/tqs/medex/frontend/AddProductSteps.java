@@ -21,7 +21,7 @@ public class AddProductSteps {
     WebDriverManager.firefoxdriver().setup();
     FirefoxOptions options = new FirefoxOptions();
     options.addArguments("--headless");
-    driver = new FirefoxDriver();
+    driver = new FirefoxDriver(options);
     loginPage = new LoginPage(driver);
     addProductPage = new AddProductPage(driver);
     errorMessage = new ErrorMessage(driver);
