@@ -11,7 +11,7 @@ public class RegisterPage {
   }
 
   public void goTo() {
-    driver.get("http://localhost:3000/register");
+    driver.get("https://tqs-medex.herokuapp.com/register");
   }
 
   public void insertEmail(String email) {

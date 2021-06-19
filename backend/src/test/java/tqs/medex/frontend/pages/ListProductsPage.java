@@ -20,7 +20,7 @@ public class ListProductsPage {
   }
 
   public void goTo() {
-    driver.get("http://localhost:3000/app/products");
+    driver.get("https://tqs-medex.herokuapp.com/app/products");
   }
 
   public void checkNumProducts(int num) {

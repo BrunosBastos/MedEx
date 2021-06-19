@@ -13,7 +13,7 @@ public class ShoppingCartPage {
   }
 
   public void goTo() {
-    driver.get("http://localhost:3000/app/shoppingCart");
+    driver.get("https://tqs-medex.herokuapp.com/app/shoppingCart");
   }
 
   public void finalizePurchase() {

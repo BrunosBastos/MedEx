@@ -16,11 +16,11 @@ public class LoginPage {
   }
 
   public void goTo() {
-    driver.get("http://localhost:3000/login");
+    driver.get("https://tqs-medex.herokuapp.com/login");
   }
 
   public void loggInAs(String email, String password) {
-    driver.get("http://localhost:3000/login");
+    driver.get("https://tqs-medex.herokuapp.com/login");
     driver.findElement(By.name("email")).sendKeys(email);
     driver.findElement(By.name("password")).sendKeys(password);
     driver.findElement(By.cssSelector(".MuiButton-label")).click();

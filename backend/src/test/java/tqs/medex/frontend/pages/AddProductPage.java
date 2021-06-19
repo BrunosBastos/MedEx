@@ -15,7 +15,7 @@ public class AddProductPage {
   }
 
   public void goTo() {
-    driver.get("http://localhost:3000/app/addProduct");
+    driver.get("https://tqs-medex.herokuapp.com/app/addProduct");
   }
 
   public void insertProductInfo(String name, double price, int stock) {
