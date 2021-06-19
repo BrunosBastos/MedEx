@@ -12,7 +12,7 @@ public class AddSupplierPage {
   }
 
   public void goTo() {
-    driver.get("https://tqs-medex.herokuapp.com/app/addSupplier");
+    driver.get("http://localhost:3000/app/addSupplier");
   }
 
   public void insertLat(Double lat) {

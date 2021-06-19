@@ -17,7 +17,7 @@ public class UpdateProductPage {
   }
 
   public void goTo(int prodid) {
-    driver.get("https://tqs-medex.herokuapp.com/app/product/" + prodid);
+    driver.get("http://localhost:3000/app/product/" + prodid);
   }
 
   public void insertInfo(int stock, double price) {

@@ -16,7 +16,7 @@ public class LoginPage {
   }
 
   public void goTo() {
-    driver.get("https://tqs-medex.herokuapp.com/login");
+    driver.get("http://localhost:3000/login");
   }
 
   public void loggInAs(String email, String password) {
