@@ -6,6 +6,7 @@ import io.cucumber.java.en.Then;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import tqs.medex.frontend.pages.AddProductPage;
 import tqs.medex.frontend.pages.ErrorMessage;
 import tqs.medex.frontend.pages.LoginPage;
@@ -18,6 +19,8 @@ public class AddProductSteps {
 
   public AddProductSteps() {
     WebDriverManager.firefoxdriver().setup();
+    FirefoxOptions options = new FirefoxOptions();
+    options.addArguments("--headless");
     driver = new FirefoxDriver();
     loginPage = new LoginPage(driver);
     addProductPage = new AddProductPage(driver);
