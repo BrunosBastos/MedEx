@@ -30,7 +30,7 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase
-class AuthControllerTest {
+class AuthController {
   RegisterRequest registerRequest;
   LoginRequest loginRequest;
   @Autowired private MockMvc mvc;
