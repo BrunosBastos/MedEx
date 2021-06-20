@@ -10,6 +10,7 @@ import org.mockito.internal.verification.VerificationModeFactory;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.test.context.support.WithMockUser;
 import tqs.medex.entity.Product;
 import tqs.medex.entity.Purchase;
@@ -75,8 +76,10 @@ class PurchaseServiceTest {
   @Test
   void whenGetPurchasesWithNonSuperUser_thenReturnUserPurchases() {
     var purchases = setupPurchasesVisibleforUser();
-    when(purchaseRepository.findAllByUser_UserId(Mockito.anyLong())).thenReturn(purchases);
-    var purchase_mocked_list = orderService.getPurchases(user);
+    Page<Purchase> page = new PageImpl<>(purchases);
+
+    when(purchaseRepository.findAllByUser_UserId(Mockito.anyLong(), any())).thenReturn(page);
+    var purchase_mocked_list = orderService.getPurchases(user, 0, true);
     assertThat(purchase_mocked_list)
         .hasSize(1)
         .extracting(Purchase::getId)
@@ -126,8 +129,9 @@ class PurchaseServiceTest {
   @Test
   void whenGetPurchasesWithSuperUser_thenReturnAllPurchases() {
     var purchases = setupPurchasesVisibleforSuperUser();
-    when(purchaseRepository.findAll()).thenReturn(purchases);
-    var purchase_mocked_list = orderService.getPurchases(superuser);
+    Page<Purchase> page = new PageImpl<>(purchases);
+    when(purchaseRepository.findAll(any(Pageable.class))).thenReturn(page);
+    var purchase_mocked_list = orderService.getPurchases(superuser, 0, true);
     assertThat(purchase_mocked_list)
         .hasSize(2)
         .extracting(Purchase::getId)
@@ -241,7 +245,7 @@ class PurchaseServiceTest {
 
   void verifyFindAllByUserIdIsCalledOnce() {
     Mockito.verify(purchaseRepository, VerificationModeFactory.times(1))
-        .findAllByUser_UserId(Mockito.anyLong());
+        .findAllByUser_UserId(Mockito.anyLong(), any());
   }
 
   void verifyFindByIdIsCalledOnce() {
@@ -255,6 +259,7 @@ class PurchaseServiceTest {
   }
 
   void verifyFindAllisCalledOnce() {
-    Mockito.verify(purchaseRepository, VerificationModeFactory.times(1)).findAll();
+    Mockito.verify(purchaseRepository, VerificationModeFactory.times(1))
+        .findAll(any(Pageable.class));
   }
 }

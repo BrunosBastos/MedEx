@@ -48,13 +48,12 @@ class PurchaseControllerIT {
   void whenGetPurchasesAndIsNotSuperUser_thenReturnUserPurchases() {
     User user = userRepository.findByEmail("henrique@gmail.com").orElse(null);
     assertThat(user).isNotNull();
-    var purchases = purchaseRepository.findAllByUser_UserId(user.getUserId());
     RestAssuredMockMvc.given()
         .get("api/v1/purchases")
         .then()
         .assertThat()
         .statusCode(200)
-        .body("", hasSize(purchases.size()))
+        .body("$.size()", is(1))
         .and()
         .body("user.userId", everyItem(is(user.getUserId().intValue())));
   }

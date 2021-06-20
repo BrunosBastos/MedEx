@@ -25,13 +25,17 @@ public class PurchaseController {
   @Autowired private UserRepository userRepository;
 
   @GetMapping("/purchases")
-  public ResponseEntity<List<Purchase>> getAllPurchases(Authentication authentication)
+  public ResponseEntity<List<Purchase>> getAllPurchases(
+      Authentication authentication,
+      @RequestParam(required = false, defaultValue = "0") Integer page,
+      @RequestParam(required = false, defaultValue = "true") Boolean recent)
       throws UserNotFoundException {
     var user =
         userRepository
             .findByEmail(authentication.getName())
             .orElseThrow(UserNotFoundException::new);
-    var purchases = purchaseService.getPurchases(user);
+
+    var purchases = purchaseService.getPurchases(user, page, recent);
     return ResponseEntity.status(HttpStatus.OK).body(purchases);
   }
 

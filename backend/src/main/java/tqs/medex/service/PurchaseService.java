@@ -26,11 +26,14 @@ public class PurchaseService {
 
   @Autowired ProductRepository productRepository;
 
-  public List<Purchase> getPurchases(User user) {
+  public List<Purchase> getPurchases(User user, Integer page, Boolean recent) {
+    Pageable pageable =
+        PageRequest.of(
+            page, PAGE_SIZE, recent ? Sort.by("id").descending() : Sort.by("id").ascending());
     if (!user.isSuperUser()) {
-      return purchaseRepository.findAllByUser_UserId(user.getUserId());
+      return purchaseRepository.findAllByUser_UserId(user.getUserId(), pageable).getContent();
     }
-    return purchaseRepository.findAll();
+    return purchaseRepository.findAll(pageable).getContent();
   }
 
   public Purchase getPurchaseDetails(User user, long purchaseid) {
