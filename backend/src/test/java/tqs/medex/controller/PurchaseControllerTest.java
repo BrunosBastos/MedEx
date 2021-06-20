@@ -218,6 +218,46 @@ class PurchaseControllerTest {
     verify(orderService, times(1)).addNewPurchase(any(), any(User.class));
   }
 
+  @Test
+  @WithMockUser(value = "henrique@gmail.com")
+  void whenGetPurchaseHistoryBySupplierWithInvalidSupplier_thenReturnEmptyList() {
+
+    when(orderService.getPurchasedProductsBySupplier(1000L, 0, true))
+        .thenReturn(Collections.emptyList());
+    RestAssuredMockMvc.given()
+        .contentType(ContentType.JSON)
+        .when()
+        .get("api/v1/purchases/products/1000?page=0&recent=true")
+        .then()
+        .assertThat()
+        .statusCode(200)
+        .body("$.size()", is(0));
+    ;
+    verify(orderService, times(1)).getPurchasedProductsBySupplier(1000L, 0, true);
+  }
+
+  @Test
+  @WithMockUser(value = "henrique@gmail.com")
+  void whenGetPurchaseHistoryBySupplierWithValidSupplier_thenReturnPurchaseList() {
+
+    var purchaseProduct1 = new PurchaseProduct();
+    var purchaseProduct2 = new PurchaseProduct();
+    var purchaseProduct3 = new PurchaseProduct();
+
+    when(orderService.getPurchasedProductsBySupplier(1L, 0, true))
+        .thenReturn(Arrays.asList(purchaseProduct1, purchaseProduct2, purchaseProduct3));
+    RestAssuredMockMvc.given()
+        .contentType(ContentType.JSON)
+        .when()
+        .get("api/v1/purchases/products/1?page=0&recent=true")
+        .then()
+        .assertThat()
+        .statusCode(200)
+        .body("$.size()", is(3));
+    ;
+    verify(orderService, times(1)).getPurchasedProductsBySupplier(1L, 0, true);
+  }
+
   CreatePurchasePOJO setUpAddOrderValid() {
     return new CreatePurchasePOJO(10, 20, Map.of(1L, 10, 2L, 4));
   }
