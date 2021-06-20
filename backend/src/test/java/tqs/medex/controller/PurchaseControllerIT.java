@@ -12,6 +12,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import tqs.medex.entity.Purchase;
+import tqs.medex.entity.PurchaseProduct;
 import tqs.medex.entity.User;
 import tqs.medex.pojo.CreatePurchasePOJO;
 import tqs.medex.repository.ProductRepository;
@@ -44,23 +45,22 @@ class PurchaseControllerIT {
 
   @Test
   @WithMockUser(value = "henrique@gmail.com")
-  void whenGetPurchasesAndisNotSuperUser_thenReturnUserPurchases() {
+  void whenGetPurchasesAndIsNotSuperUser_thenReturnUserPurchases() {
     User user = userRepository.findByEmail("henrique@gmail.com").orElse(null);
     assertThat(user).isNotNull();
-    var purchases = purchaseRepository.findAllByUser_UserId(user.getUserId());
     RestAssuredMockMvc.given()
         .get("api/v1/purchases")
         .then()
         .assertThat()
         .statusCode(200)
-        .body("", hasSize(purchases.size()))
+        .body("$.size()", is(1))
         .and()
         .body("user.userId", everyItem(is(user.getUserId().intValue())));
   }
 
   @Test
   @WithMockUser(value = "clara@gmail.com")
-  void whenGetPurchasesAndisSuperUser_thenReturnAllPurchases() {
+  void whenGetPurchasesAndIsSuperUser_thenReturnAllPurchases() {
     User user = userRepository.findByEmail("clara@gmail.com").orElse(null);
     assertThat(user).isNotNull();
     var purchases = purchaseRepository.findAll();
@@ -75,7 +75,7 @@ class PurchaseControllerIT {
 
   @Test
   @WithMockUser(value = "henrique@gmail.com")
-  void whenGetPurchaseByIdAndisNotSuperUser_thenReturnUserPurchase() {
+  void whenGetPurchaseByIdAndIsNotSuperUser_thenReturnUserPurchase() {
     User user = userRepository.findByEmail("henrique@gmail.com").orElse(null);
     assertThat(user).isNotNull();
     Purchase purchase =
@@ -96,7 +96,7 @@ class PurchaseControllerIT {
 
   @Test
   @WithMockUser(value = "clara@gmail.com")
-  void whenGetPurchaseByIdAndisSuperUser_thenReturnPurchase() {
+  void whenGetPurchaseByIdAndIsSuperUser_thenReturnPurchase() {
     User user = userRepository.findByEmail("clara@gmail.com").orElse(null);
     assertThat(user).isNotNull();
     Purchase purchase = purchaseRepository.findById(1L).orElse(null);
@@ -114,7 +114,7 @@ class PurchaseControllerIT {
 
   @Test
   @WithMockUser(value = "henrique@gmail.com")
-  void whenGetNonUserPurchaseByIdAndisNotSuperUser_thenReturnBadRequest() {
+  void whenGetNonUserPurchaseByIdAndIsNotSuperUser_thenReturnBadRequest() {
     User user = userRepository.findByEmail("henrique@gmail.com").orElse(null);
     assertThat(user).isNotNull();
     RestAssuredMockMvc.given()
@@ -177,5 +177,65 @@ class PurchaseControllerIT {
         .then()
         .assertThat()
         .statusCode(400);
+  }
+
+  @Test
+  @WithMockUser(value = "henrique@gmail.com")
+  void whenGetPurchaseHistoryBySupplierWithInvalidSupplier_thenReturnEmptyList() {
+
+    RestAssuredMockMvc.given()
+        .contentType(ContentType.JSON)
+        .when()
+        .get("api/v1/purchases/products/1000?page=0&recent=true")
+        .then()
+        .assertThat()
+        .statusCode(200)
+        .body("$.size()", is(0));
+  }
+
+  @Test
+  @WithMockUser(value = "henrique@gmail.com")
+  void whenGetPurchaseHistoryBySupplierWithValidSupplierDescending_thenReturnEmptyList() {
+
+    var history =
+        RestAssuredMockMvc.given()
+            .contentType(ContentType.JSON)
+            .when()
+            .get("api/v1/purchases/products/1?page=0&recent=true")
+            .then()
+            .assertThat()
+            .statusCode(200)
+            .body("$.size()", is(3))
+            .extract()
+            .jsonPath()
+            .getList("", PurchaseProduct.class);
+
+    assertThat(history.get(0).getPurchase().getId())
+        .isGreaterThanOrEqualTo(history.get(1).getPurchase().getId());
+    assertThat(history.get(1).getPurchase().getId())
+        .isGreaterThanOrEqualTo(history.get(2).getPurchase().getId());
+  }
+
+  @Test
+  @WithMockUser(value = "henrique@gmail.com")
+  void whenGetPurchaseHistoryBySupplierWithValidSupplierAscending_thenReturnEmptyList() {
+
+    var history =
+        RestAssuredMockMvc.given()
+            .contentType(ContentType.JSON)
+            .when()
+            .get("api/v1/purchases/products/1?page=0&recent=false")
+            .then()
+            .assertThat()
+            .statusCode(200)
+            .body("$.size()", is(3))
+            .extract()
+            .jsonPath()
+            .getList("", PurchaseProduct.class);
+
+    assertThat(history.get(0).getPurchase().getId())
+        .isLessThanOrEqualTo(history.get(1).getPurchase().getId());
+    assertThat(history.get(1).getPurchase().getId())
+        .isLessThanOrEqualTo(history.get(2).getPurchase().getId());
   }
 }

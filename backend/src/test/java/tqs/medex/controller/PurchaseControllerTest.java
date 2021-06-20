@@ -58,7 +58,7 @@ class PurchaseControllerTest {
   @WithMockUser(value = "clara@gmail.com")
   void whenGetPurchasesAndisSuperUser_thenReturnUserPurchases() {
     var orders = setupMultipleValidOrdersVisibleforUser();
-    when(orderService.getPurchases(any(User.class))).thenReturn(orders);
+    when(orderService.getPurchases(any(User.class), any(), any())).thenReturn(orders);
     RestAssuredMockMvc.given()
         .when()
         .get("api/v1/purchases")
@@ -75,14 +75,14 @@ class PurchaseControllerTest {
         .body("[0].products", hasSize(orders.get(0).getProducts().size()))
         .body("[0].user.email", is(orders.get(0).getUser().getEmail()));
     verify(userRepository, times(1)).findByEmail("clara@gmail.com");
-    verify(orderService, times(1)).getPurchases(any(User.class));
+    verify(orderService, times(1)).getPurchases(any(User.class), anyInt(), any());
   }
 
   @Test
   @WithMockUser(value = "henrique@gmail.com")
   void whenGetPurchasesAndisNotSuperUser_thenReturnUserPurchases() {
     var orders = setupMultipleValidOrdersVisibleforSuperUser();
-    when(orderService.getPurchases(any(User.class))).thenReturn(orders);
+    when(orderService.getPurchases(any(User.class), anyInt(), anyBoolean())).thenReturn(orders);
     RestAssuredMockMvc.given()
         .when()
         .get("api/v1/purchases")
@@ -104,7 +104,7 @@ class PurchaseControllerTest {
         .and()
         .body("[1].user.email", is(orders.get(1).getUser().getEmail()));
     verify(userRepository, times(1)).findByEmail("henrique@gmail.com");
-    verify(orderService, times(1)).getPurchases(any(User.class));
+    verify(orderService, times(1)).getPurchases(any(User.class), anyInt(), any());
   }
 
   @Test
@@ -216,6 +216,46 @@ class PurchaseControllerTest {
         .statusLine("400 Invalid Product Quantity");
 
     verify(orderService, times(1)).addNewPurchase(any(), any(User.class));
+  }
+
+  @Test
+  @WithMockUser(value = "henrique@gmail.com")
+  void whenGetPurchaseHistoryBySupplierWithInvalidSupplier_thenReturnEmptyList() {
+
+    when(orderService.getPurchasedProductsBySupplier(1000L, 0, true))
+        .thenReturn(Collections.emptyList());
+    RestAssuredMockMvc.given()
+        .contentType(ContentType.JSON)
+        .when()
+        .get("api/v1/purchases/products/1000?page=0&recent=true")
+        .then()
+        .assertThat()
+        .statusCode(200)
+        .body("$.size()", is(0));
+    ;
+    verify(orderService, times(1)).getPurchasedProductsBySupplier(1000L, 0, true);
+  }
+
+  @Test
+  @WithMockUser(value = "henrique@gmail.com")
+  void whenGetPurchaseHistoryBySupplierWithValidSupplier_thenReturnPurchaseList() {
+
+    var purchaseProduct1 = new PurchaseProduct();
+    var purchaseProduct2 = new PurchaseProduct();
+    var purchaseProduct3 = new PurchaseProduct();
+
+    when(orderService.getPurchasedProductsBySupplier(1L, 0, true))
+        .thenReturn(Arrays.asList(purchaseProduct1, purchaseProduct2, purchaseProduct3));
+    RestAssuredMockMvc.given()
+        .contentType(ContentType.JSON)
+        .when()
+        .get("api/v1/purchases/products/1?page=0&recent=true")
+        .then()
+        .assertThat()
+        .statusCode(200)
+        .body("$.size()", is(3));
+    ;
+    verify(orderService, times(1)).getPurchasedProductsBySupplier(1L, 0, true);
   }
 
   CreatePurchasePOJO setUpAddOrderValid() {

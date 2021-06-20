@@ -1,6 +1,6 @@
 package tqs.medex.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,7 +19,7 @@ public class PurchaseProduct {
 
   @Id
   @ManyToOne
-  @JsonIgnore
+  @JsonIgnoreProperties("products")
   @JoinColumn(name = "purchase", referencedColumnName = "id")
   private Purchase purchase;
 

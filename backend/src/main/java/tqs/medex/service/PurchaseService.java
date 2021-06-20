@@ -1,6 +1,9 @@
 package tqs.medex.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import tqs.medex.entity.Purchase;
 import tqs.medex.entity.PurchaseProduct;
@@ -16,17 +19,21 @@ import java.util.List;
 @Service
 public class PurchaseService {
 
+  private static final int PAGE_SIZE = 10;
   @Autowired PurchaseRepository purchaseRepository;
 
   @Autowired PurchaseProductRepository purchaseProductRepository;
 
   @Autowired ProductRepository productRepository;
 
-  public List<Purchase> getPurchases(User user) {
+  public List<Purchase> getPurchases(User user, Integer page, Boolean recent) {
+    Pageable pageable =
+        PageRequest.of(
+            page, PAGE_SIZE, recent ? Sort.by("id").descending() : Sort.by("id").ascending());
     if (!user.isSuperUser()) {
-      return purchaseRepository.findAllByUser_UserId(user.getUserId());
+      return purchaseRepository.findAllByUser_UserId(user.getUserId(), pageable).getContent();
     }
-    return purchaseRepository.findAll();
+    return purchaseRepository.findAll(pageable).getContent();
   }
 
   public Purchase getPurchaseDetails(User user, long purchaseid) {
@@ -69,5 +76,15 @@ public class PurchaseService {
     }
     purchase.setProducts(purchaseProducts);
     return purchase;
+  }
+
+  public List<PurchaseProduct> getPurchasedProductsBySupplier(
+      Long supplierId, int page, boolean recent) {
+    Pageable pageable =
+        PageRequest.of(
+            page,
+            PAGE_SIZE,
+            recent ? Sort.by("purchase.id").descending() : Sort.by("purchase.id").ascending());
+    return purchaseProductRepository.findAllByProductSupplierId(supplierId, pageable).getContent();
   }
 }

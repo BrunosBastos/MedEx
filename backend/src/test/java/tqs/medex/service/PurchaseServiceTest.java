@@ -8,6 +8,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.internal.verification.VerificationModeFactory;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.test.context.support.WithMockUser;
 import tqs.medex.entity.Product;
 import tqs.medex.entity.Purchase;
@@ -22,6 +25,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,6 +45,8 @@ class PurchaseServiceTest {
   private CreatePurchasePOJO newOrder;
   private User user;
   private User superuser;
+  private PurchaseProduct orderp1;
+  private PurchaseProduct orderp2;
 
   @BeforeEach
   void setUp() {
@@ -59,8 +65,8 @@ class PurchaseServiceTest {
 
     Purchase validOrder = new Purchase(newOrder.getLat(), newOrder.getLon());
 
-    PurchaseProduct orderp1 = new PurchaseProduct(validOrder, p1, 10);
-    PurchaseProduct orderp2 = new PurchaseProduct(validOrder, p2, 5);
+    orderp1 = new PurchaseProduct(validOrder, p1, 10);
+    orderp2 = new PurchaseProduct(validOrder, p2, 5);
 
     when(productRepository.findById(1L)).thenReturn(Optional.of(p1));
     when(productRepository.findById(2L)).thenReturn(Optional.of(p2));
@@ -70,8 +76,10 @@ class PurchaseServiceTest {
   @Test
   void whenGetPurchasesWithNonSuperUser_thenReturnUserPurchases() {
     var purchases = setupPurchasesVisibleforUser();
-    when(purchaseRepository.findAllByUser_UserId(Mockito.anyLong())).thenReturn(purchases);
-    var purchase_mocked_list = orderService.getPurchases(user);
+    Page<Purchase> page = new PageImpl<>(purchases);
+
+    when(purchaseRepository.findAllByUser_UserId(Mockito.anyLong(), any())).thenReturn(page);
+    var purchase_mocked_list = orderService.getPurchases(user, 0, true);
     assertThat(purchase_mocked_list)
         .hasSize(1)
         .extracting(Purchase::getId)
@@ -121,8 +129,9 @@ class PurchaseServiceTest {
   @Test
   void whenGetPurchasesWithSuperUser_thenReturnAllPurchases() {
     var purchases = setupPurchasesVisibleforSuperUser();
-    when(purchaseRepository.findAll()).thenReturn(purchases);
-    var purchase_mocked_list = orderService.getPurchases(superuser);
+    Page<Purchase> page = new PageImpl<>(purchases);
+    when(purchaseRepository.findAll(any(Pageable.class))).thenReturn(page);
+    var purchase_mocked_list = orderService.getPurchases(superuser, 0, true);
     assertThat(purchase_mocked_list)
         .hasSize(2)
         .extracting(Purchase::getId)
@@ -169,6 +178,16 @@ class PurchaseServiceTest {
 
     var order = orderService.addNewPurchase(invalidOrderByProductId, new User());
     assertThat(order).isNull();
+  }
+
+  @Test
+  @WithMockUser(value = "clara@gmail.com")
+  void whenGetPurchaseHistoryBySupplier_thenReturnPurchaseList() {
+
+    Page<PurchaseProduct> page = new PageImpl<>(Arrays.asList(orderp1, orderp2));
+    when(purchaseProductRepository.findAllByProductSupplierId(any(), any())).thenReturn(page);
+    var orderProducts = orderService.getPurchasedProductsBySupplier(1L, 0, true);
+    assertThat(orderProducts.size()).isEqualTo(2);
   }
 
   Purchase setupPurchaseVisibleforUserAndSuperUser() {
@@ -226,7 +245,7 @@ class PurchaseServiceTest {
 
   void verifyFindAllByUserIdIsCalledOnce() {
     Mockito.verify(purchaseRepository, VerificationModeFactory.times(1))
-        .findAllByUser_UserId(Mockito.anyLong());
+        .findAllByUser_UserId(Mockito.anyLong(), any());
   }
 
   void verifyFindByIdIsCalledOnce() {
@@ -240,6 +259,7 @@ class PurchaseServiceTest {
   }
 
   void verifyFindAllisCalledOnce() {
-    Mockito.verify(purchaseRepository, VerificationModeFactory.times(1)).findAll();
+    Mockito.verify(purchaseRepository, VerificationModeFactory.times(1))
+        .findAll(any(Pageable.class));
   }
 }
