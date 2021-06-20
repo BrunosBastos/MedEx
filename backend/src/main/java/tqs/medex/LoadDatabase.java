@@ -41,6 +41,7 @@ class LoadDatabase {
             products.save(prod);
           });
       var order = new Purchase(10, 20);
+      order.setDelivered(true);
       var order2 = new Purchase(30, 40);
       var op1 = new PurchaseProduct(order, product, 10);
       var op2 = new PurchaseProduct(order, product2, 20);
