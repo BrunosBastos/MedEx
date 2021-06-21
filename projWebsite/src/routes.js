@@ -2,6 +2,7 @@ import { Navigate } from 'react-router-dom';
 import DashboardLayout from 'src/components/DashboardLayout';
 import MainLayout from 'src/components/MainLayout';
 import Dashboard from 'src/pages/Dashboard';
+import OrderList from 'src/pages/OrderList.tsx';
 import Login from 'src/pages/Login.tsx';
 import NotFound from 'src/pages/NotFound';
 import ProductList from 'src/pages/ProductList.tsx';
@@ -23,7 +24,8 @@ const routes = (token, isSuperUser) => [
       // Clients Only
       { path: 'shoppingCart', element: !isSuperUser ?  <ShoppingCart /> : <Navigate to="/404" /> },
       // Anyone
-      { path: 'dashboard', element: <Dashboard /> },
+      { path: 'dashboard', element: <Navigate to="/app/orders" />/*<Dashboard />*/ },
+      { path: 'orders', element: <OrderList /> },
       { path: 'products', element: <ProductList /> },
       { path: '*', element: <Navigate to="/404" /> }
     ],
