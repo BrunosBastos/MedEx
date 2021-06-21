@@ -1,8 +1,6 @@
 import {useEffect,useState} from 'react';
 import { Helmet } from 'react-helmet';
 import getInitials from 'src/utils/getInitials';
-import products from 'src/__mocks__/products'
-import order from 'src/__mocks__/order';
 import { makeStyles } from '@material-ui/core/styles';
 import StarRatings from 'react-star-ratings';
 import {Avatar,
@@ -23,6 +21,10 @@ import {Avatar,
     TableHead,
     TableRow,
 } from '@material-ui/core';
+import { toast } from 'react-toastify';
+
+import purchaseService from 'src/services/purchaseService';
+
 
 const styles = makeStyles ({
     root: {
@@ -35,31 +37,73 @@ const styles = makeStyles ({
         marginLeft: "5%",
     }
   });
+
+  const notifySuccess = (msg) => {
+    toast.success(msg, {
+      position: toast.POSITION.TOP_CENTER
+      });
+  }
+  
+  const notifyError = (msg) => {
+    toast.error(msg, {
+      position: toast.POSITION.TOP_CENTER
+      });
+  }
 const OrderDetails = () => {
     const [price, setPrice] = useState("0.00");
     // maybe useful to check later on, if a user has already reviewed a product
     const [review, setReview] = useState(null);
     const  classes  = styles();
+    const [order, setOrder] = useState(null);
     const [rating, setRating] = useState(0);
-    const [reviewdescription, setReviewDescription] = useState("");
-    const getTotalPrice = () => {
+    const purchase_id = window.location.pathname.split('/').pop();
+    const [reviewDescription, setReviewDescription] = useState("");
+    const getTotalPrice = (order) => {
         let totalPrice = 0;
-        for (let i = 0; i < products.length; i++) {
-            totalPrice += products[i].price * products[i].quantity;
+        for (let i = 0; i < order?.products?.length; i++) {
+            let product = order.products[i].product;
+            totalPrice += product.price * order.products[i].productAmount;
         }
         setPrice(totalPrice.toFixed(2))
     }
     const changeRating = ( newRating, name ) => {
         setRating(newRating);
     }
-   
+
     const handleReviewText = (event) => {
         setReviewDescription(event.target.value)
     } 
 
     useEffect(() => {
-        getTotalPrice()
-    }, [products])
+        purchaseService.getPurchaseDetails(purchase_id)
+        .then( (res) => {
+            return res.json();
+        })
+        .then( ( res) => {
+            if(!res.errors){
+                setOrder(res);
+                getTotalPrice(res)
+                console.log(res)
+            }
+        })        
+    }, [])
+
+    const submitReview = () => {
+        purchaseService.makeReview(purchase_id, reviewDescription, rating)
+            .then( (res) => {
+                return res.json();
+            })
+            .then( ( res) => {
+                console.log(res)
+                if(!res.errors){
+                    console.log(res)
+                    notifyError("Something went wrong!")
+                } else {
+                    notifySuccess("Successfully made a review")
+                }
+            })      
+    }
+    
     return(
         <>
             <Helmet>
@@ -80,6 +124,7 @@ const OrderDetails = () => {
                 xs={8}
             className={classes.root}
             >
+            {order? 
                 <form
                 autoComplete="off"
                 noValidate
@@ -123,7 +168,7 @@ const OrderDetails = () => {
                         </TableRow>
                         </TableHead>
                         <TableBody>
-                            {products.map((product) => (
+                            {order?.products?.map((product) => (
                                 <>
                                 <TableRow
                                 hover
@@ -137,34 +182,34 @@ const OrderDetails = () => {
                                     }}
                                     >
                                     <Avatar
-                                        src={product.image}
+                                        src={product.product.image}
                                         sx={{ mr: 2 }}
                                     >
-                                        {getInitials(product.name)}
+                                        {getInitials(product.product.name)}
                                     </Avatar>
                                     <Typography
                                         color="textPrimary"
                                         variant="body1"
                                     >
-                                        {product.name}
+                                        {product.product.name}
                                     </Typography>
                                     </Box>
                                 </TableCell>
                                 <TableCell>
-                                    {product.id}
+                                    {product.product.id}
                                 </TableCell>
                                 <TableCell>
-                                    {product.supplier.name}
+                                    {product.product.name}
                                 </TableCell>
                                 <TableCell>
-                                    {product.price}
+                                    {product.product.price}
                                 </TableCell>
                                 <TableCell>
                                     
-                                    {product.quantity}
+                                    {product.productAmount}
                                 </TableCell>
                                 <TableCell>
-                                    {(product.quantity * product.price).toFixed(2)}
+                                    {(product.productAmount * product.product.price).toFixed(2)}
                                 </TableCell>
                                 </TableRow>
                                 </>
@@ -199,7 +244,9 @@ const OrderDetails = () => {
                     
                 </Card>
                 </form>
+                : ""}
             </Grid>
+            {order ? 
             <Grid
                 item
                 lg={4}
@@ -233,7 +280,7 @@ const OrderDetails = () => {
                                 order date
                             </Typography>
                             <Typography variant="body2" display="block" gutterBottom>
-                                {order.order_date}
+                                {order.orderDate}
                             </Typography>
                         </div>
                         <div>
@@ -255,7 +302,7 @@ const OrderDetails = () => {
                                     multiline
                                     placeholder="write a description of your experience."
                                     rows={4}
-                                    defaultValue={reviewdescription}
+                                    defaultValue={reviewDescription}
                                     onChange={handleReviewText}
                                 />
                                 <Box style={{'paddingLeft':'10%'}}>
@@ -268,12 +315,14 @@ const OrderDetails = () => {
                                     name='rating'
                                 />
                                 </Box>
-                            {reviewdescription!= ""? 
+                            {reviewDescription!= ""? 
                             <>
                             <Box display="flex" flexDirection="column" >
                             <Button  
                             color="primary"
-                            variant="contained">
+                            variant="contained"
+                            onClick={() => submitReview()}
+                            >
                             Submit
                             </Button>
                             </Box>
@@ -287,6 +336,7 @@ const OrderDetails = () => {
                 </CardContent>
             </Card>
             </Grid>
+            : ""}
             </Grid>
             </Box>
         </>
