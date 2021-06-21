@@ -31,7 +31,7 @@ public class ExternalService {
       var headers = new HttpHeaders();
       var newDelivery =
           new DeliveryPOJO(
-              "http://" + myHost + ":8080/purchases",
+              "http://" + myHost + ":8080/api/v1/purchases",
               purchase.getId(),
               purchase.getLat(),
               purchase.getLon());
