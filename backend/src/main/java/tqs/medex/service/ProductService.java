@@ -1,6 +1,9 @@
 package tqs.medex.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import tqs.medex.entity.Product;
 import tqs.medex.pojo.ProductPOJO;
@@ -11,11 +14,15 @@ import java.util.List;
 
 @Service
 public class ProductService {
+  public static final int PAGE_SIZE = 10;
   @Autowired private SupplierRepository supplierRepository;
   @Autowired private ProductRepository productrepository;
 
-  public List<Product> listProducts() {
-    return productrepository.findAll();
+  public List<Product> listProducts(String name, int page, boolean recent) {
+    Pageable pageable =
+        PageRequest.of(
+            page, PAGE_SIZE, recent ? Sort.by("id").descending() : Sort.by("id").ascending());
+    return productrepository.findAllByNameIgnoreCaseContaining(name, pageable).getContent();
   }
 
   public Product getProductDetails(long id) {
