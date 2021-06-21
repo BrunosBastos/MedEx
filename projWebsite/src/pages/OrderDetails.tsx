@@ -21,6 +21,7 @@ import {Avatar,
     TableHead,
     TableRow,
 } from '@material-ui/core';
+import { toast } from 'react-toastify';
 
 import purchaseService from 'src/services/purchaseService';
 
@@ -36,6 +37,18 @@ const styles = makeStyles ({
         marginLeft: "5%",
     }
   });
+
+  const notifySuccess = (msg) => {
+    toast.success(msg, {
+      position: toast.POSITION.TOP_CENTER
+      });
+  }
+  
+  const notifyError = (msg) => {
+    toast.error(msg, {
+      position: toast.POSITION.TOP_CENTER
+      });
+  }
 const OrderDetails = () => {
     const [price, setPrice] = useState("0.00");
     // maybe useful to check later on, if a user has already reviewed a product
@@ -44,10 +57,10 @@ const OrderDetails = () => {
     const [order, setOrder] = useState(null);
     const [rating, setRating] = useState(0);
     const purchase_id = window.location.pathname.split('/').pop();
-    const [reviewdescription, setReviewDescription] = useState("");
+    const [reviewDescription, setReviewDescription] = useState("");
     const getTotalPrice = (order) => {
         let totalPrice = 0;
-        for (let i = 0; i < order.products.length; i++) {
+        for (let i = 0; i < order?.products?.length; i++) {
             let product = order.products[i].product;
             totalPrice += product.price * order.products[i].productAmount;
         }
@@ -72,10 +85,25 @@ const OrderDetails = () => {
                 getTotalPrice(res)
                 console.log(res)
             }
-        })
-
-        
+        })        
     }, [])
+
+    const submitReview = () => {
+        purchaseService.makeReview(purchase_id, reviewDescription, rating)
+            .then( (res) => {
+                return res.json();
+            })
+            .then( ( res) => {
+                console.log(res)
+                if(!res.errors){
+                    console.log(res)
+                    notifyError("Something went wrong!")
+                } else {
+                    notifySuccess("Successfully made a review")
+                }
+            })      
+    }
+    
     return(
         <>
             <Helmet>
@@ -140,7 +168,7 @@ const OrderDetails = () => {
                         </TableRow>
                         </TableHead>
                         <TableBody>
-                            {order.products.map((product) => (
+                            {order?.products?.map((product) => (
                                 <>
                                 <TableRow
                                 hover
@@ -274,7 +302,7 @@ const OrderDetails = () => {
                                     multiline
                                     placeholder="write a description of your experience."
                                     rows={4}
-                                    defaultValue={reviewdescription}
+                                    defaultValue={reviewDescription}
                                     onChange={handleReviewText}
                                 />
                                 <Box style={{'paddingLeft':'10%'}}>
@@ -287,12 +315,14 @@ const OrderDetails = () => {
                                     name='rating'
                                 />
                                 </Box>
-                            {reviewdescription!= ""? 
+                            {reviewDescription!= ""? 
                             <>
                             <Box display="flex" flexDirection="column" >
                             <Button  
                             color="primary"
-                            variant="contained">
+                            variant="contained"
+                            onClick={() => submitReview()}
+                            >
                             Submit
                             </Button>
                             </Box>

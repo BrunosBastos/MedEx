@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import moment from 'moment';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import {
@@ -17,28 +17,60 @@ import {
   TablePagination,
   Tooltip
 } from '@material-ui/core';
-
+import PurchaseService from "src/services/purchaseService";
+import { toast } from 'react-toastify';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import Paginator from "src/components/paginator/Paginator";
 interface Order {
   id: any;
-  ref: string;
-  amount: number;
-  product: {
-    name: string;
-  };
-  delLocation: string;
-  createdAt: number;
-  status: string;
+  lat: number;
+  lon: number;
+  delivered: boolean;
+  products: any;
+  orderDate: any;
+}
+
+const notifySuccess = (msg) => {
+  toast.success(msg, {
+    position: toast.POSITION.TOP_CENTER
+    });
+}
+
+const notifyError = (msg) => {
+  toast.error(msg, {
+    position: toast.POSITION.TOP_CENTER
+    });
 }
 
 interface LatestOrdersProps {
-  orders: Order[];
+  recent: string;
 }
 
-
-const LatestOrders: React.FC<LatestOrdersProps> = ({orders}) => {
-  const [limit, setLimit] = useState(5);
+const LatestOrders: React.FC<LatestOrdersProps> = ({recent="asc"}) => {
+  const [limit, setLimit] = useState(9);
   const [page, setPage] = useState(0);
-  const [orderDir, setOrderDir] = useState('asc')
+  const [orders, setOrders] = useState([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    PurchaseService.getPurchases(page, recent == 'desc')
+      .then( (res) => {
+        if (res.status === 200) {
+          return res.json()
+        }
+        notifyError("Something went wrong")
+        return null;
+      })
+      .then((res) => {
+        console.log(res)
+        if (res) {
+          setOrders(res)
+        }
+      })
+      .catch(() => {
+        console.log("Something went wrong")
+      })
+  }, [recent])
 
   const handleLimitChange = (event) => {
     setLimit(event.target.value);
@@ -49,39 +81,6 @@ const LatestOrders: React.FC<LatestOrdersProps> = ({orders}) => {
     setPage(newPage);
   };
 
-  const sortByDate = () => {
-    const isAsc = orderDir === 'asc';
-    setOrderDir(isAsc ? 'desc' : 'asc');
-  }
-
-
-  function descendingComparator(a, b) {
-    if (b.createdAt < a.createdAt) {
-      return -1;
-    }
-    if (b.createdAt > a.createdAt) {
-      return 1;
-    }
-    return 0;
-  }
-  
-  function getComparator() {
-    return orderDir === 'asc'
-      ? (a, b) => descendingComparator(a, b)
-      : (a, b) => -descendingComparator(a, b);
-  }
-
-  function stableSort(comparator) {
-    const stabilizedThis = orders.map((el, index) => [el, index]);
-    stabilizedThis.sort((a, b) => {
-      const order = comparator(a[0], b[0]);
-      if (order !== 0) return order;
-      //@ts-ignore
-      return a[1] - b[1];
-    });
-    return stabilizedThis.map((el) => el[0]);
-  }
-
   return (
     <Card>
       <CardHeader title="Latest Orders" />
@@ -91,28 +90,14 @@ const LatestOrders: React.FC<LatestOrdersProps> = ({orders}) => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>
-                  Order Ref
-                </TableCell>
-                <TableCell>
-                  courier
+                <TableCell sortDirection={recent === 'asc'  ? 'asc' : 'desc'}>
+                  Reference
                 </TableCell>
                 <TableCell>
                   Delivery Location
                 </TableCell>
-                <TableCell sortDirection={orderDir === 'asc'  ? 'asc' : 'desc'}>
-                  <Tooltip
-                    enterDelay={300}
-                    title={orderDir === 'desc' ? 'Get Newest' : 'Get Oldest'}
-                  >
-                    <TableSortLabel
-                      active={true}
-                      direction={orderDir === 'asc'  ? 'asc' : 'desc'}
-                      onClick={sortByDate}
-                    >
-                      Date
-                    </TableSortLabel>
-                  </Tooltip>
+                <TableCell>
+                  Order Date
                 </TableCell>
                 <TableCell>
                   Status
@@ -120,27 +105,27 @@ const LatestOrders: React.FC<LatestOrdersProps> = ({orders}) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {orders && stableSort(getComparator()).slice(page*limit, page*limit + limit).map((order: Order) => (
+              {orders && orders.slice(page*limit, page*limit + limit).map((order: Order, index) => (
                 <TableRow
                   hover
-                  key={order.id}
+                  key={order.id+recent}
+                  style={{cursor:'pointer'}}
+                  onClick={() => navigate('/app/order/'+order.id, { replace: true })}
                 >
                   <TableCell>
-                    {order.ref}
+                    {order.id}
                   </TableCell>
                   <TableCell>
-                    {order.product.name}
+                    <p>Latitude {order.lat}</p>
+                    <p>Longitude {order.lon}</p>
                   </TableCell>
                   <TableCell>
-                    {order.delLocation}
-                  </TableCell>
-                  <TableCell>
-                    {moment(order.createdAt).format('DD/MM/YYYY')}
+                    {moment(order.orderDate).format('DD/MM/YYYY')}
                   </TableCell>
                   <TableCell>
                     <Chip
                       color="primary"
-                      label={order.status}
+                      label={order.delivered ? "delivered" : "pending"}
                       size="small"
                     />
                   </TableCell>
@@ -157,15 +142,7 @@ const LatestOrders: React.FC<LatestOrdersProps> = ({orders}) => {
           p: 2
         }}
       >
-        <TablePagination
-          component="div"
-          count={orders.length}
-          onPageChange={handlePageChange}
-          onRowsPerPageChange={handleLimitChange}
-          page={page}
-          rowsPerPage={limit}
-          rowsPerPageOptions={[5, 10, 25]}
-        />
+        <Paginator hasNext={orders.length == limit + 1} page={page} changePage={(page) => setPage(page)}/>
       </Box>
     </Card>
   )
