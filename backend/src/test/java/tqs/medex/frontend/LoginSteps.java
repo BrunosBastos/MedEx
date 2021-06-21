@@ -7,6 +7,7 @@ import io.cucumber.java.en.When;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import tqs.medex.frontend.pages.ErrorMessage;
 import tqs.medex.frontend.pages.LoginPage;
 
@@ -17,7 +18,9 @@ public class LoginSteps {
 
   public LoginSteps() {
     WebDriverManager.firefoxdriver().setup();
-    driver = new FirefoxDriver();
+    FirefoxOptions options = new FirefoxOptions();
+    options.addArguments("--headless");
+    driver = new FirefoxDriver(options);
     loginPage = new LoginPage(driver);
     errorMessage = new ErrorMessage(driver);
   }

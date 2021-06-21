@@ -7,6 +7,7 @@ import io.cucumber.java.en.When;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import tqs.medex.frontend.pages.AddSupplierPage;
 import tqs.medex.frontend.pages.ErrorMessage;
 import tqs.medex.frontend.pages.LoginPage;
@@ -19,7 +20,9 @@ public class AddSupplierSteps {
 
   public AddSupplierSteps() {
     WebDriverManager.firefoxdriver().setup();
-    driver = new FirefoxDriver();
+    FirefoxOptions options = new FirefoxOptions();
+    options.addArguments("--headless");
+    driver = new FirefoxDriver(options);
     loginPage = new LoginPage(driver);
     addSupplierPage = new AddSupplierPage(driver);
     errorMessage = new ErrorMessage(driver);
