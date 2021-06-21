@@ -40,7 +40,7 @@ class ProductControllerTest {
   void whenGetProducts_thenReturnProducts() {
     Product product = new Product(1L, "ProductTest", "A description", 1, 4.99, IMAGE_URL);
     Product product2 = new Product(2L, "ProductTest2", "A description2", 4, 0.99, IMAGE_URL);
-    when(productService.listProducts()).thenReturn(Arrays.asList(product, product2));
+    when(productService.listProducts("", 0, true)).thenReturn(Arrays.asList(product, product2));
     RestAssuredMockMvc.given()
         .when()
         .get("api/v1/products")
@@ -58,7 +58,7 @@ class ProductControllerTest {
         .body("[1].name", is(product2.getName()))
         .and()
         .body("[1].price", is((float) product2.getPrice()));
-    verify(productService, times(1)).listProducts();
+    verify(productService, times(1)).listProducts("", 0, true);
   }
 
   @Test

@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.internal.verification.VerificationModeFactory;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
 import tqs.medex.entity.Product;
 import tqs.medex.entity.Supplier;
 import tqs.medex.pojo.ProductPOJO;
@@ -19,7 +20,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
@@ -49,14 +51,18 @@ class ProductServiceTest {
 
   @Test
   void given2Products_whenGetProducts_thenReturn2Records() {
+
     Product product = new Product(1L, "ProductTest", "A description", 1, 4.99, IMAGE_URL);
     Product product2 = new Product(2L, "SecondProduct", "A description", 5, 2.99, IMAGE_URL);
-    List<Product> productList = productService.listProducts();
+    var page = new PageImpl<>(Arrays.asList(product, product2));
+    when(productRepository.findAllByNameIgnoreCaseContaining(any(), any())).thenReturn(page);
+
+    List<Product> productList = productService.listProducts("", 0, true);
     assertThat(productList)
         .hasSize(2)
         .extracting(Product::getName)
         .contains(product.getName(), product2.getName());
-    verifyFindAllProductsisCalledOnce();
+    verify(productRepository, times(1)).findAllByNameIgnoreCaseContaining(any(), any());
   }
 
   @Test

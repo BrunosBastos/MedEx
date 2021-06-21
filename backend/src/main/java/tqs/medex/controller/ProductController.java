@@ -18,8 +18,12 @@ public class ProductController {
   @Autowired ProductService productService;
 
   @GetMapping("/products")
-  public ResponseEntity<List<Product>> getProducts() {
-    List<Product> productList = productService.listProducts();
+  public ResponseEntity<List<Product>> getProducts(
+      @RequestParam(required = false, defaultValue = "") String name,
+      @RequestParam(required = false, defaultValue = "0") Integer page,
+      @RequestParam(required = false, defaultValue = "true") Boolean recent) {
+
+    List<Product> productList = productService.listProducts(name, page, recent);
     return ResponseEntity.status(HttpStatus.OK).body(productList);
   }
 

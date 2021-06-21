@@ -37,14 +37,44 @@ class ProductControllerIT {
 
   @Test
   @WithMockUser(value = "test")
-  void whenGetProducts_thenReturnValidResponse() {
+  void whenGetProductsDescending_thenReturnValidResponse() {
     Product product = getExistingObject();
     Product product2 = productRepository.findByName("ProductTest2").orElse(null);
     Supplier supplier = supplierRepository.findByName("Pharmacy").orElse(null);
 
     RestAssuredMockMvc.given()
         .when()
-        .get("api/v1/products")
+        .get("api/v1/products?page=0&recent=true")
+        .then()
+        .assertThat()
+        .statusCode(200)
+        .contentType(ContentType.JSON)
+        .and()
+        .body("", hasSize(2))
+        .and()
+        .body("[1].name", is(product.getName()))
+        .and()
+        .body("[1].price", is((float) product.getPrice()))
+        .and()
+        .body("[0].name", is(product2.getName()))
+        .and()
+        .body("[0].price", is((float) product2.getPrice()))
+        .and()
+        .body("[1].supplier.id", is(supplier.getId().intValue()))
+        .and()
+        .body("[0].supplier.id", is(supplier.getId().intValue()));
+  }
+
+  @Test
+  @WithMockUser(value = "test")
+  void whenGetProductsAscending_thenReturnValidResponse() {
+    Product product = getExistingObject();
+    Product product2 = productRepository.findByName("ProductTest2").orElse(null);
+    Supplier supplier = supplierRepository.findByName("Pharmacy").orElse(null);
+
+    RestAssuredMockMvc.given()
+        .when()
+        .get("api/v1/products?page=0&recent=false")
         .then()
         .assertThat()
         .statusCode(200)
@@ -63,6 +93,26 @@ class ProductControllerIT {
         .body("[0].supplier.id", is(supplier.getId().intValue()))
         .and()
         .body("[1].supplier.id", is(supplier.getId().intValue()));
+  }
+
+  @Test
+  @WithMockUser(value = "test")
+  void whenGetProductsByName_thenReturnValidResponse() {
+    Product product = getExistingObject();
+    Product product2 = productRepository.findByName("ProductTest2").orElse(null);
+    Supplier supplier = supplierRepository.findByName("Pharmacy").orElse(null);
+
+    RestAssuredMockMvc.given()
+        .when()
+        .get("api/v1/products?name=2&page=0&recent=false")
+        .then()
+        .assertThat()
+        .statusCode(200)
+        .contentType(ContentType.JSON)
+        .and()
+        .body("", hasSize(1))
+        .and()
+        .body("[0].name", is("ProductTest2"));
   }
 
   @Test
