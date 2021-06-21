@@ -30,7 +30,7 @@ export default function Paginator(props) {
                 lg={10}
                 md={10}
                 xs={10}
-                style={{textAlign:'center'}}
+                style={{textAlign:'center', maxWidth: "100%"}}
                 >
                     <Button style={{color: 'white', pointerEvents: 'none', background: 'rgb(0, 135, 255)'}}>
                         Page {props.page}
