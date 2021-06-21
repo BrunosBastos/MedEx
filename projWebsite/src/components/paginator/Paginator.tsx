@@ -9,40 +9,40 @@ import {
 export default function Paginator(props) {
 
     return (
-        <Grid container spacing={3}>
+        <Grid container style={{flexGrow: 1}} spacing={3}>
             <Grid
               item
-              lg={12}
-              md={12}
               xs={12}
               pt={50}
             >
-                <Grid
-                item
-                lg={1}
-                md={1}
-                xs={1}
-                >
-                    {props.page !== 0 ? <ArrowBackIosIcon onClick={() => props.changePage(props.page - 1)} style={{cursor: 'pointer', color: 'rgb(0 6 255)'}} /> : <></> }
-                </Grid>
-                <Grid
-                item
-                lg={10}
-                md={10}
-                xs={10}
-                style={{textAlign:'center', maxWidth: "100%"}}
-                >
-                    <Button style={{color: 'white', pointerEvents: 'none', background: 'rgb(0, 135, 255)'}}>
-                        Page {props.page}
-                    </Button>
-                </Grid>
-                <Grid
-                item
-                lg={1}
-                md={1}
-                xs={1}
-                >
-                    {props.hasNext ? <ArrowForwardIosIcon onClick={() => props.changePage(props.page + 1)} style={{cursor: 'pointer', color: 'rgb(0 6 255)'}} /> : <></>}
+                <Grid container >
+                    <Grid
+                    item
+                    lg={1}
+                    md={1}
+                    xs={1}
+                    >
+                        {props.page !== 0 ? <ArrowBackIosIcon onClick={() => props.changePage(props.page - 1)} style={{cursor: 'pointer', color: 'rgb(0 6 255)'}} /> : <></> }
+                    </Grid>
+                    <Grid
+                    item
+                    lg={10}
+                    md={10}
+                    xs={10}
+                    style={{textAlign:'center', maxWidth: "100%"}}
+                    >
+                        <Button style={{color: 'white', pointerEvents: 'none', background: 'rgb(0, 135, 255)'}}>
+                            Page {props.page}
+                        </Button>
+                    </Grid>
+                    <Grid
+                    item
+                    lg={1}
+                    md={1}
+                    xs={1}
+                    >
+                        {props.hasNext ? <ArrowForwardIosIcon onClick={() => props.changePage(props.page + 1)} style={{cursor: 'pointer', color: 'rgb(0 6 255)'}} /> : <></>}
+                    </Grid>
                 </Grid>
             </Grid>
         </Grid>

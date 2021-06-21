@@ -87,7 +87,7 @@ const AddProduct = () => {
           notifyError("Error Creating Product")
         }
         else{
-          navigate('/app/dashboard', { replace: true });
+          navigate('/app/products', { replace: true });
           notifySuccess("Success Adding new Product!")
         }
       })
@@ -182,7 +182,6 @@ const AddProduct = () => {
                             
                             label="Image URL"
                             name="image"
-                            required
                             variant="outlined"
                             id="prodphoto"
                             onChange={setImageUrl}

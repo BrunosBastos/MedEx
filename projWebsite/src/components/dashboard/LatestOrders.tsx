@@ -47,7 +47,7 @@ interface LatestOrdersProps {
 }
 
 const LatestOrders: React.FC<LatestOrdersProps> = ({recent="asc"}) => {
-  const [limit, setLimit] = useState(9);
+  const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
   const [orders, setOrders] = useState([]);
   const navigate = useNavigate();
@@ -70,7 +70,7 @@ const LatestOrders: React.FC<LatestOrdersProps> = ({recent="asc"}) => {
       .catch(() => {
         console.log("Something went wrong")
       })
-  }, [recent])
+  }, [recent, page])
 
   const handleLimitChange = (event) => {
     setLimit(event.target.value);
@@ -142,7 +142,7 @@ const LatestOrders: React.FC<LatestOrdersProps> = ({recent="asc"}) => {
           p: 2
         }}
       >
-        <Paginator hasNext={orders.length == limit + 1} page={page} changePage={(page) => setPage(page)}/>
+        <Paginator hasNext={orders.length == limit} page={page} changePage={(page) => setPage(page)}/>
       </Box>
     </Card>
   )
