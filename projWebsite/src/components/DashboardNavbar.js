@@ -30,7 +30,7 @@ const DashboardNavbar = ({ onMobileNavOpen, ...rest }) => {
 
   const logout = () => {
     useAuthStore.getState().exit();
-    navigate('/login');
+    navigate('/login', { replace: true })
   }
 
   return (
