@@ -14,7 +14,7 @@ const App = () => {
   useShopCartStore();
   const token = useAuthStore(state => state.token);
   const user = useAuthStore(state => state.user);
-  const routing = useRoutes(routes(token, user));
+  const routing = useRoutes(routes(token, user?.superUser));
 
   return (
     <PersistGate>
