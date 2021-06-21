@@ -26,6 +26,8 @@ public class PurchaseService {
 
   @Autowired ProductRepository productRepository;
 
+  @Autowired ExternalService externalService;
+
   public List<Purchase> getPurchases(User user, Integer page, Boolean recent) {
     Pageable pageable =
         PageRequest.of(
@@ -65,7 +67,7 @@ public class PurchaseService {
               purchase, product.get(), newPurchase.getProducts().get(product.get().getId()));
       purchaseProducts.add(purchaseProduct);
     }
-    purchaseRepository.save(purchase);
+    purchase = purchaseRepository.save(purchase);
     // creates PurchaseProduct entities and updates products stock
     for (PurchaseProduct op : purchaseProducts) {
       var product = op.getProduct();
@@ -75,6 +77,8 @@ public class PurchaseService {
       purchaseProductRepository.save(op);
     }
     purchase.setProducts(purchaseProducts);
+
+    externalService.createDelivery(purchase);
     return purchase;
   }
 

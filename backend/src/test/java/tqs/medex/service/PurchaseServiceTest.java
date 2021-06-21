@@ -40,6 +40,9 @@ class PurchaseServiceTest {
   @Mock(lenient = true)
   private PurchaseProductRepository purchaseProductRepository;
 
+  @Mock(lenient = true)
+  private ExternalService externalService;
+
   @InjectMocks private PurchaseService orderService;
 
   private CreatePurchasePOJO newOrder;
@@ -143,6 +146,9 @@ class PurchaseServiceTest {
   @Test
   void whenAddNewOrderWithValidData_thenReturnOrder() {
 
+    Purchase purchase = new Purchase(newOrder.getLat(), newOrder.getLon());
+    purchase.setId(1L);
+    when(purchaseRepository.save(any())).thenReturn(purchase);
     var order = orderService.addNewPurchase(newOrder, new User());
     assertThat(order.isDelivered()).isFalse();
     assertThat(order.getLat()).isEqualTo(newOrder.getLat());

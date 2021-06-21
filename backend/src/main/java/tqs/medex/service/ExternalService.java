@@ -1,0 +1,49 @@
+package tqs.medex.service;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import tqs.medex.entity.Purchase;
+import tqs.medex.pojo.DeliveryPOJO;
+
+import java.util.Arrays;
+
+@Service
+public class ExternalService {
+
+  @Value("${app.DELIVERY_HOST:localhost}")
+  private String deliveryHost;
+
+  @Value("${app.MY_HOST:localhost}")
+  private String myHost;
+
+  @Autowired private RestTemplate restTemplate;
+
+  public void createDelivery(Purchase purchase) {
+    try {
+      var url = "http://" + deliveryHost + ":8081/api/v1/deliveries";
+      var headers = new HttpHeaders();
+      var newDelivery =
+          new DeliveryPOJO(
+              "http://" + myHost + ":8080/purchases",
+              purchase.getId(),
+              purchase.getLat(),
+              purchase.getLon());
+      var mapper = new ObjectMapper();
+      headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+      headers.setContentType(MediaType.APPLICATION_JSON);
+      HttpEntity<String> request =
+          new HttpEntity<>(mapper.writeValueAsString(newDelivery), headers);
+
+      restTemplate.postForObject(url, request, String.class);
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+  }
+}
