@@ -16,12 +16,14 @@ import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import InputIcon from '@material-ui/icons/Input';
 import Logo from './Logo';
 import useShopCartStore from 'src/stores/useShopCartStore';
+import { UserType, isUserType } from "src/consts/userType";
 import useAuthStore from 'src/stores/useAuthStore';
 
 const DashboardNavbar = ({ onMobileNavOpen, ...rest }) => {
   const [notifications] = useState([]);
   const products = useShopCartStore(state => state.products);
   const theme = useTheme();
+  const user = useAuthStore(state => state.user);
   const hidden = useMediaQuery(theme => theme.breakpoints.up('lg'));
   const hiddenDown = useMediaQuery(theme => theme.breakpoints.down('lg'));
   const navigate = useNavigate();
@@ -43,24 +45,29 @@ const DashboardNavbar = ({ onMobileNavOpen, ...rest }) => {
         <Box sx={{ flexGrow: 1 }} />
         {hiddenDown ? null :
           <>
-            <RouterLink to="/app/shoppingCart">
-              <IconButton style={{color: 'white'}}>
-                <Badge
-                  badgeContent={products.length}
-                  color="secondary"
-                  variant="number"
-                >
-                  <ShoppingCartIcon />
-                </Badge>
-              </IconButton>
-            </RouterLink>
-
-            <IconButton color="inherit">
-              <InputIcon onClick={() => logout()}/>
-            </IconButton>
+            {isUserType(user.superUser, UserType.CLIENT) ?
+              <RouterLink to="/app/shoppingCart">
+                <IconButton style={{ color: 'white' }}>
+                  <Badge
+                    badgeContent={products.length}
+                    color="secondary"
+                    variant="number"
+                  >
+                    <ShoppingCartIcon />
+                  </Badge>
+                </IconButton>
+              </RouterLink>
+              : null
+            }
           </>
         }
-        { hidden ? null :
+        <IconButton
+          color="inherit"
+          onClick={logout}
+        >
+          <InputIcon />
+        </IconButton>
+        {hidden ? null :
           <IconButton
             color="inherit"
             onClick={onMobileNavOpen}
