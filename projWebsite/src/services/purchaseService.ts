@@ -19,6 +19,18 @@ class ProductService {
             })
         })
     }
+
+    getPurchaseDetails(id: any) {
+        return fetch(MEDEX_API_BASE_URL + 'purchases/' + id, {
+            method: 'GET',
+            mode: 'cors',
+            headers: {
+                'accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization' : "Bearer "+ useAuthStore.getState().token
+            }
+        })
+    }
 }
 
 export default new ProductService();
