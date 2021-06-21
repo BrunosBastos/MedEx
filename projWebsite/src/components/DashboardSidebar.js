@@ -38,10 +38,16 @@ const user = {
 };
 
 const items = [
+  // {
+  //   href: '/app/dashboard',
+  //   icon: BarChartIcon,
+  //   title: 'Dashboard',
+  //   type: UserType.ANY,
+  // },
   {
-    href: '/app/dashboard',
-    icon: BarChartIcon,
-    title: 'Dashboard',
+    href: '/app/orders',
+    icon: HistoryIcon,
+    title: 'Orders',
     type: UserType.ANY,
   },
   {
@@ -66,12 +72,6 @@ const items = [
     href: '/app/addSupplier',
     icon: LocalPharmacyIcon,
     title: 'Add Supplier',
-    type: UserType.ADMIN,
-  },
-  {
-    href: '/app/product/1',
-    icon: PackageIcon,
-    title: 'Product Details',
     type: UserType.ADMIN,
   },
 ];
