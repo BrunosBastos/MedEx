@@ -44,10 +44,9 @@ class LoadDatabase {
       var order2 = new Purchase(30, 40);
       var op1 = new PurchaseProduct(order, product, 10);
       var op2 = new PurchaseProduct(order, product2, 20);
-      order.setProducts(Arrays.asList(op1, op2));
-      order2.setProducts(Arrays.asList(op1, op2));
+      var op3 = new PurchaseProduct(order2, product2, 20);
       purchaseRepository.saveAll(Arrays.asList(order, order2));
-      purchaseProductRepository.saveAll(Arrays.asList(op1, op2));
+      purchaseProductRepository.saveAll(Arrays.asList(op1, op2, op3));
       order.setUser(clientUser);
       order2.setUser(adminUser);
       purchaseRepository.saveAll(Arrays.asList(order, order2));

@@ -5,6 +5,7 @@ import io.restassured.http.ContentType;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import io.restassured.parsing.Parser;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -30,7 +31,12 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase
+<<<<<<< HEAD:backend/src/test/java/tqs/medex/controller/AuthController.java
 class AuthController {
+=======
+@Disabled
+class AuthControllerTest {
+>>>>>>> 08c7e01cb123ce5928486b05f343408259bc3156:backend/src/test/java/tqs/medex/controller/AuthControllerTest.java
   RegisterRequest registerRequest;
   LoginRequest loginRequest;
   @Autowired private MockMvc mvc;
