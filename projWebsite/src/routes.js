@@ -9,6 +9,7 @@ import ProductList from 'src/pages/ProductList.tsx';
 import Register from 'src/pages/Register.tsx';
 import AddProduct from './pages/AddProduct.tsx';
 import AddSupplier from './pages/AddSupplier.tsx';
+import OrderDetails from './pages/OrderDetails.tsx';
 import PharmacyProductDetails from './pages/PharmarcyProductDetails.tsx';
 import ShoppingCart from './pages/ShoppingCart.tsx';
 
@@ -26,6 +27,7 @@ const routes = (token, isSuperUser) => [
       // Anyone
       { path: 'dashboard', element: <Navigate to="/app/orders" />/*<Dashboard />*/ },
       { path: 'orders', element: <OrderList /> },
+      { path: 'order/:id', element: <OrderDetails /> },
       { path: 'products', element: <ProductList /> },
       { path: '*', element: <Navigate to="/404" /> }
     ],

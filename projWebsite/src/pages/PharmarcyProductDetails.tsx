@@ -208,7 +208,6 @@ const Account = () => {
                           fullWidth
                           label="Image URL"
                           name="image"
-                          required
                           variant="outlined"
                           disabled={!editing}
                           defaultValue={product.imageUrl}

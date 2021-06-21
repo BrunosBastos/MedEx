@@ -5,8 +5,9 @@ import useAuthStore from 'src/stores/useAuthStore';
 class ProductService {
 
 
-    getAllProducts(){
-        return fetch(MEDEX_API_BASE_URL + 'products', {
+    getAllProducts(name, page, recent){
+        let url = name && name != "" ? '&name=' + name : "";
+        return fetch(MEDEX_API_BASE_URL + 'products?page='+page+'&recent='+recent+url, {
             method: 'GET',
             mode: 'cors',
             headers: {

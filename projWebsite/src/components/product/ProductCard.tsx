@@ -13,7 +13,8 @@ import LocalOfferIcon from '@material-ui/icons/LocalOffer';
 import AddShoppingCartOutlinedIcon from '@material-ui/icons/AddShoppingCartOutlined';
 import { toast } from 'react-toastify';
 import useShopCartStore from 'src/stores/useShopCartStore';
-
+import EditIcon from '@material-ui/icons/Edit';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
 const toast_props = {
   position: toast.POSITION.BOTTOM_RIGHT,
@@ -24,7 +25,9 @@ const toast_props = {
   progress: undefined,
 }
 
-const ProductCard = ({ product, ...rest }) => {
+const ProductCard = ({ product, superUser, ...rest }) => {
+  const navigate = useNavigate();
+
   const addToCart = (product) => {
     product.quantity = 1;
     useShopCartStore.getState().addProduct(product)
@@ -133,25 +136,64 @@ const ProductCard = ({ product, ...rest }) => {
               {product.price} €
             </Typography>
           </Grid>
-          <Grid
-            item
-            sx={{
-              alignItems: 'center',
-              display: 'flex'
-            }}
-          >
-            <Button color="primary" variant="contained" onClick={() => addToCart(product)}>
-              <AddShoppingCartOutlinedIcon style={{color: "white"}} />
-              <Typography
-                style={{color: "white"}}
-                display="inline"
-                sx={{ pl: 1 }}
-                variant="body2"
+          
+          { superUser ? 
+            (
+              <Grid
+                item
+                sx={{
+                  alignItems: 'center',
+                  display: 'flex'
+                }}
               >
-                Add
-              </Typography>
-            </Button>
-          </Grid>
+                <Button color="primary" variant="contained" onClick={() => navigate('/app/product/'+product.id)}>
+                  <EditIcon style={{color: "white"}} />
+                  <Typography
+                    style={{color: "white"}}
+                    display="inline"
+                    sx={{ pl: 1 }}
+                    variant="body2"
+                  >
+                    Edit
+                  </Typography>
+                </Button>
+              </Grid>
+            )
+          : (
+            <Grid
+              item
+              sx={{
+                alignItems: 'center',
+                display: 'flex'
+              }}
+            >
+              {product.stock == 0 ?
+                <Button color="primary" variant="contained" disabled>
+                  <AddShoppingCartOutlinedIcon style={{color: "grey"}} />
+                  <Typography
+                    style={{color: "grey"}}
+                    display="inline"
+                    sx={{ pl: 1 }}
+                    variant="body2"
+                  >
+                    Out of Stock
+                  </Typography>
+                </Button>
+              :
+                <Button color="primary" variant="contained" onClick={() => addToCart(product)}>
+                  <AddShoppingCartOutlinedIcon style={{color: "white"}} />
+                  <Typography
+                    style={{color: "white"}}
+                    display="inline"
+                    sx={{ pl: 1 }}
+                    variant="body2"
+                  >
+                    Add
+                  </Typography>
+                </Button>
+              }
+            </Grid>
+          )}
         </Grid>
       </Box>
     </Card>
