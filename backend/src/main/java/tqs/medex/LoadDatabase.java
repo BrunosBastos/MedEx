@@ -43,14 +43,23 @@ class LoadDatabase {
       var order = new Purchase(10, 20);
       order.setDelivered(true);
       var order2 = new Purchase(30, 40);
+      var order3 = new Purchase(30, 40);
+      var order4 = new Purchase(30, 40);
+      var order5 = new Purchase(20, 20);
       var op1 = new PurchaseProduct(order, product, 10);
       var op2 = new PurchaseProduct(order, product2, 20);
       var op3 = new PurchaseProduct(order2, product2, 20);
-      purchaseRepository.saveAll(Arrays.asList(order, order2));
-      purchaseProductRepository.saveAll(Arrays.asList(op1, op2, op3));
+      var op4 = new PurchaseProduct(order3, product, 1);
+      var op5 = new PurchaseProduct(order4, product, 1);
+      var op6 = new PurchaseProduct(order5, product, 3);
+      purchaseRepository.saveAll(Arrays.asList(order, order2, order3, order4, order5));
+      purchaseProductRepository.saveAll(Arrays.asList(op1, op2, op3, op4, op5, op6));
       order.setUser(clientUser);
       order2.setUser(adminUser);
-      purchaseRepository.saveAll(Arrays.asList(order, order2));
+      order3.setUser(clientUser);
+      order4.setUser(clientUser);
+      order5.setUser(clientUser);
+      purchaseRepository.saveAll(Arrays.asList(order, order2, order3, order4, order5));
     };
   }
 }

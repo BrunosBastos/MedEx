@@ -54,7 +54,7 @@ class PurchaseControllerIT {
         .then()
         .assertThat()
         .statusCode(200)
-        .body("$.size()", is(1))
+        .body("$.size()", is(4))
         .and()
         .body("user.userId", everyItem(is(user.getUserId().intValue())));
   }
@@ -207,7 +207,7 @@ class PurchaseControllerIT {
             .then()
             .assertThat()
             .statusCode(200)
-            .body("$.size()", is(3))
+            .body("$.size()", is(6))
             .extract()
             .jsonPath()
             .getList("", PurchaseProduct.class);
@@ -230,7 +230,7 @@ class PurchaseControllerIT {
             .then()
             .assertThat()
             .statusCode(200)
-            .body("$.size()", is(3))
+            .body("$.size()", is(6))
             .extract()
             .jsonPath()
             .getList("", PurchaseProduct.class);
