@@ -45,7 +45,7 @@ class LoadDatabase {
       var order2 = new Purchase(30, 40);
       var order3 = new Purchase(30, 40);
       var order4 = new Purchase(30, 40);
-      order.setDelivered(true);
+      order4.setDelivered(true);
       var order5 = new Purchase(20, 20);
       var op1 = new PurchaseProduct(order, product, 10);
       var op2 = new PurchaseProduct(order, product2, 20);
