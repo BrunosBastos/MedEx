@@ -19,10 +19,10 @@ import java.util.Arrays;
 @Service
 public class ExternalService {
 
-  @Value("${app.DELIVERY_HOST:localhost}")
+  @Value("${app.deliveryHost:localhost}")
   private String deliveryHost;
 
-  @Value("${app.MY_HOST:localhost}")
+  @Value("${app.myHost:localhost}")
   private String myHost;
 
   @Autowired private RestTemplate restTemplate;
