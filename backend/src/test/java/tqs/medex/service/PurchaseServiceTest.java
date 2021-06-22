@@ -196,6 +196,26 @@ class PurchaseServiceTest {
     assertThat(orderProducts.size()).isEqualTo(2);
   }
 
+  @Test
+  @WithMockUser(value = "clara@gmail.com")
+  void whenUpdatePurchaseWithInvalidId_thenReturnNull() {
+
+    when(purchaseRepository.findById(any())).thenReturn(Optional.empty());
+    var purchase = orderService.updatePurchase(1000L);
+    assertThat(purchase).isNull();
+  }
+
+  @Test
+  @WithMockUser(value = "clara@gmail.com")
+  void whenUpdatePurchase_thenReturnDeliveredPurchased() {
+    var purchasedb = new Purchase(newOrder.getLat(), newOrder.getLon());
+    purchasedb.setDelivered(true);
+    when(purchaseRepository.findById(any())).thenReturn(Optional.of(purchasedb));
+    when(purchaseRepository.save(any())).thenReturn(purchasedb);
+    var purchase = orderService.updatePurchase(1L);
+    assertThat(purchase.isDelivered()).isTrue();
+  }
+
   Purchase setupPurchaseVisibleforUserAndSuperUser() {
     Product p1 = new Product();
     p1.setId(1L);

@@ -240,4 +240,32 @@ class PurchaseControllerIT {
     assertThat(history.get(1).getPurchase().getId())
         .isLessThanOrEqualTo(history.get(2).getPurchase().getId());
   }
+
+  @Test
+  @WithMockUser(value = "henrique@gmail.com")
+  void whenUpdatePurchaseWithInvalidId_thenReturnError() {
+
+    RestAssuredMockMvc.given()
+        .contentType(ContentType.JSON)
+        .when()
+        .put("api/v1/purchases/1000")
+        .then()
+        .assertThat()
+        .statusCode(400)
+        .statusLine("400 Purchase does not exist");
+  }
+
+  @Test
+  @WithMockUser(value = "henrique@gmail.com")
+  void whenUpdatePurchase_thenReturnPurchase() {
+
+    RestAssuredMockMvc.given()
+        .contentType(ContentType.JSON)
+        .when()
+        .put("api/v1/purchases/2")
+        .then()
+        .assertThat()
+        .statusCode(200)
+        .body("delivered", is(true));
+  }
 }
