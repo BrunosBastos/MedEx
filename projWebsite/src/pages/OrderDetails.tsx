@@ -199,7 +199,9 @@ const OrderDetails = () => {
                                     {product.product.id}
                                 </TableCell>
                                 <TableCell>
-                                    {product.product.name}
+                                    {product.product.supplier.name}
+                                    <p>Latitude: {product.product.supplier.lat}</p>
+                                    <p>Longitude: {product.product.supplier.lon}</p>
                                 </TableCell>
                                 <TableCell>
                                     {product.product.price}
