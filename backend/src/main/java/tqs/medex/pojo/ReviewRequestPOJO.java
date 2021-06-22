@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReviewRequestPOJO {
-
     private String host;
     private Long purchaseId;
     private int rating;
