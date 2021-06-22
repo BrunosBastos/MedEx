@@ -54,7 +54,7 @@ public class ExternalService {
     try{
       var url = "http://" + deliveryHost + ":8081/api/v1/deliveries/reviews";
       var headers = new HttpHeaders();
-      reviewRequestPOJO.setHost("http://" + myHost + ":8080/api/v1/deliveries/reviews");
+      reviewRequestPOJO.setHost("http://" + myHost + ":8080/api/v1/purchases");
       var mapper = new ObjectMapper();
       headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
       headers.setContentType(MediaType.APPLICATION_JSON);

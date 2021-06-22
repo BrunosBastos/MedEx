@@ -43,9 +43,8 @@ class PurchaseService {
             }
         })
     }
-
-    makeReview(id, desc, rating) {
-        return fetch(MEDEX_API_BASE_URL + 'purchases/' + id, {
+    makeReview(host, id, desc, rating) {
+        return fetch(MEDEX_API_BASE_URL + 'reviews', {
             method: 'POST',
             mode: 'cors',
             headers: {
@@ -54,7 +53,9 @@ class PurchaseService {
                 'Authorization' : "Bearer "+ useAuthStore.getState().token
             },
             body: JSON.stringify({
-                desc: desc,
+                host: host,
+                purchaseId: id,
+                comment: desc,
                 rating: rating, 
             })
         })

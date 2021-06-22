@@ -89,17 +89,23 @@ const OrderDetails = () => {
     }, [])
 
     const submitReview = () => {
-        purchaseService.makeReview(purchase_id, reviewDescription, rating)
+        console.log(purchase_id)
+        console.log(reviewDescription)
+        console.log(rating)
+        purchaseService.makeReview("", purchase_id, reviewDescription, rating)
             .then( (res) => {
-                return res.json();
+                console.log(res)
+                if (res.status==201)
+                    return res.json();
+                return null
             })
             .then( ( res) => {
                 console.log(res)
-                if(!res.errors){
+                if(res){
                     console.log(res)
-                    notifyError("Something went wrong!")
-                } else {
                     notifySuccess("Successfully made a review")
+                } else {
+                    notifyError("Something went wrong!")
                 }
             })      
     }
