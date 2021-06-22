@@ -68,6 +68,15 @@ public class PurchaseController {
     return ResponseEntity.status(HttpStatus.CREATED).body(newOrder);
   }
 
+  @PutMapping("/purchases/{id}")
+  public ResponseEntity<Purchase> updatePurchaseStatus(@PathVariable Long id) {
+    var purchase = purchaseService.updatePurchase(id);
+    if (purchase == null) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Purchase does not exist");
+    }
+    return ResponseEntity.status(HttpStatus.OK).body(purchase);
+  }
+
   @GetMapping("/purchases/products/{supplierId}")
   public ResponseEntity<List<PurchaseProduct>> getPurchasedProductsForSupplier(
       @PathVariable Long supplierId, @RequestParam int page, @RequestParam boolean recent) {

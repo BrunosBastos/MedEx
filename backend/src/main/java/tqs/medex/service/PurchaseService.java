@@ -91,4 +91,16 @@ public class PurchaseService {
             recent ? Sort.by("purchase.id").descending() : Sort.by("purchase.id").ascending());
     return purchaseProductRepository.findAllByProductSupplierId(supplierId, pageable).getContent();
   }
+
+  public Purchase updatePurchase(Long id) {
+
+    var purchasedb = purchaseRepository.findById(id);
+    if (purchasedb.isEmpty()) {
+      return null;
+    }
+
+    var purchase = purchasedb.get();
+    purchase.setDelivered(true);
+    return purchaseRepository.save(purchase);
+  }
 }

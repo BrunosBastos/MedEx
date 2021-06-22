@@ -258,6 +258,36 @@ class PurchaseControllerTest {
     verify(orderService, times(1)).getPurchasedProductsBySupplier(1L, 0, true);
   }
 
+  @Test
+  @WithMockUser(value = "henrique@gmail.com")
+  void whenUpdatePurchaseWithInvalidId_thenReturnError() {
+
+    when(orderService.updatePurchase(1000L)).thenReturn(null);
+    RestAssuredMockMvc.given()
+        .contentType(ContentType.JSON)
+        .when()
+        .put("api/v1/purchases/1000")
+        .then()
+        .assertThat()
+        .statusCode(400);
+    verify(orderService, times(1)).updatePurchase(1000L);
+  }
+
+  @Test
+  @WithMockUser(value = "henrique@gmail.com")
+  void whenUpdatePurchase_thenReturnPurchase() {
+
+    when(orderService.updatePurchase(1L)).thenReturn(setUpValidOrder());
+    RestAssuredMockMvc.given()
+        .contentType(ContentType.JSON)
+        .when()
+        .put("api/v1/purchases/1")
+        .then()
+        .assertThat()
+        .statusCode(200);
+    verify(orderService, times(1)).updatePurchase(1L);
+  }
+
   CreatePurchasePOJO setUpAddOrderValid() {
     return new CreatePurchasePOJO(10, 20, Map.of(1L, 10, 2L, 4));
   }
