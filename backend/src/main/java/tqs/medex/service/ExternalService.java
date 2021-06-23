@@ -14,7 +14,7 @@ import tqs.medex.pojo.DeliveryPOJO;
 import tqs.medex.pojo.ReviewPOJO;
 import tqs.medex.pojo.ReviewRequestPOJO;
 
-import java.util.Arrays;
+import java.util.Collections;
 
 @Service
 public class ExternalService {
@@ -29,19 +29,20 @@ public class ExternalService {
 
   public void createDelivery(Purchase purchase) {
     try {
-      var url = "http://" + deliveryHost + ":8081/api/v1/deliveries";
+
+      var url = String.format("http://%s:8081/api/v1/deliveries", deliveryHost);
       var headers = new HttpHeaders();
       var newDelivery =
-              new DeliveryPOJO(
-                      "http://" + myHost + ":8080/api/v1/purchases",
-                      purchase.getId(),
-                      purchase.getLat(),
-                      purchase.getLon());
+          new DeliveryPOJO(
+                  String.format("http://%s:8080/api/v1/purchases", myHost),
+              purchase.getId(),
+              purchase.getLat(),
+              purchase.getLon());
       var mapper = new ObjectMapper();
-      headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+      headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
       headers.setContentType(MediaType.APPLICATION_JSON);
       HttpEntity<String> request =
-              new HttpEntity<>(mapper.writeValueAsString(newDelivery), headers);
+          new HttpEntity<>(mapper.writeValueAsString(newDelivery), headers);
 
       restTemplate.postForObject(url, request, String.class);
     } catch (JsonProcessingException e) {
@@ -51,15 +52,15 @@ public class ExternalService {
 
   public ReviewPOJO createReview(ReviewRequestPOJO reviewRequestPOJO) {
 
-    try{
-      var url = "http://" + deliveryHost + ":8081/api/v1/deliveries/reviews";
+    try {
+      var url = String.format("http://%s:8081/api/v1/deliveries/reviews", deliveryHost);
       var headers = new HttpHeaders();
-      reviewRequestPOJO.setHost("http://" + myHost + ":8080/api/v1/purchases");
+      reviewRequestPOJO.setHost(String.format("http://%s:8080/api/v1/purchases", myHost));
       var mapper = new ObjectMapper();
-      headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+      headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
       headers.setContentType(MediaType.APPLICATION_JSON);
       HttpEntity<String> request =
-              new HttpEntity<>(mapper.writeValueAsString(reviewRequestPOJO), headers);
+          new HttpEntity<>(mapper.writeValueAsString(reviewRequestPOJO), headers);
 
       return restTemplate.postForObject(url, request, ReviewPOJO.class);
     } catch (JsonProcessingException e) {
@@ -68,4 +69,9 @@ public class ExternalService {
     return null;
   }
 
+  public ReviewPOJO getReview(Long purchaseId) {
+    var url = String.format("http://%s:8081/api/v1/deliveries/%d/reviews", deliveryHost, purchaseId);
+
+    return restTemplate.getForObject(url, ReviewPOJO.class);
+  }
 }

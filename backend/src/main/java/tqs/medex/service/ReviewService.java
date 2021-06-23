@@ -12,6 +12,11 @@ public class ReviewService {
     @Autowired
     private ExternalService externalService;
 
+    public ReviewPOJO getReview(Long purchaseId){
+
+        return externalService.getReview(purchaseId);
+    }
+
     public ReviewPOJO addReview(ReviewRequestPOJO reviewPOJO){
 
         return externalService.createReview(reviewPOJO);
