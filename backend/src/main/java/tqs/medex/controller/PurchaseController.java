@@ -54,7 +54,7 @@ public class PurchaseController {
   }
 
   @PostMapping("/purchases")
-  public ResponseEntity<Purchase> addNewProduct(
+  public ResponseEntity<Purchase> addNewPurchase(
       @Valid @RequestBody CreatePurchasePOJO order, Authentication authentication)
       throws UserNotFoundException {
     var user =
