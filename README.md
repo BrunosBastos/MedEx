@@ -4,9 +4,32 @@ MedEx
 
 ## Table of Contents
 
+- [Accesses](#Accesses)
 - [Description](#description)
 - [Project team](#project-team)
 - [Project bookmarks](#project-bookmarks)
+
+## Accesses
+
+### MedEx
+
+- [App Link](http://192.168.160.231:3000)
+- [API Documentation](http://192.168.160.231:8080/swagger-ui.html)
+
+| Username           | Password | Role       |
+| ------------------ | -------- | ---------- |
+| clara@gmail.com    | string   | Admin      |
+| henrique@gmail.com | string   | End Client |
+
+### ExDelivery
+
+- [App Link](http://192.168.160.231:3001)
+- [API Documentation](http://192.168.160.231:8081/swagger-ui.html)
+
+| Username          | Password | Role    |
+| ----------------- | -------- | ------- |
+| leandro@gmail.com | string   | Admin   |
+| tiago@gmail.com   | string   | Courier |
 
 ## Delivery System Repository
 
