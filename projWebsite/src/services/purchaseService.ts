@@ -43,6 +43,19 @@ class PurchaseService {
             }
         })
     }
+
+    getReview(id) {
+        return fetch(MEDEX_API_BASE_URL + 'reviews/' + id, {
+            method: 'GET',
+            mode: 'cors',
+            headers: {
+                'accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization' : "Bearer "+ useAuthStore.getState().token
+            },
+        })
+    }
+
     makeReview(host, id, desc, rating) {
         return fetch(MEDEX_API_BASE_URL + 'reviews', {
             method: 'POST',
