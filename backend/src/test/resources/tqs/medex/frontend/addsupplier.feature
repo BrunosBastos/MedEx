@@ -1,4 +1,4 @@
-Feature: Add a new Product to an Existent Pharmacy
+Feature: Add a Supplier
 
   Background:
     Given I am the pharmacy owner on the add supplier page
@@ -10,7 +10,7 @@ Feature: Add a new Product to an Existent Pharmacy
     And I press the add a new supplier button
     Then A successfully added a new supplier message should appear
 
-  Scenario: Introduce an Already Existing Product
+  Scenario: Introduce an Already Existing Supplier
     When I insert an already existing supplier name like 'Pharmacy'
     And I insert the latitude 43.5652
     And I insert the longitude -55.42231
