@@ -58,6 +58,6 @@ Project bookmarks
 - Project Backlog - [Jira](https://crowdwire.atlassian.net/jira/software/projects/MED/boards/3)
 - Document Sharing - [Google Drive](https://drive.google.com/drive/folders/1tgk3GQd3EnHOorKlSXlc6PDayAXA7Fmg?usp=sharing)
 - API Documentation - Swagger: [MedEx](http://192.168.160.231:8080/swagger-ui.html), [ExDelivery](http://192.168.160.231:8081/swagger-ui.html)
-- Static Analysis - [SonarCloud](https://sonarcloud.io/dashboard?id=BrunosBastos_MedEx) and SonarLint
+- Static Analysis - SonarCloud ([MedEx](https://sonarcloud.io/dashboard?id=BrunosBastos_MedEx), [ExDelivery](https://sonarcloud.io/dashboard?id=ExDelivery)) and SonarLint
 - CI/CD Environment - Github Actions
 
