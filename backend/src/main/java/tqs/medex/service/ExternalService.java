@@ -15,6 +15,7 @@ import tqs.medex.pojo.ReviewPOJO;
 import tqs.medex.pojo.ReviewRequestPOJO;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 @Service
 public class ExternalService {
@@ -38,7 +39,7 @@ public class ExternalService {
                       purchase.getLat(),
                       purchase.getLon());
       var mapper = new ObjectMapper();
-      headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+      headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
       headers.setContentType(MediaType.APPLICATION_JSON);
       HttpEntity<String> request =
               new HttpEntity<>(mapper.writeValueAsString(newDelivery), headers);
@@ -56,7 +57,7 @@ public class ExternalService {
       var headers = new HttpHeaders();
       reviewRequestPOJO.setHost("http://" + myHost + ":8080/api/v1/purchases");
       var mapper = new ObjectMapper();
-      headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+      headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
       headers.setContentType(MediaType.APPLICATION_JSON);
       HttpEntity<String> request =
               new HttpEntity<>(mapper.writeValueAsString(reviewRequestPOJO), headers);
@@ -68,4 +69,9 @@ public class ExternalService {
     return null;
   }
 
+    public ReviewPOJO getReview(Long purchaseId) {
+        var url = "http://" + deliveryHost + ":8081/api/v1/deliveries/" + purchaseId + "/reviews";
+
+        return restTemplate.getForObject(url, ReviewPOJO.class);
+    }
 }
