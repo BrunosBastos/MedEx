@@ -11,7 +11,6 @@ import tqs.medex.exception.UserNotFoundException;
 import tqs.medex.pojo.ReviewPOJO;
 import tqs.medex.repository.PurchaseRepository;
 import tqs.medex.repository.UserRepository;
-import tqs.medex.service.PurchaseService;
 import tqs.medex.service.ReviewService;
 import tqs.medex.pojo.ReviewRequestPOJO;
 import javax.validation.Valid;
