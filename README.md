@@ -4,9 +4,37 @@ MedEx
 
 ## Table of Contents
 
+- [Accesses](#Accesses)
 - [Description](#description)
 - [Project team](#project-team)
 - [Project bookmarks](#project-bookmarks)
+
+## Accesses
+
+### MedEx
+
+- [App Link](http://192.168.160.231:3000)
+- [API Documentation](http://192.168.160.231:8080/swagger-ui.html)
+
+| Username           | Password | Role       |
+| ------------------ | -------- | ---------- |
+| clara@gmail.com    | string   | Admin      |
+| henrique@gmail.com | string   | End Client |
+
+### ExDelivery
+
+- [App Link](http://192.168.160.231:3001)
+- [API Documentation](http://192.168.160.231:8081/swagger-ui.html)
+
+| Username          | Password | Role    |
+| ----------------- | -------- | ------- |
+| leandro@gmail.com | string   | Admin   |
+| tiago@gmail.com   | string   | Courier |
+
+## ExDelivery - Delivery System Repository
+
+- [Github](https://github.com/BrunosBastos/ExDelivery)
+- [SonarCloud](https://sonarcloud.io/dashboard?id=ExDelivery)
 
 
 Description
@@ -29,7 +57,7 @@ Project bookmarks
 ---
 - Project Backlog - [Jira](https://crowdwire.atlassian.net/jira/software/projects/MED/boards/3)
 - Document Sharing - [Google Drive](https://drive.google.com/drive/folders/1tgk3GQd3EnHOorKlSXlc6PDayAXA7Fmg?usp=sharing)
-- API Documentation - [Swagger]()
-- Static Analysis - [SonarCloud]() and SonarLint
+- API Documentation - Swagger: [MedEx](http://192.168.160.231:8080/swagger-ui.html), [ExDelivery](http://192.168.160.231:8081/swagger-ui.html)
+- Static Analysis - SonarCloud ([MedEx](https://sonarcloud.io/dashboard?id=BrunosBastos_MedEx), [ExDelivery](https://sonarcloud.io/dashboard?id=ExDelivery)) and SonarLint
 - CI/CD Environment - Github Actions
 
